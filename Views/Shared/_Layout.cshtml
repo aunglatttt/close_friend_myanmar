@@ -1,0 +1,280 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin Dashboard</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <nav class="top-nav" id="topNav">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-outline-light" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+            <div class="search-container ms-3">
+                <input type="text" placeholder="Search...">
+                <i class="fa fa-search text-white ms-2"></i>
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="notification me-3">
+                <i class="fa fa-bell fa-lg"></i>
+                <span class="badge">12</span>
+            </div>
+            <span class="text-white mx-2">|</span>
+            <div class="user-menu">
+                <span class="text-white" onclick="toggleUserMenu()">Admin User Name</span>
+                <i class="fa fa-user-circle fa-lg ms-2" onclick="toggleUserMenu()"></i>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="#">Change Password</a>
+                    <a href="#">Logout</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="@Url.Content("~/images/Logo.jpg")" alt="Logo" width="100" style=" border-radius: 50%;">
+        </div>
+
+        <div class="sidebar-menu">
+
+            <div class="menu-item">
+                <a href="#">
+                    <i class="fa-solid fa-gauge menu-icon"></i>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </div>
+
+
+            <div class="menu-item">
+                <a href="#">
+                    <i class="fa-solid fa-magnifying-glass menu-icon"></i>
+                    <span class="menu-text">Advance Search</span>
+                </a>
+            </div>
+
+            <div class="menu-item mb-3">
+                <a href="#">
+                    <i class="fa-solid fa-phone menu-icon"></i>
+                    <span class="menu-text">To Do List (Alert Center)</span>
+                </a>
+            </div>
+            <p class="divider"></p>
+
+            <div class="menu-group">
+                <div class="menu-group-label">Operation Section</div>
+
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fa-solid fa-house-chimney menu-icon"></i>
+                        <span class="menu-text">Property</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="#">Add New Property</a>
+                        <a href="#">Property Search</a>
+                        <a href="#">Recent Update Data</a>
+                    </div>
+                    <div class="submenu-flyout">
+                        <a href="#">Add New Property</a>
+                        <a href="#">Property Search</a>
+                        <a href="#">Recent Update Data</a>
+                    </div>
+                </div>
+
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fa-solid fa-magnifying-glass-dollar menu-icon"></i>
+                        <span class="menu-text">Client Request</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="#">Client Request List</a>
+                        <a href="#">Client Request Entry</a>
+                    </div>
+                    <div class="submenu-flyout">
+                        <a href="#">Client Request List</a>
+                        <a href="#">Client Request Entry</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="menu-group">
+                <div class="menu-group-label">Management Section</div>
+
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fa-solid fa-user menu-icon"></i>
+                        <span class="menu-text">User Management</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="#">Client</a>
+                        <a href="#">Owner</a>
+                        <a href="#">Agent</a>
+                    </div>
+                    <div class="submenu-flyout">
+                        <a href="#">Client</a>
+                        <a href="#">Owner</a>
+                        <a href="#">Agent</a>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="menu-group">
+                <div class="menu-group-label">Account Section</div>
+
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fa-solid fa-hand-holding-dollar menu-icon"></i>
+                        <span class="menu-text">Cash Management</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a href="#">Company Income</a>
+                        <a href="#">Income List</a>
+                        <a href="#">Comapny Expense</a>
+                        <a href="#">Expense List</a>
+                        <a href="#">Account Transfer</a>
+                        <a href="#">CashBook</a>
+                    </div>
+                    <div class="submenu-flyout">
+                        <a href="#">Company Income</a>
+                        <a href="#">Income List</a>
+                        <a href="#">Comapny Expense</a>
+                        <a href="#">Expense List</a>
+                        <a href="#">Account Transfer</a>
+                        <a href="#">CashBook</a>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="menu-group">
+                <div class="menu-group-label">Configuration Section</div>
+
+                <div class="menu-item">
+                    <a href="#">
+                        <i class="fas fa-cog menu-icon"></i>
+                        <span class="menu-text">Configuration</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
+                        <a asp-controller="Employee" asp-action="EmployeeTypeList"> <span class="title">Employee Type</span></a>
+                        <a href="#">Employee</a>
+                        <a asp-controller="IncomeTitle" asp-action="Index"> <span class="title">Income Title</span></a>
+                        <a href="#">Expense Title</a>
+                        <a href="#">Facilities</a>
+                        <a href="#">Property Type</a>
+                        <a href="#">Building Type</a>
+                        <a href="#">Bank Accounts</a>
+                        <a href="#">Logs</a>
+                    </div>
+                    <div class="submenu-flyout">
+                        <a href="#">Employee Type</a>
+                        <a href="#">Employee</a>
+                        <a href="#">Income Title</a>
+                        <a href="#">Expense Title</a>
+                        <a href="#">Facilities</a>
+                        <a href="#">Property Type</a>
+                        <a href="#">Building Type</a>
+                        <a href="#">Bank Accounts</a>
+                        <a href="#">Logs</a>
+                    </div>
+                </div>
+
+                <!-- Add more menu items -->
+            </div>
+
+        </div>
+    </nav>
+
+    <main class="main-content" id="mainContent">
+        @RenderBody()
+    </main>
+    <button id="backToTop" class="back-to-top" title="Go to top"><i class="fa-solid fa-arrow-up fa-bounce" style="color: #ffffff;"></i></button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+          function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("collapsed");
+            document.getElementById("mainContent").classList.toggle("collapsed");
+            let topNav = document.getElementById("topNav");
+            if (document.getElementById("sidebar").classList.contains("collapsed")) {
+                topNav.style.left = "80px";
+                topNav.style.width = "calc(100% - 80px)";
+            } else {
+                topNav.style.left = "250px";
+                topNav.style.width = "calc(100% - 250px)";
+            }
+        }
+        function toggleMenu(el) {
+            let submenu = el.nextElementSibling;
+            submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+            el.querySelector("i.fa-chevron-right").classList.toggle("fa-chevron-down");
+        }
+        function toggleUserMenu() {
+            document.getElementById("userDropdown").classList.toggle("show");
+        }
+        document.addEventListener("click", function(event) {
+            if (!event.target.closest(".user-menu")) {
+                document.getElementById("userDropdown").classList.remove("show");
+            }
+        });
+
+        // Back to Top Button
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            const mainContent = document.querySelector('.main-content');
+
+            if (window.scrollY > 300 && mainContent.scrollHeight > window.innerHeight) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        document.getElementById('backToTop').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+               // Improved Submenu Flyout Positioning
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('mouseenter', function () {
+                if (document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    const flyout = this.querySelector('.submenu-flyout');
+                    if (flyout) {
+                        // Calculate the top position relative to the parent menu item
+                        const rect = this.getBoundingClientRect();
+                        flyout.style.top = `${rect.top}px`; // Align with the parent menu item
+                        flyout.style.left = `${rect.width}px`; // Position it to the right of the parent
+                        flyout.style.display = 'block'; // Show the flyout
+                    }
+                }
+            });
+
+            item.addEventListener('mouseleave', function () {
+                if (document.querySelector('.sidebar').classList.contains('collapsed')) {
+                    const flyout = this.querySelector('.submenu-flyout');
+                    if (flyout) {
+                        flyout.style.display = 'none'; // Hide the flyout
+                    }
+                }
+            });
+        });
+
+
+    </script>
+</body>
+</html>

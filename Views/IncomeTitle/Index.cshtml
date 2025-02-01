@@ -1,0 +1,67 @@
+﻿@model IEnumerable<CloseFriendMyanamr.Models.IncomeTitleModel>
+
+    <link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
+
+
+<div class="container">
+    <h2>Income Title</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card p-3">
+                <h5 class="text-primary">Income Title!</h5>
+                <div id="expenseList">
+                    @foreach (var item in Model)
+                    {
+                        <div>
+                            <span>@item.Name</span>
+                            <button onclick="editExpense(@item.Id)">Edit</button>
+                            <button onclick="deleteExpense(@item.Id)">Delete</button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="form-container">
+                <h2>Add/Edit Income Title</h2>
+                <form id="expenseForm" asp-action="Add" method="post">
+                    <input type="hidden" id="Id" name="Id" />
+                    <input type="text" id="Name" name="Name" placeholder="မှတ်ချက်" required />
+                    <button type="submit" id="submitButton">Add</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    function editExpense(id) {
+        fetch(`/IncomeTitle/Detail/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('Id').value = data.id;
+                document.getElementById('Name').value = data.name;
+                document.getElementById('submitButton').innerText = 'Update';
+            });
+    }
+
+    function deleteExpense(id) {
+        if (confirm('Are you sure you want to delete this expense?')) {
+            fetch(`/IncomeTitle/Delete/${id}`, { method: 'POST' })
+                .then(() => window.location.reload());
+        }
+    }
+
+    document.getElementById('expenseForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const action = document.getElementById('submitButton').innerText === 'Add' ? 'Add' : 'Update';
+        fetch(`/IncomeTitle/${action}`, {
+            method: 'POST',
+            body: formData
+        }).then(() => window.location.reload());
+    });
+</script>
