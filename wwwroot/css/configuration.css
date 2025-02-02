@@ -50,3 +50,19 @@
         border-radius: 5px;
         font-weight: bold;
     }
+
+/* Optional: Customize table style */
+.table th, .table td {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.table th {
+    background-color: #f8f9fa;
+    padding: 1rem 0.5rem 1.5rem !important;
+    line-height: 2rem;
+}
+
+.table td {
+    font-size: 14px;
+}

@@ -1,0 +1,178 @@
+﻿body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #343a40;
+}
+
+/* Page Header */
+.page-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #343a40;
+    }
+
+/* Add Button */
+.btn-add {
+    background-color: #28a745; /* Green color for a professional look */
+    border-color: #28a745;
+    color: #fff;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
+
+    .btn-add:hover {
+        background-color: #218838; /* Slightly darker green on hover */
+        border-color: #1e7e34;
+    }
+
+    .btn-add i {
+        margin-right: 8px;
+    }
+
+/* Responsive Adjustments for Mobile */
+@media (max-width: 767.98px) {
+    .page-header {
+        flex-direction: column; /* Stack items vertically on mobile */
+        align-items: flex-start; /* Align items to the left */
+        padding: 15px;
+    }
+
+        .page-header h2 {
+            font-size: 20px; /* Reduce font size for mobile */
+            margin-bottom: 10px; /* Add space between title and button */
+        }
+
+    .btn-add {
+        width: 100%; /* Make button full width on mobile */
+        justify-content: center; /* Center button text */
+        padding: 10px; /* Increase padding for better touch experience */
+    }
+
+        .btn-add i {
+            margin-right: 6px; /* Adjust icon spacing */
+        }
+}
+/* Card Styling */
+.card {
+    /*border: none;*/
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #f8f9fa; /* Light gray header */
+    color: #343a40;
+    padding: 15px 20px;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 1px solid #e9ecef; /* Subtle border */
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 0;
+}
+
+    .table th, .table td {
+        text-align: center;
+        vertical-align: middle;
+        padding: 12px 15px;
+        border: 1px solid #e9ecef; /* Light border for cells */
+    }
+
+    .table th {
+        background-color: #f8f9fa; /* Light gray header */
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .table td {
+        font-size: 14px;
+        color: #495057;
+    }
+
+    .table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+        .table tbody tr:hover {
+            background-color: #f1f3f5; /* Light gray hover effect */
+        }
+
+/* Optional: Add a subtle border radius to the table */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Custom scrollbar for the table */
+.table-responsive {
+    overflow-x: auto;
+}
+
+    .table-responsive::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .table-responsive::-webkit-scrollbar-thumb {
+        background-color: #ced4da;
+        border-radius: 4px;
+    }
+
+    .table-responsive::-webkit-scrollbar-track {
+        background-color: #f8f9fa;
+    }
+
+
+
+/* Ensure the table container is responsive */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Adjust table font size for smaller screens */
+@media (max-width: 767.98px) {
+    .table th, .table td {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .page-header h2 {
+        font-size: 20px;
+    }
+
+    .btn-add {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .card-header {
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+}

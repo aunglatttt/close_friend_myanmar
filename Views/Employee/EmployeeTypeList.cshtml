@@ -1,53 +1,80 @@
 ﻿@model IEnumerable<CloseFriendMyanamr.Models.EmployeeType>
+<link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
 
-<div>
-    <h2>Employee Types</h2>
-    <div id="expenseList">
-        @foreach (var item in Model)
-        {
-            <div>
-                <span>@item.Type</span>
-                <button onclick="editExpense(@item.Id)">Edit</button>
-                <button onclick="deleteExpense(@item.Id)">Delete</button>
+<div class="row my-3">
+    <div class="col-sm-12">
+        <h3 class="title mb-3">Employee Types</h3>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card p-0">
+                    <div id="expenseList">
+                    <table class="table table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                @* <th>#</th> *@
+                                <th>Employee Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    @* <td>@item.Id</td> *@
+                                    <td>@item.Type</td>
+                                    <td>
+                                        <i class="fa-solid fa-pen" onclick="editExpense(@item.Id)" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                        <i class="fa-solid fa-trash-can" onclick="deleteExpense(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
             </div>
-        }
+
+            <div class="col-md-6">
+                <div class="form-container">
+                    <h4 class="edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
+                    <form id="expenseForm" asp-action="Add" method="post">
+                        <input type="hidden" id="Id" name="Id" />
+                        <input type="text" id="Type" name="Type" placeholder="Enter Employee Type" required />
+                        <button type="submit" id="submitButton">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>     
     </div>
+
 </div>
+<script>
+    function editExpense(id) {
+        fetch(`/Employee/DetailEmployeeType/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('Id').value = data.id;
+                document.getElementById('Type').value = data.type;
+                document.getElementById('submitButton').innerText = 'Update';
+                 document.getElementById('edit').innerText = "Edit Employee Type";
+            });
+    }
 
-<div>
-    <h2>Add/Edit Employee Type</h2>
-    <form id="expenseForm" asp-action="Add" method="post">
-        <input type="hidden" id="Id" name="Id" />
-        <input type="text" id="Type" name="Type" placeholder="Enter Employee Type" required />
-        <button type="submit" id="submitButton">Add</button>
-    </form>
-</div>
-
-    <script>
-        function editExpense(id) {
-            fetch(`/Employee/DetailEmployeeType/${id}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('Id').value = data.id;
-                    document.getElementById('Type').value = data.type;
-                    document.getElementById('submitButton').innerText = 'Update';
-                });
+    function deleteExpense(id) {
+        if (confirm('Are you sure you want to delete this expense?')) {
+            fetch(`/Employee/DeleteEmployeeType/${id}`, { method: 'POST' })
+                .then(() => window.location.reload());
         }
+    }
 
-        function deleteExpense(id) {
-            if (confirm('Are you sure you want to delete this expense?')) {
-                fetch(`/Employee/DeleteEmployeeType/${id}`, { method: 'POST' })
-                    .then(() => window.location.reload());
-            }
-        }
-
-        document.getElementById('expenseForm').addEventListener('submit', function (event) {
-            event.preventDefault();
-            const formData = new FormData(this);
-            const action = document.getElementById('submitButton').innerText === 'Add' ? 'AddEmployeeType' : 'UpdateEmployeeType';
-            fetch(`/Employee/${action}`, {
-                method: 'POST',
-                body: formData
-            }).then(() => window.location.reload());
-        });
-    </script>
+    document.getElementById('expenseForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const formData = new FormData(this);
+        const action = document.getElementById('submitButton').innerText === 'Add' ? 'AddEmployeeType' : 'UpdateEmployeeType';
+        fetch(`/Employee/${action}`, {
+            method: 'POST',
+            body: formData
+        }).then(() => window.location.reload());
+    });
+</script>

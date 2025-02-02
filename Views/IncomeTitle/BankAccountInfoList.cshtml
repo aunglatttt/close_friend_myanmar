@@ -1,0 +1,104 @@
+﻿@model IEnumerable<CloseFriendMyanamr.Models.BankAccountInfoModel>
+<link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
+
+<div class="row my-3">
+    <div class="col-sm-12">
+        <h3 class="title mb-3">Bank Account Info List</h3>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card p-0">
+                    <div id="expenseList">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    @* <th>#</th> *@
+                                    <th>Bank Name</th>
+                                    <th>Openging Amount</th>
+                                    <th>Remark</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr>
+                                        @* <td>@item.Id</td> *@
+                                        <td>@item.BankName</td>
+                                        <td>@item.OpeningAmount</td>
+                                        <td>@item.Remark</td>
+                                        <td>
+                                            <i class="fa-solid fa-pen" onclick="editIncomeTitle(@item.Id)" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                            <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-container">
+                    <h4 class="edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
+                    <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
+                        <input type="hidden" id="Id" name="Id" />
+                        <input type="text" id="BankName" name="BankName" placeholder="Enter Bank Name" required class="form-control mb-3" />
+                        <input type="text" id="OpeningAmount" name="OpeningAmount" placeholder="Enter Openging Amount" required class="form-control mb-3" />
+                        <input type="text" id="Remark" name="Remark" placeholder="Enter Remark" class="form-control mb-3" />
+                        <button type="submit" id="submitButton" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Edit function
+    function editIncomeTitle(id) {
+        fetch(`/IncomeTitle/DetailBankAccountInfo/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('Id').value = data.id;
+                document.getElementById('BankName').value = data.bankName;
+                document.getElementById('OpeningAmount').value = data.openingAmount;
+                document.getElementById('Remark').value = data.remark;
+                document.getElementById('submitButton').innerText = 'Update';
+                document.getElementById('incomeTitleForm').action = '/IncomeTitle/Update';
+                document.getElementById('edit').innerText = "Edit Bank Account Info";
+            });
+    }
+
+    // Delete function
+    function deleteIncomeTitle(id) {
+        if (confirm('Are you sure you want to delete this income title?')) {
+            fetch(`/IncomeTitle/DeleteBankAccountInfo/${id}`, { method: 'POST' })
+                .then(() => window.location.reload());
+        }
+    }
+
+    // Handle form submission
+    document.getElementById('incomeTitleForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const openingAmount = document.getElementById('OpeningAmount').value;
+
+    // Check if OpeningAmount is a valid number and is not empty
+    if (isNaN(openingAmount) || openingAmount.trim() === '') {
+        alert('Please enter a valid opening amount (numeric value).');
+        return;
+    }
+
+        const formData = new FormData(this);
+        const action = document.getElementById('submitButton').innerText === 'Add' ? 'AddBankAccountInfo' : 'UpdateBankAccountInfo';
+
+        fetch(`/IncomeTitle/${action}`, {
+            method: 'POST',
+            body: formData
+        }).then(() => window.location.reload());
+    });
+</script>

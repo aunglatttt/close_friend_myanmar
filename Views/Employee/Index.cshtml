@@ -1,5 +1,75 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model IEnumerable<CloseFriendMyanamr.Models.EmployeeModel>
+<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Header Row: Title and Add Button -->
+        <div class="page-header">
+            <h2>Employee Management</h2>
+            <a class="btn btn-add" asp-controller="Employee" asp-action="Create">
+                <i class="fas fa-user-plus"></i> Add New Employee
+            </a>
+        </div>
+
+        <!-- Main Content Row -->
+        <div class="row">
+            <!-- Left Card: DataTable -->
+            <div class="col-md-12 mb-4">
+                <div class="card border-2 shadow-sm">
+                    <div class="card-header">
+                        Employees List
+                    </div>
+                    <div class="card-body">
+                       <div class="table-responsive">
+                            <table id="employeeTable" class="table table-hover table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Employee Name</th>
+                                        <th>Phone Number</th>
+                                        <th>Login Name</th>
+                                        <th>Employee Type</th>
+                                        <th>Created Date</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.EmployeeName</td>
+                                            <td>@item.PhoneNumber</td>
+                                            <td>@item.LoginName</td>
+                                            <td>@item.EmployeeType?.Type</td>
+                                            <td>@item.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                                            <td>@(item.Status ? "Active" : "Inactive")</td>
+                                            <td>
+                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("Create", "Employee", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#employeeTable').DataTable({
+            responsive: true, // Enable responsive feature
+            paging: true,     // Enable pagination
+            searching: true,  // Enable search
+            ordering: true,   // Enable sorting
+            info: true,       // Show table information
+            autoWidth: false, // Disable automatic column width calculation
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
+                { responsivePriority: 2, targets: -1 } // Make Action column high priority
+            ]
+        });
+    });
+</script>
