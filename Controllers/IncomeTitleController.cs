@@ -18,7 +18,7 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> Index()
         {
             ViewData["FormTitle"] = "Add Income Title";
-            var items = await _context.IncomeTitles.ToListAsync();
+            var items = await _context.IncomeTitle.ToListAsync();
             return View(items);
         }
 
@@ -30,7 +30,7 @@ namespace CloseFriendMyanamr.Controllers
                 return BadRequest("Name is required");
 
             item.CreatedAt = DateTime.Now;
-            _context.IncomeTitles.Add(item);
+            _context.IncomeTitle.Add(item);
             await _context.SaveChangesAsync();
             return Json(item);
         }
@@ -38,10 +38,11 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> Update(IncomeTitleModel item)
         {
-            var existingItem = await _context.IncomeTitles.FindAsync(item.Id);
+            var existingItem = await _context.IncomeTitle.FindAsync(item.Id);
             if (existingItem == null) return NotFound();
 
             existingItem.Name = item.Name;
+            existingItem.Remark = item.Remark;
             item.UpdatedAt = DateTime.Now;
             await _context.SaveChangesAsync();
             return Json(existingItem);
@@ -50,10 +51,10 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
-            var item = await _context.IncomeTitles.FindAsync(id);
+            var item = await _context.IncomeTitle.FindAsync(id);
             if (item == null) return NotFound();
 
-            _context.IncomeTitles.Remove(item);
+            _context.IncomeTitle.Remove(item);
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
@@ -61,7 +62,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
-            var epmtype = await _context.IncomeTitles.FindAsync(id);
+            var epmtype = await _context.IncomeTitle.FindAsync(id);
             return Json(epmtype);
         }
         #endregion
@@ -71,27 +72,27 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> ExpenseList()
         {
             ViewData["FormTitle"] = "Add Expense";
-            var items = await _context.Expenses.ToListAsync();
+            var items = await _context.ExpenseTitle.ToListAsync();
             return View(items);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> AddExpense(ExpenseModel item)
+        public async Task<IActionResult> AddExpense(ExpenseTitleModel item)
         {
             if (string.IsNullOrWhiteSpace(item.Name))
                 return BadRequest("Name is required");
 
             item.CreatedAt = DateTime.Now;
-            _context.Expenses.Add(item);
+            _context.ExpenseTitle.Add(item);
             await _context.SaveChangesAsync();
             return Json(item);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateExpense(ExpenseModel item)
+        public async Task<IActionResult> UpdateExpense(ExpenseTitleModel item)
         {
-            var existingItem = await _context.Expenses.FindAsync(item.Id);
+            var existingItem = await _context.ExpenseTitle.FindAsync(item.Id);
             if (existingItem == null) return NotFound();
 
             existingItem.Name = item.Name;
@@ -104,10 +105,10 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteExpense(int id)
         {
-            var item = await _context.Expenses.FindAsync(id);
+            var item = await _context.ExpenseTitle.FindAsync(id);
             if (item == null) return NotFound();
 
-            _context.Expenses.Remove(item);
+            _context.ExpenseTitle.Remove(item);
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
@@ -115,7 +116,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailExpense(int id)
         {
-            var epmtype = await _context.Expenses.FindAsync(id);
+            var epmtype = await _context.ExpenseTitle.FindAsync(id);
             return Json(epmtype);
         }
         #endregion
@@ -176,7 +177,7 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> PropertyTypeList()
         {
             ViewData["FormTitle"] = "Add Property Type";
-            var items = await _context.PropertyTypes.ToListAsync();
+            var items = await _context.PropertyType.ToListAsync();
             return View(items);
         }
 
@@ -191,7 +192,7 @@ namespace CloseFriendMyanamr.Controllers
                 return BadRequest("ShortCode is required");
 
             item.CreatedAt = DateTime.Now;
-            _context.PropertyTypes.Add(item);
+            _context.PropertyType.Add(item);
             await _context.SaveChangesAsync();
             return Json(item);
         }
@@ -199,7 +200,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdatePropertyType(PropertyTypeModel item)
         {
-            var existingItem = await _context.PropertyTypes.FindAsync(item.Id);
+            var existingItem = await _context.PropertyType.FindAsync(item.Id);
             if (existingItem == null) return NotFound();
 
             existingItem.TypeName = item.TypeName;
@@ -212,10 +213,10 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> DeletePropertyType(int id)
         {
-            var item = await _context.PropertyTypes.FindAsync(id);
+            var item = await _context.PropertyType.FindAsync(id);
             if (item == null) return NotFound();
 
-            _context.PropertyTypes.Remove(item);
+            _context.PropertyType.Remove(item);
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
@@ -223,7 +224,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailPropertyType(int id)
         {
-            var epmtype = await _context.PropertyTypes.FindAsync(id);
+            var epmtype = await _context.PropertyType.FindAsync(id);
             return Json(epmtype);
         }
         #endregion
@@ -232,7 +233,7 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> BuildingTypeList()
         {
             ViewData["FormTitle"] = "Add Building Type";
-            var items = await _context.BuildingTypes.ToListAsync();
+            var items = await _context.BuildingType.ToListAsync();
             return View(items);
         }
 
@@ -244,7 +245,7 @@ namespace CloseFriendMyanamr.Controllers
                 return BadRequest("Name is required");
 
             item.CreatedAt = DateTime.Now;
-            _context.BuildingTypes.Add(item);
+            _context.BuildingType.Add(item);
             await _context.SaveChangesAsync();
             return Json(item);
         }
@@ -252,7 +253,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateBuildingType(BuildingTypeModel item)
         {
-            var existingItem = await _context.BuildingTypes.FindAsync(item.Id);
+            var existingItem = await _context.BuildingType.FindAsync(item.Id);
             if (existingItem == null) return NotFound();
 
             existingItem.Name = item.Name;
@@ -264,10 +265,10 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteBuildingType(int id)
         {
-            var item = await _context.BuildingTypes.FindAsync(id);
+            var item = await _context.BuildingType.FindAsync(id);
             if (item == null) return NotFound();
 
-            _context.BuildingTypes.Remove(item);
+            _context.BuildingType.Remove(item);
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
@@ -275,7 +276,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailBuildingType(int id)
         {
-            var epmtype = await _context.BuildingTypes.FindAsync(id);
+            var epmtype = await _context.BuildingType.FindAsync(id);
             return Json(epmtype);
         }
         #endregion
@@ -284,33 +285,33 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> BankAccountInfoList()
         {
             ViewData["FormTitle"] = "Add Bank Account Info";
-            var items = await _context.BankAccountInfos.ToListAsync();
+            var items = await _context.BankAccount.ToListAsync();
             return View(items);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> AddBankAccountInfo(BankAccountInfoModel item)
+        public async Task<IActionResult> AddBankAccountInfo(BankAccountModel item)
         {
-            if (string.IsNullOrWhiteSpace(item.BankName))
+            if (string.IsNullOrWhiteSpace(item.BankAccount))
                 return BadRequest("BankName is required");
 
-            if (item.OpeningAmount <= 0)
-                return BadRequest("OpeningAmount must be a valid positive number.");
+            //if (item.OpeningAmount <= 0)
+            //    return BadRequest("OpeningAmount must be a valid positive number.");
 
             item.CreatedAt = DateTime.Now;
-            _context.BankAccountInfos.Add(item);
+            _context.BankAccount.Add(item);
             await _context.SaveChangesAsync();
             return Json(item);
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateBankAccountInfo(BankAccountInfoModel item)
+        public async Task<IActionResult> UpdateBankAccountInfo(BankAccountModel item)
         {
-            var existingItem = await _context.BankAccountInfos.FindAsync(item.Id);
+            var existingItem = await _context.BankAccount.FindAsync(item.Id);
             if (existingItem == null) return NotFound();
 
-            existingItem.BankName = item.BankName;
+            existingItem.BankAccount = item.BankAccount;
             existingItem.OpeningAmount = item.OpeningAmount;
             existingItem.Remark = item.Remark;
             item.UpdatedAt = DateTime.Now;
@@ -321,10 +322,10 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteBankAccountInfo(int id)
         {
-            var item = await _context.BankAccountInfos.FindAsync(id);
+            var item = await _context.BankAccount.FindAsync(id);
             if (item == null) return NotFound();
 
-            _context.BankAccountInfos.Remove(item);
+            _context.BankAccount.Remove(item);
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
@@ -332,7 +333,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailBankAccountInfo(int id)
         {
-            var epmtype = await _context.BankAccountInfos.FindAsync(id);
+            var epmtype = await _context.BankAccount.FindAsync(id);
             return Json(epmtype);
         }
         #endregion

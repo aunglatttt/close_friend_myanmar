@@ -9,13 +9,13 @@ namespace SimpleDataWebsite.Data
         {
         }
 
-        public DbSet<EmployeeType> EmployeeTypes { get; set; }
-        public DbSet<EmployeeModel> Employees { get; set; }
-        public DbSet<IncomeTitleModel> IncomeTitles { get; set; }
-        public DbSet<ExpenseModel> Expenses { get; set; }
+        public DbSet<EmployeeType> EmployeeType { get; set; }
+        public DbSet<EmployeeModel> Employee { get; set; }
+        public DbSet<IncomeTitleModel> IncomeTitle { get; set; }
+        public DbSet<ExpenseTitleModel> ExpenseTitle { get; set; }
         public DbSet<FacilityModel> Facilities { get; set; }
-        public DbSet<PropertyTypeModel> PropertyTypes { get; set; }
-        public DbSet<BuildingTypeModel> BuildingTypes { get; set; }
-        public DbSet<BankAccountInfoModel> BankAccountInfos { get; set; }
+        public DbSet<PropertyTypeModel> PropertyType { get; set; }
+        public DbSet<BuildingTypeModel> BuildingType { get; set; }
+        public DbSet<BankAccountModel> BankAccount { get; set; }
     }
 }

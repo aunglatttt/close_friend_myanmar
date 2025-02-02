@@ -9,6 +9,7 @@ namespace CloseFriendMyanamr.Models
 
         [Required]
         public string Name { get; set; }
+        public string? Remark { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

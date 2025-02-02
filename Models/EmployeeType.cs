@@ -9,7 +9,7 @@ namespace CloseFriendMyanamr.Models
 
         [Required]
         public string Type { get; set; }
-
+        public bool ReadOnly { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

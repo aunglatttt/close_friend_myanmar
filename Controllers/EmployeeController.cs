@@ -17,14 +17,14 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Employees.AsNoTracking().Include(d => d.EmployeeType).ToListAsync());
+            return View(await _context.Employee.AsNoTracking().Include(d => d.EmployeeType).ToListAsync());
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(int? id)
         {
             // Fetch employee types from the database
-            var empTypes = await _context.EmployeeTypes.AsNoTracking()
+            var empTypes = await _context.EmployeeType.AsNoTracking()
                 .Select(x => new { x.Id, x.Type }) // Ensure x.Type is used
                 .ToListAsync();
 
@@ -42,7 +42,7 @@ namespace CloseFriendMyanamr.Controllers
 
             if(id != null && id > 0)
             {
-                return View(await _context.Employees.FindAsync(id));
+                return View(await _context.Employee.FindAsync(id));
             }
 
             return View();
@@ -57,7 +57,7 @@ namespace CloseFriendMyanamr.Controllers
                 // Insert your data saving logic here (e.g., save to the database)
                 if (model.Id > 0)
                 {
-                    var existingModel = await _context.Employees.FindAsync(model.Id);
+                    var existingModel = await _context.Employee.FindAsync(model.Id);
                     if (existingModel != null)
                     {
                         existingModel.EmployeeName = model.EmployeeName;
@@ -72,14 +72,14 @@ namespace CloseFriendMyanamr.Controllers
                 else
                 {
                     model.CreatedAt = DateTime.Now;
-                    _context.Employees.Add(model);
+                    _context.Employee.Add(model);
                 }
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("Success", new { message = model.Id > 0? "Updated" : "Created" });
             }
 
-            var empTypes = await _context.EmployeeTypes.AsNoTracking()
+            var empTypes = await _context.EmployeeType.AsNoTracking()
                 .Select(x => new { x.Id, x.Type }) // Ensure x.Type is used
                 .ToListAsync();
 
@@ -105,12 +105,12 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> EmployeeTypeList()
         {
             ViewData["FormTitle"] = "Add Employee Type";
-            return View(await _context.EmployeeTypes.ToListAsync());
+            return View(await _context.EmployeeType.ToListAsync());
         }
 
         public async Task<IActionResult> DetailEmployeeType(int id)
         {
-            var epmtype = await _context.EmployeeTypes.FindAsync(id);
+            var epmtype = await _context.EmployeeType.FindAsync(id);
             return Json(epmtype);
         }
 
@@ -118,7 +118,7 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> AddEmployeeType(EmployeeType expense)
         {
             expense.CreatedAt = DateTime.Now;
-            _context.EmployeeTypes.Add(expense);
+            _context.EmployeeType.Add(expense);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(EmployeeTypeList));
         }
@@ -127,7 +127,7 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> UpdateEmployeeType(EmployeeType expense)
         {
             expense.UpdatedAt = DateTime.Now;
-            _context.EmployeeTypes.Update(expense);
+            _context.EmployeeType.Update(expense);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(EmployeeTypeList));
         }
@@ -135,10 +135,10 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteEmployeeType(int id)
         {
-            var expense = await _context.EmployeeTypes.FindAsync(id);
+            var expense = await _context.EmployeeType.FindAsync(id);
             if (expense != null)
             {
-                _context.EmployeeTypes.Remove(expense);
+                _context.EmployeeType.Remove(expense);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(EmployeeTypeList));

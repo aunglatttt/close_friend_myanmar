@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CloseFriendMyanamr.Models.BankAccountInfoModel>
+﻿@model IEnumerable<CloseFriendMyanamr.Models.BankAccountModel>
 <link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
 
 <div class="row my-3">
@@ -24,7 +24,7 @@
                                 {
                                     <tr>
                                         @* <td>@item.Id</td> *@
-                                        <td>@item.BankName</td>
+                                        <td>@item.BankAccount</td>
                                         <td>@item.OpeningAmount</td>
                                         <td>@item.Remark</td>
                                         <td>
@@ -45,7 +45,7 @@
                     <h4 class="edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
                     <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
                         <input type="hidden" id="Id" name="Id" />
-                        <input type="text" id="BankName" name="BankName" placeholder="Enter Bank Name" required class="form-control mb-3" />
+                        <input type="text" id="BankAccount" name="BankAccount" placeholder="Enter Bank Name" required class="form-control mb-3" />
                         <input type="text" id="OpeningAmount" name="OpeningAmount" placeholder="Enter Openging Amount" required class="form-control mb-3" />
                         <input type="text" id="Remark" name="Remark" placeholder="Enter Remark" class="form-control mb-3" />
                         <button type="submit" id="submitButton" class="btn btn-primary">Add</button>
@@ -64,7 +64,7 @@
             .then(response => response.json())
             .then(data => {
                 document.getElementById('Id').value = data.id;
-                document.getElementById('BankName').value = data.bankName;
+                document.getElementById('BankAccount').value = data.bankAccount;
                 document.getElementById('OpeningAmount').value = data.openingAmount;
                 document.getElementById('Remark').value = data.remark;
                 document.getElementById('submitButton').innerText = 'Update';

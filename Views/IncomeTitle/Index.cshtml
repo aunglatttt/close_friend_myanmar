@@ -1,55 +1,58 @@
 ﻿@model IEnumerable<CloseFriendMyanamr.Models.IncomeTitleModel>
-    <link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
 
-    <div class="row my-3">
-        <div class="col-sm-12">
-            <h3 class="title mb-3">Income Titles</h3>
+<div class="row my-3">
+    <div class="col-sm-12">
+        <h3 class="title mb-3">Income Titles</h3>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card p-0">
-                        <div id="expenseList">
-                            <table class="table table-hover table-bordered">
-                                <thead>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card p-0">
+                    <div id="expenseList">
+                        <table class="table table-hover table-bordered">
+                            <thead>
+                                <tr>
+                                    @* <th>#</th> *@
+                                    <th>Income Title</th>
+                                    <th>Remark</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
                                     <tr>
-                                        @* <th>#</th> *@
-                                        <th>Income Title</th>
-                                        <th>Actions</th>
+                                        @* <td>@item.Id</td> *@
+                                        <td>@item.Name</td>
+                                        <td>@item.Remark</td>
+                                        <td>
+                                            <i class="fa-solid fa-pen" onclick="editIncomeTitle(@item.Id)" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                            <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-                                            @* <td>@item.Id</td> *@
-                                            <td>@item.Name</td>
-                                            <td>
-                                                <i class="fa-solid fa-pen" onclick="editIncomeTitle(@item.Id)" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
-                                                <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
-                                            </td>
-                                        </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                </div>
 
-                <div class="col-md-6">
-                    <div class="form-container">
-                        <h4 class="edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
-                        <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
-                            <input type="hidden" id="Id" name="Id" />
-                            <input type="text" id="Name" name="Name" placeholder="Enter income title" required class="form-control mb-3" />
-                            <button type="submit" id="submitButton" class="btn btn-primary">Add</button>
-                        </form>
-                    </div>
                 </div>
             </div>
 
+            <div class="col-md-6">
+                <div class="form-container">
+                    <h4 class="edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
+                    <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
+                        <input type="hidden" id="Id" name="Id" />
+                        <input type="text" id="Name" name="Name" placeholder="Enter income title" required class="form-control mb-3" />
+                        <input type="text" id="Remark" name="Remark" placeholder="မှတ်ချက်" class="form-control mb-3" />
+                        <button type="submit" id="submitButton" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
         </div>
+
     </div>
+</div>
 
 <script>
     // Edit function
@@ -59,6 +62,7 @@
             .then(data => {
                 document.getElementById('Id').value = data.id;
                 document.getElementById('Name').value = data.name;
+                document.getElementById('Remark').value = data.remark;
                 document.getElementById('submitButton').innerText = 'Update';
                 document.getElementById('incomeTitleForm').action = '/IncomeTitle/Update';
                 document.getElementById('edit').innerText = "Edit Income Title";
