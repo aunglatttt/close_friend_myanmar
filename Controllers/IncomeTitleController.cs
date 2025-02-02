@@ -339,5 +339,10 @@ namespace CloseFriendMyanamr.Controllers
         #endregion
 
 
+
+        public async Task<IActionResult> LogList(int id)
+        {
+            return View(await _context.Log.AsNoTracking().ToListAsync());
+        }
     }
 }

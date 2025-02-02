@@ -114,12 +114,12 @@
                 </div>
                 <ul class="sub-menu">
                     <li>
-                        <a asp-controller="Account" asp-action="index">
+                        <a asp-controller="UserManagement" asp-action="ClientList">
                             <span class="title">Client</span>
                         </a>
                     </li>
                     <li>
-                        <a asp-controller="Account" asp-action="Create">
+                        <a asp-controller="UserManagement" asp-action="OwnerList">
                             <span class="title">Owner</span>
                         </a>
                     </li>
@@ -173,6 +173,7 @@
                 </ul>
             </li>
 
+            @* Configuration  *@
             <li>
                 <div class="icon-link">
                     <a href="#">
@@ -223,7 +224,7 @@
                         </a>
                     </li>
                     <li>
-                        <a asp-controller="Penalty" asp-action="Report_PenaltyTOPList">
+                        <a asp-controller="IncomeTitle" asp-action="LogList">
                             <span class="title">Logs</span>
                         </a>
                     </li>

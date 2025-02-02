@@ -1,0 +1,59 @@
+﻿@model IEnumerable<CloseFriendMyanamr.Models.LogModel>
+<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Main Content Row -->
+        <div class="row">
+            <!-- Left Card: DataTable -->
+            <div class="col-md-12 mb-4">
+                <div class="card border-2 shadow-sm">
+                    <div class="card-header">
+                        Log List
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="employeeTable" class="table table-hover table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Employee</th>
+                                        <th>Type</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.LogsDate.ToString("MMM-dd-yyyy")</td>
+                                            <td>@(item.Employee != null? item.Employee.EmployeeName : "")</td>
+                                            <td>@item.Type</td>
+                                            <td>@item.Logs</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#employeeTable').DataTable({
+            responsive: true, // Enable responsive feature
+            paging: true,     // Enable pagination
+            searching: true,  // Enable search
+            ordering: true,   // Enable sorting
+            info: true,       // Show table information
+            autoWidth: false, // Disable automatic column width calculation
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
+                { responsivePriority: 2, targets: -1 } // Make Action column high priority
+            ]
+        });
+    });
+</script>
