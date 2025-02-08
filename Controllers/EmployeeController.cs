@@ -54,7 +54,7 @@ namespace CloseFriendMyanamr.Controllers
         {
             if (ModelState.IsValid)
             {
-                // Insert your data saving logic here (e.g., save to the database)
+                string returnMsg = "Created";
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Employee.FindAsync(model.Id);
@@ -67,16 +67,20 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.Password = model.Password;
                         existingModel.Status = model.Status;
                         model.UpdatedAt = DateTime.Now;
+
+                        returnMsg = "Updated";
                     }
                 }
                 else
                 {
                     model.CreatedAt = DateTime.Now;
                     _context.Employee.Add(model);
+
+                    returnMsg = "Created";
                 }
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("Success", new { message = model.Id > 0? "Updated" : "Created" });
+                return RedirectToAction("Success", new { message = returnMsg });
             }
 
             var empTypes = await _context.EmployeeType.AsNoTracking()

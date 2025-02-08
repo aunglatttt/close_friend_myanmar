@@ -92,6 +92,12 @@ h2 {
         transform: translateY(0);
     }
 
+.btn-secondary{
+    transform: translateY(-2px);
+}
+.btn-secondary {
+    transform: translateY(0);
+}
 /* Validation Styles */
 .text-danger {
     color: #e74c3c;
@@ -113,6 +119,9 @@ h2 {
     margin-left: 0.5em;
     color: #495057;
 }
+.w-80 {
+    width: 80%;
+}
 
 /* Responsive Styles */
 @media (max-width: 768px) {
@@ -122,5 +131,9 @@ h2 {
 
     .card {
         margin-bottom: 15px;
+        
+    }
+    .w-80 {
+        width: 100%;
     }
 }

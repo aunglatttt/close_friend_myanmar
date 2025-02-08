@@ -25,7 +25,7 @@
 
 /* Add Button */
 .btn-add {
-    background-color: #28a745; /* Green color for a professional look */
+    background-color: #28a745;
     border-color: #28a745;
     color: #fff;
     font-weight: 500;
@@ -37,7 +37,7 @@
 }
 
     .btn-add:hover {
-        background-color: #218838; /* Slightly darker green on hover */
+        background-color: #218838;
         border-color: #1e7e34;
     }
 
@@ -48,29 +48,29 @@
 /* Responsive Adjustments for Mobile */
 @media (max-width: 767.98px) {
     .page-header {
-        flex-direction: column; /* Stack items vertically on mobile */
-        align-items: flex-start; /* Align items to the left */
+        flex-direction: column;
+        align-items: flex-start;
         padding: 15px;
     }
 
         .page-header h2 {
-            font-size: 20px; /* Reduce font size for mobile */
-            margin-bottom: 10px; /* Add space between title and button */
+            font-size: 20px;
+            margin-bottom: 10px;
         }
 
     .btn-add {
-        width: 100%; /* Make button full width on mobile */
-        justify-content: center; /* Center button text */
-        padding: 10px; /* Increase padding for better touch experience */
+        width: 100%;
+        justify-content: center;
+        padding: 10px;
     }
 
         .btn-add i {
-            margin-right: 6px; /* Adjust icon spacing */
+            margin-right: 6px;
         }
 }
+
 /* Card Styling */
 .card {
-    /*border: none;*/
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     background-color: #ffffff;
@@ -78,12 +78,12 @@
 }
 
 .card-header {
-    background-color: #f8f9fa; /* Light gray header */
+    background-color: #f8f9fa;
     color: #343a40;
     padding: 15px 20px;
     font-size: 18px;
     font-weight: 600;
-    border-bottom: 1px solid #e9ecef; /* Subtle border */
+    border-bottom: 1px solid #e9ecef;
 }
 
 .card-body {
@@ -101,11 +101,11 @@
         text-align: center;
         vertical-align: middle;
         padding: 12px 15px;
-        border: 1px solid #e9ecef; /* Light border for cells */
+        border: 1px solid #e9ecef;
     }
 
     .table th {
-        background-color: #f8f9fa; /* Light gray header */
+        background-color: #f8f9fa;
         font-weight: 600;
         color: #495057;
     }
@@ -120,7 +120,7 @@
     }
 
         .table tbody tr:hover {
-            background-color: #f1f3f5; /* Light gray hover effect */
+            background-color: #f1f3f5;
         }
 
 /* Optional: Add a subtle border radius to the table */
@@ -147,12 +147,10 @@
         background-color: #f8f9fa;
     }
 
-
-
 /* Ensure the table container is responsive */
 .table-responsive {
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
 }
 
 /* Adjust table font size for smaller screens */
@@ -176,3 +174,24 @@
         padding: 10px 15px;
     }
 }
+
+/* Fix for form labels and buttons */
+form .form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+}
+
+form .form-btn {
+    font-size: 15px;
+    border-radius: 5px;
+    /*padding: 8px 16px;*/
+   /* color: white;
+    background-color: #007bff; */
+    /*border: 1px solid #007bff;*/
+}
+
+    form .form-btn:hover {
+        /*background-color: #0056b3;*/
+        /*border-color: #0056b3;*/
+    }

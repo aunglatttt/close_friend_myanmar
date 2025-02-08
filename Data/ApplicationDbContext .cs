@@ -1,4 +1,5 @@
 ﻿using CloseFriendMyanamr.Models;
+using CloseFriendMyanamr.Models.CashManagement;
 using CloseFriendMyanamr.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,8 +26,13 @@ namespace SimpleDataWebsite.Data
         #region user management
         public DbSet<ClientModel> Client { get; set; }
         public DbSet<OwnerModel> Owner { get; set; }
+        public DbSet<AgentModel> Agent { get; set; }
 
 
+        #endregion
+
+        #region company income
+        public DbSet<CompanyIncome> Income { get; set; }
         #endregion
     }
 }

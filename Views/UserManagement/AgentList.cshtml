@@ -1,15 +1,16 @@
-﻿@model IEnumerable<CloseFriendMyanamr.Models.UserManagement.ClientModel>
+﻿@model IEnumerable<CloseFriendMyanamr.Models.UserManagement.AgentModel>
+
 @{
-    ViewData["Title"] = "Client List";
+    ViewData["Title"] = "Agent List";
 }
 <link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
 <div class="row">
     <div class="col-sm-12">
         <!-- Header Row: Title and Add Button -->
         <div class="page-header">
-            <h2>Client Management</h2>
-            <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate">
-                <i class="fas fa-user-plus"></i> Add New Client
+            <h2>Agent Management</h2>
+            <a class="btn btn-add" asp-controller="UserManagement" asp-action="AgentCreate">
+                <i class="fas fa-user-plus"></i> Add New Agent
             </a>
         </div>
 
@@ -19,7 +20,7 @@
             <div class="col-md-12 mb-4">
                 <div class="card border-2 shadow-sm">
                     <div class="card-header">
-                        Client List
+                        Agent List
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -29,10 +30,9 @@
                                         <th>Name</th>
                                         <th>Phone Number</th>
                                         <th>Address</th>
-                                        <th>Reg. Date</th>
-                                        <th>Status</th>
-                                        <th>Request Count</th>
+                                        <th>FB Page</th>
                                         <th>Remark</th>
+                                        <th>No of Property</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -40,15 +40,14 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td>@item.ClientName</td>
-                                            <td>@item.ClientPhone</td>
+                                            <td>@item.AgentName</td>
+                                            <td>@item.AgentPhone</td>
                                             <td>@item.Address</td>
-                                            <td>@item.RegistrationDate.ToString("dd-MMM-yyyy")</td>
-                                            <td>@item.Status</td>
-                                            <td>@item.ShownProperty</td>
+                                            <td>@item.FBPage</td>
                                             <td>@item.Remark</td>
+                                            <td>@item.ShowProperty</td>
                                             <td>
-                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("ClientCreate", "UserManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("AgentCreate", "UserManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
                                                 <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
                                             </td>
                                         </tr>
@@ -80,8 +79,8 @@
     });
 
      function deleteIncomeTitle(id) {
-        if (confirm('Are you sure you want to delete this client?')) {
-            fetch(`/UserManagement/DeleteClient/${id}`, { method: 'POST' })
+        if (confirm('Are you sure you want to delete this agent?')) {
+            fetch(`/UserManagement/DeleteAgent/${id}`, { method: 'POST' })
                 .then(() => window.location.reload());
         }
     }

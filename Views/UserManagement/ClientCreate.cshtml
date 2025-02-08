@@ -1,0 +1,72 @@
+﻿@model CloseFriendMyanamr.Models.UserManagement.ClientModel
+
+@{
+    ViewData["Title"] = "Create Client";
+}
+<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
+
+
+<div class="row my-3 mx-auto">
+    <div class="col-sm-12">
+        <h3 class="mb-3 text-center">@ViewBag.CreateOrUpdate Client</h3>
+        <form asp-action="ClientCreate" method="post" id="employeeForm">
+            <div class="row">
+                <!-- Left Column: Employee Details -->
+                <div class="col-md-12 col-sm-12">
+                    <div class="card mx-auto w-80">
+                        <div class="card-header">
+                            Client Information
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="ClientName" class="required"></label>
+                                <input asp-for="ClientName" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="ClientName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="ClientPhone" class="required"></label>
+                                <input asp-for="ClientPhone" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="ClientPhone" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Address"></label>
+                                <input asp-for="Address" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="RegistrationDate" class="required"></label>
+                                <input type="date" asp-for="RegistrationDate" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="RegistrationDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Status" class="required"></label>
+                                <select class="form-select mb-1" asp-for="Status" id="Status" name="Status" data-val="true" data-val-required="Status is required.">
+                                    <option value="" selected>{{Select}}</option>
+                                    <option value="New">New Enquiry</option>
+                                    <option value="Confirm">Confirmed</option>
+                                    <option value="Shown">ShownSomeProperties</option>
+                                    <option value="Wait">Waiting The Result</option>
+                                    <option value="Complete">Complete (Success!)</option>
+                                    <option value="Cancel">Cancel (Not Success!)</option>
+                                </select>
+                                <span class="text-danger" asp-validation-for="Status"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Remark"></label>
+                                <input asp-for="Remark" placeholder="Type here" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
+                <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>

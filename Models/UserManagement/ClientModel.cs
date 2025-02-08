@@ -14,14 +14,14 @@ namespace CloseFriendMyanamr.Models.UserManagement
 
 
         [Required(ErrorMessage = "Client Phone is required.")]
-        [Phone(ErrorMessage = "Please enter a valid phone number.")]
+        //[Phone(ErrorMessage = "Please enter a valid phone number.")]
         [DisplayName("Client Phone Number")]
         public string ClientPhone { get; set; }
 
 
-        [Required(ErrorMessage = "Address is required.")]
+        //[Required(ErrorMessage = "Address is required.")]
         [DisplayName("Address")]
-        public string Address { get; set; }
+        public string? Address { get; set; }
 
         [Required(ErrorMessage = "RegistrationDate is required.")]
         public DateTime RegistrationDate { get; set; }
@@ -29,11 +29,14 @@ namespace CloseFriendMyanamr.Models.UserManagement
         [Required(ErrorMessage = "Status is required.")]
         public string Status { get; set; }
 
-        [Required(ErrorMessage = "ShownProperty is required.")]
+        //[Required(ErrorMessage = "ShownProperty is required.")]
         [DisplayName("Shown Property")]
         public int ShownProperty { get; set; }
 
-        [Required(ErrorMessage = "Remark is required.")]
-        public string Remark { get; set; }
+        //[Required(ErrorMessage = "Remark is required.")]
+        public string? Remark { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

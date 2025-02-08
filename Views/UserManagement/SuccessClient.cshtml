@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Success";
+}
+
+<div class="container mt-5">
+    <div class="success-card">
+        @if (ViewBag.Message != null)
+        {
+            <h2>Client @ViewBag.Message Successfully!</h2>
+        }
+        else
+        {
+            <h2>Client Created Successfully!</h2>
+        }
+        <p>Your client data has been saved.</p>
+        <a href="@Url.Action("ClientCreate", "UserManagement")" class="btn btn-primary">Create Agent</a>
+        <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-secondary">Back To List</a>
+    </div>
+</div>
+
+<style>
+    .success-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 30px;
+        text-align: center;
+        max-width: 600px;
+        margin: auto;
+    }
+
+        .success-card h2 {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .success-card p {
+            color: #495057;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .success-card .btn {
+            margin: 5px;
+        }
+</style>

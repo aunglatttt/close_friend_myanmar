@@ -23,6 +23,17 @@ namespace CloseFriendMyanamr.Controllers
             return View();
         }
 
+        public IActionResult SuccessComponent(string Title, string Message, string ActionName, string ActionName2, string BtnName, string ControllerName)
+        {
+            ViewBag.Title = Title;
+            ViewBag.Message = Message;
+            ViewBag.Action = ActionName;
+            ViewBag.Action2 = ActionName2;
+            ViewBag.BtnName = BtnName;
+            ViewBag.Controller = ControllerName;
+            return View();
+        }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

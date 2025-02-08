@@ -1,0 +1,54 @@
+﻿@model CloseFriendMyanamr.Models.UserManagement.OwnerModel
+
+@{
+    ViewData["Title"] = "Create Owner";
+}
+<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
+
+
+<div class="row my-3 mx-auto">
+    <div class="col-sm-12">
+        <h3 class="mb-3 text-center">@ViewBag.CreateOrUpdate Employee</h3>
+        <form asp-action="OwnerCreate" method="post" id="employeeForm">
+            <div class="row">
+                <!-- Left Column: Employee Details -->
+                <div class="col-md-12 col-sm-12">
+                    <div class="card mx-auto w-80">
+                        <div class="card-header">
+                            Owner Information
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="OwnerName" class="required"></label>
+                                <input asp-for="OwnerName" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="OwnerName" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="OwnerPhone"></label>
+                                <input asp-for="OwnerPhone" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="OwnerPhone" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Address"></label>
+                                <input asp-for="Address" placeholder="Type here" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Remark"></label>
+                                <input asp-for="Remark" placeholder="Type here" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
+                <a href="@Url.Action("OwnerList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>

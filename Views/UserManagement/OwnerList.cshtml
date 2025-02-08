@@ -1,11 +1,14 @@
 ﻿@model IEnumerable<CloseFriendMyanamr.Models.UserManagement.OwnerModel>
+@{
+    ViewData["Title"] = "Owner List";
+}
 <link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
 <div class="row">
     <div class="col-sm-12">
         <!-- Header Row: Title and Add Button -->
         <div class="page-header">
             <h2>Owner Management</h2>
-            <a class="btn btn-add" asp-controller="Employee" asp-action="Create">
+            <a class="btn btn-add" asp-controller="UserManagement" asp-action="OwnerCreate">
                 <i class="fas fa-user-plus"></i> Add New Owner
             </a>
         </div>
@@ -41,7 +44,8 @@
                                             <td>@item.Remark</td>
                                             <td>@item.Type</td>
                                             <td>
-                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("Create", "Employee", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("OwnerCreate", "UserManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                                <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
                                             </td>
                                         </tr>
                                     }
@@ -70,4 +74,11 @@
             ]
         });
     });
+
+      function deleteIncomeTitle(id) {
+        if (confirm('Are you sure you want to delete this owner?')) {
+            fetch(`/UserManagement/DeleteOwner/${id}`, { method: 'POST' })
+                .then(() => window.location.reload());
+        }
+    }
 </script>

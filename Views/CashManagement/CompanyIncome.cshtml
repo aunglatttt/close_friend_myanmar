@@ -1,0 +1,66 @@
+﻿@model CloseFriendMyanamr.Models.CashManagement.CompanyIncome
+
+@{
+    ViewData["Title"] = "Company Income";
+}
+<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
+
+
+<div class="row my-3 mx-auto">
+    <div class="col-sm-12">
+        <h3 class="mb-3 text-center">@ViewBag.CreateOrUpdate Income Data</h3>
+        <form asp-action="CompanyIncome" method="post" id="employeeForm">
+            <div class="row">
+                <!-- Left Column: Employee Details -->
+                <div class="col-md-12 col-sm-12">
+                    <div class="card mx-auto w-80">
+                        <div class="card-header">
+                            Income Information
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="IncomeDate"></label>
+                                <input type="date" asp-for="IncomeDate" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="IncomeDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IncomeTitleId"></label>
+                                <select class="form-select" asp-for="IncomeTitleId" asp-items="ViewBag.IncomeTitle" id="IncomeTitleId" name="IncomeTitleId" data-val="true" data-val-required="Income title is required.">
+                                    <option value="">{{Select}}</option>
+                                </select>
+                                <span asp-validation-for="IncomeTitleId" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="IncomeType" class="required"></label>
+                                <select class="form-select" asp-for="IncomeType" id="IncomeType" name="IncomeType" data-val="true" data-val-required="Employee Type is required.">
+                                    <option value="CompanyIncome">Main Cash</option>
+                                </select>
+                                <span asp-validation-for="IncomeType" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Amount"></label>
+                                <input type="number" asp-for="Amount" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="Amount" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Remark"></label>
+                                <input asp-for="Remark" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="Remark" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
+                <a href="@Url.Action("IncomeList", "CashManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
+
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
