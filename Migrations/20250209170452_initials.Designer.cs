@@ -12,8 +12,8 @@ using SimpleDataWebsite.Data;
 namespace CloseFriendMyanamr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250208135352_initial")]
-    partial class initial
+    [Migration("20250209170452_initials")]
+    partial class initials
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,7 +77,81 @@ namespace CloseFriendMyanamr.Migrations
                     b.ToTable("BuildingType");
                 });
 
-            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CompanyIncome", b =>
+            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CashBookTransaction", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Account")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Descritpion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TransactionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CashBookTransaction");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<double>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpenseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ExpenseTitleId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExpenseTitleName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpenseType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExpenseTitleId");
+
+                    b.ToTable("Expense");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CompanyIncomeModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -439,7 +513,16 @@ namespace CloseFriendMyanamr.Migrations
                     b.ToTable("Owner");
                 });
 
-            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CompanyIncome", b =>
+            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel", b =>
+                {
+                    b.HasOne("CloseFriendMyanamr.Models.ExpenseTitleModel", "ExpenseTitle")
+                        .WithMany()
+                        .HasForeignKey("ExpenseTitleId");
+
+                    b.Navigation("ExpenseTitle");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.CashManagement.CompanyIncomeModel", b =>
                 {
                     b.HasOne("CloseFriendMyanamr.Models.IncomeTitleModel", "IncomeTitle")
                         .WithMany()

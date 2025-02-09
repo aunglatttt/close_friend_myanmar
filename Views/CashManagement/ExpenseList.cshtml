@@ -1,6 +1,6 @@
-﻿@model IEnumerable<CloseFriendMyanamr.Models.CashManagement.CompanyIncomeModel>
+﻿@model IEnumerable<CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel>
 @{
-    ViewData["Title"] = "Company Income List";
+    ViewData["Title"] = "Company Expense List";
 }
 <link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
 <div class="row">
@@ -12,7 +12,7 @@
                 <div class="card border-2 shadow-sm">
                     <div class="card-header">
                         <h5 class="card-title">Income List</h5>
-                        <form asp-action="IncomeList" method="get">
+                        <form asp-action="ExpenseList" method="get">
                             <div class="row my-2">
                                 <div class="col-md-2">
                                     <label for="fromdate" class="form-label">From</label>
@@ -23,15 +23,15 @@
                                     <input type="date" class="form-control" id="todate" name="todate" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" placeholder="To">
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="incomeTitle" class="form-label">Income Title</label>
-                                    <select class="form-select" id="incomeTitle" asp-items="ViewBag.IncomeTitle" name="incomeTitle" data-val="true" data-val-required="Income Title is required.">
+                                    <label for="expenseTitle" class="form-label">Income Title</label>
+                                    <select class="form-select" id="expenseTitle" asp-items="ViewBag.ExpenseTitle" name="expenseTitle" data-val="true" data-val-required="Expense Title is required.">
                                         <option value="">All</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mt-4">
                                     <button type="submit" class="btn btn-secondary form-btn mt-2">Search</button>
                                     <button class="btn btn-secondary form-btn mt-2">Account Transfer</button>
-                                    <a class="btn btn-warning text-white mt-2 form-btn" href="@Url.Action("CompanyIncome", "CashManagement")">New Income</a>
+                                    <a class="btn btn-warning text-white mt-2 form-btn" href="@Url.Action("CompanyExpense", "CashManagement")">New Expense</a>
                                     @* <button class="btn btn-warning text-white mt-2 form-btn" onclick="window.location.href='@Url.Action("CompanyIncome", "CashManagement")'">New Income</button> *@
                                     <button class="btn btn-primary form-btn mt-2">Cash Book</button>
                                 </div>
@@ -44,8 +44,8 @@
                                 <thead>
                                     <tr>
                                         <th>Date</th>
-                                        <th>Income Title</th>
-                                        <th>Income Type</th>
+                                        <th>Expense Title</th>
+                                        <th>Expense Type</th>
                                         <th>Amount</th>
                                         <th>Description</th>
                                         <th>Created At</th>
@@ -56,14 +56,14 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td>@item.IncomeDate.ToString("MMM dd, yyyy")</td>
-                                            <td>@item.IncomeTitleName</td>
-                                            <td>@item.IncomeType</td>
+                                            <td>@item.ExpenseDate.ToString("MMM dd, yyyy")</td>
+                                            <td>@item.ExpenseTitleName</td>
+                                            <td>@item.ExpenseType</td>
                                             <td>@item.Amount</td>
                                             <td>@item.Remark</td>
                                             <td>@(item.CreatedAt != null ? item.CreatedAt.Value.ToString("MMM dd, yyyy  hh:mm tt") : "")</td>
                                             <td>
-                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("CompanyIncome", "CashManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("CompanyExpense", "CashManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
                                                 @* <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i> *@
                                             </td>
                                         </tr>

@@ -1,0 +1,88 @@
+﻿@model IEnumerable<CloseFriendMyanamr.ViewModel.DateBalanceModel>
+
+@{
+    ViewData["Title"] = "Company Expense List";
+    DateTime fromDate = ViewBag.FromDate ?? DateTime.Today;  // Default to today if no fromdate
+    DateTime toDate = ViewBag.ToDate ?? DateTime.Today;  // Default to today if no todate
+}
+<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <form asp-action="CashBookList" method="get">
+                <div class="row my-2">
+                    <div class="col-md-3">
+                        <label for="fromdate">From</label>
+                        <input type="date" class="form-control" id="fromdate" name="fromdate" value="@(ViewBag.FromDate?.ToString("yyyy-MM-dd"))" placeholder="From">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="todate">To</label>
+                        <input type="date" class="form-control" id="todate" name="todate" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" placeholder="To">
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <button type="submit" class="btn btn-secondary form-btn mt-2">Search</button>
+                        <a class="btn btn-info text-white mt-2 form-btn" href="@Url.Action("CompanyIncome", "CashManagement")">New Income</a>
+                        <a class="btn btn-warning text-white mt-2 form-btn" href="@Url.Action("CompanyExpense", "CashManagement")">New Expense</a>
+                        <a class="btn btn-secondary form-btn mt-2" href="@Url.Action("AccountTransfer", "CashManagement")">New Transfer</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12 mb-4">
+                <div class="card border-2 shadow-sm">
+                    <div class="card-header">
+                        <h5 class="card-title">Cash Book</h5>
+                    </div>
+                    <div class="card-body">
+                                @if (fromDate == toDate)
+                                {
+                            <span class="text-primary fw-bold" style="font-size:14px; display: block; text-align: center;">
+                                        @fromDate.ToString("MMM dd, yyyy (dddd)")
+                                    </span>
+                                }
+                                else
+                                {
+                            <span class="text-primary fw-bold text-center" style="font-size:14px; display: block; text-align: center;">
+                                        @fromDate.ToString("MMM dd, yyyy (dddd)") --- @toDate.ToString("MMM dd, yyyy (dddd)")
+                                    </span>
+                                }
+                        <div class="table-responsive mt-3">
+                    @*     <div class="card shadow-sm"> *@
+                            @* <div class="card-header text-center bg-light py-2"> *@
+                            @* </div> *@
+                            @* <div class="card-body p-0"> *@
+                                <table class="table">
+                                    <thead class="bg-secondary text-white">
+                                        <tr>
+                                            <th class="text-center">Date</th>
+                                            <th class="text-center">Opening Cash</th>
+                                            <th class="text-center">Closing Cash</th>
+                                            <th class="text-center">Opening Bank</th>
+                                            <th class="text-center">Closing Bank</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var balance in Model)
+                                        {
+                                            <tr class="bg-light">
+                                                <td class="text-center">@balance.Date.ToString("MMM dd, yyyy")</td>
+                                                <td class="text-center">@balance.CashOpeningBalance</td>
+                                                <td class="text-center">@balance.CashClosingBalance</td>
+                                                <td class="text-center">@balance.BankOpeningBalance</td>
+                                                <td class="text-center">@balance.BankClosingBalance</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            @* </div> *@
+                        @* </div> *@
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

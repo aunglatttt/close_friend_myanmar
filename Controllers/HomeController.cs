@@ -25,7 +25,7 @@ namespace CloseFriendMyanamr.Controllers
 
         public IActionResult SuccessComponent(string Title, string Message, string ActionName, string ActionName2, string BtnName, string ControllerName)
         {
-            ViewBag.Title = Title;
+            ViewBag.TitleName = Title;
             ViewBag.Message = Message;
             ViewBag.Action = ActionName;
             ViewBag.Action2 = ActionName2;

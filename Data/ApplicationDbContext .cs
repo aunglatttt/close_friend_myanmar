@@ -32,7 +32,9 @@ namespace SimpleDataWebsite.Data
         #endregion
 
         #region company income
-        public DbSet<CompanyIncome> Income { get; set; }
+        public DbSet<CompanyIncomeModel> Income { get; set; }
+        public DbSet<CompanyExpenseModel> Expense { get; set; }
+        public DbSet<CashBookTransaction> CashBookTransaction { get; set; }
         #endregion
     }
 }

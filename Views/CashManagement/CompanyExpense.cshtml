@@ -1,41 +1,41 @@
-﻿@model CloseFriendMyanamr.Models.CashManagement.CompanyIncomeModel
+﻿@model CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel
 
 @{
-    ViewData["Title"] = "Company Income";
+    ViewData["Title"] = "Company Expense";
 }
 <link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
 
 
 <div class="row my-3 mx-auto">
     <div class="col-sm-12">
-        <h3 class="mb-3 text-center">@ViewBag.CreateOrUpdate Income Data</h3>
-        <form asp-action="CompanyIncome" method="post" id="employeeForm">
+        <h3 class="mb-3 text-center">@ViewBag.CreateOrUpdate Expense Data</h3>
+        <form asp-action="CompanyExpense" method="post" id="employeeForm">
             <div class="row">
                 <!-- Left Column: Employee Details -->
                 <div class="col-md-12 col-sm-12">
                     <div class="card mx-auto w-80">
                         <div class="card-header">
-                            Income Information
+                            Expense Information
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label asp-for="IncomeDate"></label>
-                                <input type="date" asp-for="IncomeDate" placeholder="Type here" class="form-control" />
-                                <span asp-validation-for="IncomeDate" class="text-danger"></span>
+                                <label asp-for="ExpenseDate"></label>
+                                <input type="date" asp-for="ExpenseDate" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="ExpenseDate" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="IncomeTitleId"></label>
-                                <select class="form-select" asp-for="IncomeTitleId" asp-items="ViewBag.IncomeTitle" id="IncomeTitleId" name="IncomeTitleId" data-val="true" data-val-required="Income title is required.">
+                                <label asp-for="ExpenseTitleId"></label>
+                                <select class="form-select" asp-for="ExpenseTitleId" asp-items="ViewBag.ExpenseTitle" id="ExpenseTitleId" name="ExpenseTitleId" data-val="true" data-val-required="Expense Title is required.">
                                     <option value="">{{Select}}</option>
                                 </select>
-                                <span asp-validation-for="IncomeTitleId" class="text-danger"></span>
+                                <span asp-validation-for="ExpenseTitleId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="IncomeType" class="required"></label>
-                                <select class="form-select" asp-for="IncomeType" id="IncomeType" name="IncomeType" data-val="true" data-val-required="Employee Type is required.">
-                                    <option value="CompanyIncome">Main Cash</option>
+                                <label asp-for="ExpenseType" class="required"></label>
+                                <select class="form-select" asp-for="ExpenseType" id="ExpenseType" name="ExpenseType" data-val="true" data-val-required="Expense Type is required.">
+                                    <option value="CompanyExpense">Main Cash</option>
                                 </select>
-                                <span asp-validation-for="IncomeType" class="text-danger"></span>
+                                <span asp-validation-for="ExpenseType" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Amount"></label>
@@ -54,7 +54,7 @@
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
-                <a href="@Url.Action("IncomeList", "CashManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
+                <a href="@Url.Action("IncomeExpense", "CashManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
 
             </div>
         </form>

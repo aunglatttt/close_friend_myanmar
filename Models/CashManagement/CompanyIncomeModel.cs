@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace CloseFriendMyanamr.Models.CashManagement
 {
-    public class CompanyIncome : BaseDomain
+    public class CompanyIncomeModel : BaseDomain
     {
         [Key]
         public int Id { get; set; }

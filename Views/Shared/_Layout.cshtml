@@ -3,304 +3,232 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Close Friend Myanmar</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet"
-          href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" />
-    @*for data table*@
-    <link rel="stylesheet" href="//cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+    <style>
+    
+    </style>
+    <link rel="stylesheet" href="~/css/test.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="sidebar">
-        <div class="logo-details mb-5">
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
             <img class="logo_img" src="@Url.Content("~/images/Logo.jpg")">
         </div>
-
-        <ul class="nav-links mt-5">
-
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-gauge menu-icon"></i>
-                        <span class="link_name">Dashboard</span>
+        <div class="sidebar-menu">
+            <div class="menu-item">
+                <a href="#">
+                    <i class="fa-solid fa-gauge menu-icon"></i>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </div>
+            <div class="menu-item">
+                <a href="#">
+                    <i class="fa-solid fa-magnifying-glass menu-icon"></i>
+                    <span class="menu-text">Advance Search</span>
+                </a>
+            </div>
+            <div class="menu-item mb-3">
+                <a href="#">
+                    <i class="fa-solid fa-phone menu-icon"></i>
+                    <span class="menu-text">To Do List (Alert Center)</span>
+                </a>
+            </div>
+            <div class="menu-group">
+                <div class="menu-group-label">Operation Section</div>
+                <div class="menu-item">
+                    <a onclick="toggleMenu(this)">
+                        <i class="fa-solid fa-house-chimney menu-icon"></i>
+                        <span class="menu-text">Property</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
                     </a>
+                    <div class="submenu">
+                        <a href="#">Add New Property</a>
+                        <a href="#">Property Search</a>
+                        <a href="#">Recent Update Data</a>
+                    </div>
                 </div>
-            </li>
-
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <span class="link_name">Advance Search</span>
+                <div class="menu-item">
+                    <a onclick="toggleMenu(this)">
+                        <i class="fa-solid fa-magnifying-glass-dollar menu-icon"></i>
+                        <span class="menu-text">Client Request</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
                     </a>
+                    <div class="submenu">
+                        <a href="#">Client Request List</a>
+                        <a href="#">Client Request Entry</a>
+                    </div>
                 </div>
-            </li>
-
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-phone menu-icon"></i>
-                        <span class="link_name">To Do List (Alert Center)</span>
+            </div>
+            <div class="menu-group">
+                <div class="menu-group-label">Management Section</div>
+                <div class="menu-item">
+                    <a onclick="toggleMenu(this)">
+                        <i class="fa-solid fa-user menu-icon"></i>
+                        <span class="menu-text">User Management</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
                     </a>
-                </div>
-            </li>
-
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-house-chimney"></i>
-                        <span class="link_name">Property</span>
-                    </a>
-                    <i class="bi bi-chevron-down arrow"></i>
-                </div>
-                <ul class="sub-menu">
-                    <li>
-                        <a asp-controller="Penalty" asp-action="index">
-                            <span class="title">Add New Property</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Penalty" asp-action="index">
-                            <span class="title">Property Search</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Penalty" asp-action="index">
-                            <span class="title">Recent Update Data</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-magnifying-glass-dollar"></i>
-                        <span class="link_name">Client Request</span>
-                    </a>
-                    <i class="bi bi-chevron-down arrow"></i>
-                </div>
-                <ul class="sub-menu">
-                    <li>
-                        <a asp-controller="BODs" asp-action="index">
-                            <span class="title">Client Request List </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Agencies" asp-action="index">
-                            <span class="title">Client Request Entry</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-user"></i>
-                        <span class="link_name">User Management</span>
-                    </a>
-                    <i class="bi bi-chevron-down arrow"></i>
-                </div>
-                <ul class="sub-menu">
-                    <li>
+                    <div class="submenu">
                         <a asp-controller="UserManagement" asp-action="ClientList">
                             <span class="title">Client</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="UserManagement" asp-action="OwnerList">
                             <span class="title">Owner</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="UserManagement" asp-action="AgentList">
                             <span class="title">Agent</span>
                         </a>
-                    </li>
-                </ul>
-            </li>
-           
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fa-solid fa-hand-holding-dollar"></i>
-                        <span class="link_name">Cash Management</span>
-                    </a>
-                    <i class="bi bi-chevron-down arrow"></i>
+                    </div>
                 </div>
-                <ul class="sub-menu">
-                    <li>
+            </div>
+            <div class="menu-group">
+                <div class="menu-group-label">Account Section</div>
+                <div class="menu-item">
+                    <a onclick="toggleMenu(this)">
+                        <i class="fa-solid fa-hand-holding-dollar menu-icon"></i>
+                        <span class="menu-text">Cash Management</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
                         <a asp-controller="CashManagement" asp-action="CompanyIncome">
                             <span class="title">Company Income</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="CashManagement" asp-action="IncomeList">
                             <span class="title">Income List</span>
                         </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Penalty" asp-action="Report_PenaltyTOPList">
+                        <a asp-controller="CashManagement" asp-action="CompanyExpense">
                             <span class="title">Comapny Expense</span>
                         </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Penalty" asp-action="Report_PenaltyTOPList">
+                        <a asp-controller="CashManagement" asp-action="ExpenseList">
                             <span class="title">Expense List</span>
                         </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Penalty" asp-action="Report_PenaltyTOPList">
+                        <a asp-controller="CashManagement" asp-action="AccountTransfer">
                             <span class="title">Account Transfer</span>
                         </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Penalty" asp-action="Report_PenaltyTOPList">
-                            <span class="title">CashBook</span>
+                        <a asp-controller="CashManagement" asp-action="CashBookList">
+                            <span class="title">Cash Book</span>
                         </a>
-                    </li>
-                </ul>
-            </li>
-
-            @* Configuration  *@
-            <li>
-                <div class="icon-link">
-                    <a href="#">
-                        <i class="fas fa-cog menu-icon"></i>
-                        <span class="link_name">Configuration</span>
-                    </a>
-                    <i class="bi bi-chevron-down arrow"></i>
+                    </div>
                 </div>
-                <ul class="sub-menu">
-                    <li>
+            </div>
+            <div class="menu-group">
+                <div class="menu-group-label">Configuration Section</div>
+                <div class="menu-item">
+                    <a onclick="toggleMenu(this)">
+                        <i class="fas fa-cog menu-icon"></i>
+                        <span class="menu-text">Configuration</span>
+                        <i class="fas fa-angle-right menu-arrow"></i>
+                    </a>
+                    <div class="submenu">
                         <a asp-controller="Employee" asp-action="EmployeeTypeList">
                             <span class="title">Employee Type</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="Employee" asp-action="Index">
                             <span class="title">Employee</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="IncomeTitle" asp-action="index">
                             <span class="title">Income Title</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="IncomeTitle" asp-action="ExpenseList">
                             <span class="title">Expense Title</span>
                         </a>
-                    </li>
-                      <li>
                         <a asp-controller="IncomeTitle" asp-action="FacilityList">
                             <span class="title">Facilities</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="IncomeTitle" asp-action="PropertyTypeList">
                             <span class="title">Property Type</span>
                         </a>
-                    </li>
-                      <li>
                         <a asp-controller="IncomeTitle" asp-action="BuildingTypeList">
                             <span class="title">Building Type</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="IncomeTitle" asp-action="BankAccountInfoList">
                             <span class="title">Bank Accounts</span>
                         </a>
-                    </li>
-                    <li>
                         <a asp-controller="IncomeTitle" asp-action="LogList">
                             <span class="title">Logs</span>
                         </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-    </div>
-    <section class="home-section shadow-sm">
-        <div class="home-content">
-            <i class="bi bi-list"></i>
-            @*  <div>
-            <a class="dropdown-item text logouttext" type="button" asp-action="Logout" asp-controller="Account">
-            <i class="bi bi-box-arrow-in-right"></i>
-            <span>&nbsp;&nbsp;Logout </span>
-            </a>
-            </div>*@
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
 
-
-            <div class="dropdown" style="margin-right:1%;">
-                <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="entypo-user btnedit"></i>
-                    Hello @User.Identity?.Name!
-                </button>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" href="#">
-                            your role
-                        </a>
-                    </li>
-                    <div class="dropdown-divider"></div>
-                    <li>
-                        <a class="dropdown-item" type="button" asp-action="Logout" asp-controller="Account"> <i class="bi bi-box-arrow-in-right"></i>&nbsp;&nbsp;Logout </a>
-                    </li>
+    <!-- Top Navbar -->
+    <nav class="navbar shadow-sm" id="topNav">
+        <div class="d-flex align-items-center">
+            <button class="btn btn-outline-dark me-3" onclick="toggleSidebar()">
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="search-container">
+                <input type="text" class="form-control" placeholder="Search...">
+            </div>
+        </div>
+        <div class="d-flex align-items-center">
+            <div class="position-relative me-3">
+                <i class="fa fa-bell fa-lg"></i>
+                <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle">12</span>
+            </div>
+            <div class="dropdown">
+                <a href="#" class="text-black text-decoration-none" id="userMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+                    Admin User Name <i class="fa fa-user-circle fa-lg ms-2"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuLink">
+                    <li><a class="dropdown-item" href="#">Change Password</a></li>
+                    <li><a class="dropdown-item" href="#">Logout</a></li>
                 </ul>
             </div>
         </div>
-    </section>
-    <div class="containerMain after-login">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    </nav>
 
-    </div>
-    <button id="backToTop" class="back-to-top" title="Go to top"><i class="fa-solid fa-arrow-up fa-bounce" style="color: #ffffff;"></i></button>
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        @RenderBody()
+    </main>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="back-to-top" title="Go to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
 
-
-    @*for data table*@
-    <script src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-    @* <script src="~/js/jquery.dataTables.min.js"></script> *@
-
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-          // Back to Top Button
-        window.addEventListener('scroll', function() {
-            const backToTop = document.getElementById('backToTop');
-            const mainContent = document.querySelector('.main-content');
+        function toggleSidebar() {
+          const sidebar = document.getElementById("sidebar");
+          sidebar.classList.toggle("collapsed");
+          document.getElementById("mainContent").classList.toggle("collapsed");
+          const topNav = document.getElementById("topNav");
+          if (sidebar.classList.contains("collapsed")) {
+            topNav.style.left = "100px";
+            topNav.style.width = "calc(100% - 100px)";
+          } else {
+            topNav.style.left = "250px";
+            topNav.style.width = "calc(100% - 250px)";
+          }
+        }
 
-            if (window.scrollY > 300 && mainContent.scrollHeight > window.innerHeight) {
-                backToTop.classList.add('show');
-            } else {
-                backToTop.classList.remove('show');
-            }
+        function toggleMenu(element) {
+          // Toggle the active class to show/hide submenu
+          const parent = element.parentElement;
+          parent.classList.toggle("active");
+        }
+
+        // Back to Top Button
+        window.addEventListener('scroll', function() {
+          const backToTop = document.getElementById('backToTop');
+          if (window.scrollY > 300) {
+            backToTop.classList.add('show');
+          } else {
+            backToTop.classList.remove('show');
+          }
         });
 
         document.getElementById('backToTop').addEventListener('click', function() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
     </script>
 </body>
-</html>

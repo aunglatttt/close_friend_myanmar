@@ -209,6 +209,31 @@ namespace CloseFriendMyanamr.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Expense",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ExpenseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpenseTitleId = table.Column<int>(type: "int", nullable: true),
+                    ExpenseTitleName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    ExpenseType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Expense", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Expense_ExpenseTitle_ExpenseTitleId",
+                        column: x => x.ExpenseTitleId,
+                        principalTable: "ExpenseTitle",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Income",
                 columns: table => new
                 {
@@ -263,6 +288,11 @@ namespace CloseFriendMyanamr.Migrations
                 column: "EmployeeTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Expense_ExpenseTitleId",
+                table: "Expense",
+                column: "ExpenseTitleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Income_IncomeTitleId",
                 table: "Income",
                 column: "IncomeTitleId");
@@ -289,7 +319,7 @@ namespace CloseFriendMyanamr.Migrations
                 name: "Client");
 
             migrationBuilder.DropTable(
-                name: "ExpenseTitle");
+                name: "Expense");
 
             migrationBuilder.DropTable(
                 name: "Facilities");
@@ -305,6 +335,9 @@ namespace CloseFriendMyanamr.Migrations
 
             migrationBuilder.DropTable(
                 name: "PropertyType");
+
+            migrationBuilder.DropTable(
+                name: "ExpenseTitle");
 
             migrationBuilder.DropTable(
                 name: "IncomeTitle");
