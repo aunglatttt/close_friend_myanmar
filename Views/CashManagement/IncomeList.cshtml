@@ -49,7 +49,7 @@
                                         <th>Amount</th>
                                         <th>Description</th>
                                         <th>Created At</th>
-                                        <th>Action</th>
+                                        @* <th>Action</th> *@
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -62,10 +62,10 @@
                                             <td>@item.Amount</td>
                                             <td>@item.Remark</td>
                                             <td>@(item.CreatedAt != null ? item.CreatedAt.Value.ToString("MMM dd, yyyy  hh:mm tt") : "")</td>
-                                            <td>
+                                           @*  <td>
                                                 <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("CompanyIncome", "CashManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
-                                                @* <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i> *@
-                                            </td>
+                                                <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
+                                            </td> *@
                                         </tr>
                                     }
                                 </tbody>

@@ -3,10 +3,10 @@
 
 <div class="row my-3">
     <div class="col-sm-12">
-        <h3 class="title mb-3">Employee Types</h3>
+        <h3 class="responsive-heading title mb-3">Employee Types</h3>
 
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6 mb-3">
                 <div class="card p-0">
                     <div id="expenseList">
                     <table class="table table-hover table-bordered">
@@ -37,7 +37,7 @@
 
             <div class="col-md-6">
                 <div class="form-container">
-                    <h4 class="edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
+                    <h4 class="responsive-heading edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
                     <form id="expenseForm" asp-action="Add" method="post">
                         <input type="hidden" id="Id" name="Id" />
                         <input type="text" id="Type" name="Type" placeholder="Enter Employee Type" required />

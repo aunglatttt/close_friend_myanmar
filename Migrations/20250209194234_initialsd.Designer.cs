@@ -12,8 +12,8 @@ using SimpleDataWebsite.Data;
 namespace CloseFriendMyanamr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250209170452_initials")]
-    partial class initials
+    [Migration("20250209194234_initialsd")]
+    partial class initialsd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

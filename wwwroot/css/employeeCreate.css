@@ -137,3 +137,23 @@ h2 {
         width: 100%;
     }
 }
+
+
+/* Default (for larger screens) */
+.responsive-heading {
+    font-size: 2rem; /* Adjust as needed */
+}
+
+/* For medium screens (tablets) */
+@media (max-width: 768px) {
+    .responsive-heading {
+        font-size: 1.5rem; /* Adjust for tablets */
+    }
+}
+
+/* For small screens (mobiles) */
+@media (max-width: 576px) {
+    .responsive-heading {
+        font-size: 1.2rem; /* Adjust for mobile */
+    }
+}
