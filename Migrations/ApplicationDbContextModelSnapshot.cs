@@ -187,6 +187,82 @@ namespace CloseFriendMyanamr.Migrations
                     b.ToTable("Income");
                 });
 
+            modelBuilder.Entity("CloseFriendMyanamr.Models.ClientManagement.ClientRequirementModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Area")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BuildingType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CondoName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EndPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Facilities")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FloorMax")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FloorMin")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MasterBed")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PropertyType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Purpose")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("SpecialRequest")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("StartPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Street")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Township")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Ward")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
+
+                    b.ToTable("ClientRequirement");
+                });
+
             modelBuilder.Entity("CloseFriendMyanamr.Models.EmployeeModel", b =>
                 {
                     b.Property<int>("Id")
@@ -393,6 +469,27 @@ namespace CloseFriendMyanamr.Migrations
                     b.ToTable("PropertyType");
                 });
 
+            modelBuilder.Entity("CloseFriendMyanamr.Models.TownshipModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Township")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TownshipMM")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Township");
+                });
+
             modelBuilder.Entity("CloseFriendMyanamr.Models.UserManagement.AgentModel", b =>
                 {
                     b.Property<int>("Id")
@@ -451,7 +548,7 @@ namespace CloseFriendMyanamr.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("RegistrationDate")
@@ -526,6 +623,17 @@ namespace CloseFriendMyanamr.Migrations
                         .HasForeignKey("IncomeTitleId");
 
                     b.Navigation("IncomeTitle");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.ClientManagement.ClientRequirementModel", b =>
+                {
+                    b.HasOne("CloseFriendMyanamr.Models.UserManagement.ClientModel", "Client")
+                        .WithMany()
+                        .HasForeignKey("ClientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Client");
                 });
 
             modelBuilder.Entity("CloseFriendMyanamr.Models.EmployeeModel", b =>

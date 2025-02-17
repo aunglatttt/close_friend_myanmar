@@ -49,8 +49,8 @@
                     <img class="logo_img" src="@Url.Content("~/images/Logo.jpg")">
                 </div>
             </a>
-            <div class="sidebar-brand-text logo_text text-center mb-3">Close Friend Myanamar</div>
-           
+            <div class="sidebar-brand-text logo_text text-center mb-3"><span style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Close Friend Myanamar</span></div>
+
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
@@ -98,9 +98,9 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Property:</h6>
-                        <a class="collapse-item" asp-controller="Penalty" asp-action="index">Add New Property</a>
-                        <a class="collapse-item" asp-controller="Penalty" asp-action="index">Property Search</a>
-                        <a class="collapse-item" asp-controller="Penalty" asp-action="index">Recent Update Data</a>
+                        <a class="collapse-item" asp-controller="Property" asp-action="NewProperty">Add New Property</a>
+                        <a class="collapse-item" asp-controller="Property" asp-action="index">Property Search</a>
+                        <a class="collapse-item" asp-controller="Property" asp-action="index">Recent Update Data</a>
                     </div>
                 </div>
             </li>
@@ -115,7 +115,7 @@
                 <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Client Request:</h6>
-                        <a class="collapse-item" asp-controller="Penalty" asp-action="index">Client Request List</a>
+                        <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">Client Request List</a>
                         <a class="collapse-item" asp-controller="Penalty" asp-action="index">Client Request Entry</a>
                     </div>
                 </div>
@@ -209,7 +209,7 @@
                 </div>
             </li>
 
-        
+
 
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">

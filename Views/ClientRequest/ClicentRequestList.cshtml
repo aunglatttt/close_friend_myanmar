@@ -1,0 +1,136 @@
+﻿@model IEnumerable<CloseFriendMyanamr.Models.ClientManagement.ClientRequirementModel>
+@{
+    ViewData["Title"] = "Client Requirement List";
+}
+<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+<div class="row">
+    <div class="col-sm-12">
+        <!-- Header Row: Title and Add Button -->
+        <div class="page-header">
+            <h2>Client Requirement List</h2>
+            <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate">
+                <i class="fas fa-user-plus"></i> Add New Requirement
+            </a>
+        </div>
+
+        <!-- Main Content Row -->
+        <div class="row">
+            <!-- Left Card: DataTable -->
+            <div class="col-md-12 mb-4">
+                <div class="card border-2 shadow-sm">
+                    <div class="card-header">
+                        Client List
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="employeeTable" class="table table-hover table-bordered" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th>Client</th>
+                                        <th>Purpose</th>
+                                        <th>Property Type</th>
+                                        <th>Budget</th>
+                                        <th>Township</th>
+                                        <th>Detail</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@(item.Client != null? (item.Client.ClientName + " (" + item.Client.ClientPhone) + ")" : "")</td>
+                                            <td>@(item.Purpose == "1"? "ဝယ်ရန်" : "ရောင်းရန်")</td>
+                                            <td>@item.PropertyType</td>
+                                            <td>@(
+                                                    (item.StartPrice>0 && item.EndPrice >0)
+                                                    ? $"သိန်း {item.EndPrice} မှ သိန်း {item.StartPrice} အတွင်း"
+                                                    : (item.StartPrice<=0 && item.EndPrice >0)
+                                                    ? $"သိန်း {item.EndPrice} အောက်" 
+                                                    : $"သိန်း {item.StartPrice} အထက်"
+                                                )</td>
+                                            <td>@item.Township</td>
+                                            <td>
+                                                @if (string.IsNullOrEmpty(item.Status))
+                                                {
+                                                    @item.Status
+
+                                                    <br />
+                                                }
+
+                                                @if (string.IsNullOrEmpty(item.Ward))
+                                                {
+                                                    @item.Ward
+
+                                                    <br />
+                                                }
+
+                                                @if (item.Area > 0)
+                                                {
+                                                    @:>>> အကျယ် အနည်းဆုံး (@item.Area) ရှိရပါမယ် 
+                                                }
+
+                                                @if (item.MasterBed > 0)
+                                                {
+                                                    @:>>> Master အနည်းဆုံး (@item.MasterBed) ခန်းပါရမယ် 
+                                                }
+
+                                                @if (item.FloorMin > 0)
+                                                {
+                                                    @:>>> အလွှာ အနိမ့်ဆုံး (@item.FloorMin) လွှာ 
+                                                }
+
+                                                @if (item.FloorMax > 0)
+                                                {
+                                                    @:>>> အလွှာ အမြင့်ဆုံး (@item.FloorMax) ရှိရပါမယ် 
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(item.SpecialRequest))
+                                                {
+                                                    @:>>> @item.SpecialRequest 
+                                                }
+
+                                                @if (!string.IsNullOrEmpty(item.Facilities))
+                                                {
+                                                    @:>>> @item.Facilities 
+                                                }
+                                            </td>
+
+                                            <td>
+                                                 @item.Status
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#employeeTable').DataTable({
+            responsive: true, // Enable responsive feature
+            paging: true,     // Enable pagination
+            searching: true,  // Enable search
+            ordering: true,   // Enable sorting
+            info: true,       // Show table information
+            autoWidth: false, // Disable automatic column width calculation
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
+                { responsivePriority: 2, targets: -1 } // Make Action column high priority
+            ]
+        });
+    });
+
+     function deleteIncomeTitle(id) {
+        if (confirm('Are you sure you want to delete this client?')) {
+            fetch(`/UserManagement/DeleteClient/${id}`, { method: 'POST' })
+                .then(() => window.location.reload());
+        }
+    }
+</script>

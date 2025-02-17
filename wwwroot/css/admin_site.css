@@ -12261,3 +12261,7 @@ body.sidebar-toggled footer.sticky-footer {
         margin-top: 0px;
     }
 }
+
+.h-70 {
+    height: 190px;
+}

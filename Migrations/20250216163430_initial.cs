@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CloseFriendMyanamr.Migrations
 {
     /// <inheritdoc />
-    public partial class initialsd : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -95,7 +95,7 @@ namespace CloseFriendMyanamr.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShownProperty = table.Column<int>(type: "int", nullable: false),
                     Remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -202,6 +202,57 @@ namespace CloseFriendMyanamr.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Township",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Township = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TownshipMM = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Township", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ClientRequirement",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    Purpose = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    PropertyType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BuildingType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ward = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CondoName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartPrice = table.Column<int>(type: "int", nullable: false),
+                    EndPrice = table.Column<int>(type: "int", nullable: false),
+                    Area = table.Column<int>(type: "int", nullable: false),
+                    MasterBed = table.Column<int>(type: "int", nullable: false),
+                    FloorMin = table.Column<int>(type: "int", nullable: false),
+                    FloorMax = table.Column<int>(type: "int", nullable: false),
+                    SpecialRequest = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Township = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Facilities = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ClientRequirement", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientRequirement_Client_ClientId",
+                        column: x => x.ClientId,
+                        principalTable: "Client",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employee",
                 columns: table => new
                 {
@@ -302,6 +353,11 @@ namespace CloseFriendMyanamr.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientRequirement_ClientId",
+                table: "ClientRequirement",
+                column: "ClientId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Employee_EmployeeTypeId",
                 table: "Employee",
                 column: "EmployeeTypeId");
@@ -338,7 +394,7 @@ namespace CloseFriendMyanamr.Migrations
                 name: "CashBookTransaction");
 
             migrationBuilder.DropTable(
-                name: "Client");
+                name: "ClientRequirement");
 
             migrationBuilder.DropTable(
                 name: "Expense");
@@ -357,6 +413,12 @@ namespace CloseFriendMyanamr.Migrations
 
             migrationBuilder.DropTable(
                 name: "PropertyType");
+
+            migrationBuilder.DropTable(
+                name: "Township");
+
+            migrationBuilder.DropTable(
+                name: "Client");
 
             migrationBuilder.DropTable(
                 name: "ExpenseTitle");

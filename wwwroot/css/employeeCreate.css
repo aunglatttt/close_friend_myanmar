@@ -92,12 +92,26 @@ h2 {
         transform: translateY(0);
     }
 
-.btn-secondary{
-    transform: translateY(-2px);
-}
+/* Secondary Button to match btn-primary style but with slight variation */
 .btn-secondary {
-    transform: translateY(0);
+    background-color: #95a5a6;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
+
+    .btn-secondary:hover {
+        background-color: #7f8c8d;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary:active {
+        background-color: #596c6c;
+        transform: translateY(0);
+    }
 /* Validation Styles */
 .text-danger {
     color: #e74c3c;
@@ -141,7 +155,7 @@ h2 {
 
 /* Default (for larger screens) */
 .responsive-heading {
-    font-size: 2rem; /* Adjust as needed */
+    font-size: 1.5rem; /* Adjust as needed */
 }
 
 /* For medium screens (tablets) */
@@ -157,3 +171,93 @@ h2 {
         font-size: 1.2rem; /* Adjust for mobile */
     }
 }
+
+
+/* Delete Button Styles */
+.btn-danger {
+    background-color: #e74c3c; /* Red color for danger actions */
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 1em;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+    .btn-danger:hover {
+        background-color: #c0392b; /* Darker red on hover */
+        transform: translateY(-2px);
+    }
+
+    .btn-danger:active {
+        background-color: #96281b; /* Even darker red on active */
+        transform: translateY(0);
+    }
+
+/* Modal Styles */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    background-color: #3498db; /* Match card-header color */
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.modal-title {
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 20px;
+    color: #333;
+}
+
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 15px;
+}
+
+    /* Ensure modal buttons are consistent with other buttons */
+    .modal-footer .btn-secondary {
+        background-color: #95a5a6; /* Match btn-secondary color */
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 1em;
+        color: white;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+        .modal-footer .btn-secondary:hover {
+            background-color: #7f8c8d; /* Darker on hover */
+            transform: translateY(-2px);
+        }
+
+        .modal-footer .btn-secondary:active {
+            background-color: #596c6c; /* Even darker on active */
+            transform: translateY(0);
+        }
+
+    .modal-footer .btn-danger {
+        background-color: #e74c3c; /* Match btn-danger color */
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-size: 1em;
+        color: white;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+        .modal-footer .btn-danger:hover {
+            background-color: #c0392b; /* Darker on hover */
+            transform: translateY(-2px);
+        }
+
+        .modal-footer .btn-danger:active {
+            background-color: #96281b; /* Even darker on active */
+            transform: translateY(0);
+        }

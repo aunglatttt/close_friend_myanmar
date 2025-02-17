@@ -12,8 +12,8 @@
         <form asp-action="ClientCreate" method="post" id="employeeForm">
             <div class="row">
                 <!-- Left Column: Employee Details -->
-                <div class="col-md-12 col-sm-12">
-                    <div class="card mx-auto w-80">
+                <div class="col-md-6 col-sm-12">
+                    <div class="card mx-auto">
                         <div class="card-header">
                             Client Information
                         </div>
@@ -54,6 +54,34 @@
                                 <label asp-for="Remark"></label>
                                 <input asp-for="Remark" placeholder="Type here" class="form-control" />
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <div class="card mx-auto">
+                        <div class="card-header">
+                            <div class="row">
+                                <span class="col-md-3 col-sm-12">
+                                    Requirement
+                                </span>
+                                @if (ViewBag.CreateOrUpdate != null && ViewBag.CreateOrUpdate != "Create New"){
+
+                                    <a href="@Url.Action("ClientRequirement", "ClientRequest", new { clientId = Model.Id })" class="btn btn-warning col-md-3 col-sm-12">New</a>
+                                }
+                                <div class="col"></div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @if (ViewBag.CreateOrUpdate != null && ViewBag.CreateOrUpdate == "Create New"){
+                                <div class="row my-2 text-center">
+                                    <strong>Please add client data first.</strong>
+                                </div>
+                            }else{
+                                foreach(var item in Model.ClientRequirements){
+                                    @item
+                                }
+                            }
                         </div>
                     </div>
                 </div>

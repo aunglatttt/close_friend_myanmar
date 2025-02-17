@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models.UserManagement
 {
-    public class ClientModel
+    public class ClientModel : BaseDomain
     {
         [Key]
         public int Id { get; set; }
@@ -34,9 +35,9 @@ namespace CloseFriendMyanamr.Models.UserManagement
         public int ShownProperty { get; set; }
 
         //[Required(ErrorMessage = "Remark is required.")]
+        [NotMapped]
+        public List<string> ClientRequirements { get; set; }
         public string? Remark { get; set; }
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

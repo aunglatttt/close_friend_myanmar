@@ -1,0 +1,377 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" /> 
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="row">
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-primary h-70 shadow py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                    Code :
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" checked />
+                                            <label class="form-check-label" for="selectedFacility">Auto</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12" id="autoFields">
+                                        <input class="form-control" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
+                                        <input class="form-control" type="text" placeholder="" id="inputRegular" style="display: none;" />
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-auto">
+                                <i class="fa-solid fa-circle-info fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Requests Card Example -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-warning h-70 shadow py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="row">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Available Date :
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-triangle-exclamation fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Last Checked Date :
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-triangle-exclamation fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-4 col-md-6 mb-4">
+                <div class="card border-left-info h-70 shadow py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col-12 mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Status:
+                                </div>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                                <option value="1">Available</option>
+                                                <option value="2">(ခေတ္တ) အရောင်းပိတ်/အငှားပိတ်</option>
+                                                <option value="2">အငှားရှိ</option>
+                                                <option value="2">Cancel (Sold)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    Status:
+                                </div>
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                                <option value="1">NoPost</option>
+                                                <option value="1">Posted</option>
+                                                <option value="2">Boost</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="card mx-auto w-90">
+                    <div class="card-header">
+                        General Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Owner </label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Property Type</label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Building Type</label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>အမှတ်</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span  class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>အခန်း</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Building Type</label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>အလှည့်</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>လမ်း</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>ရပ်ကွက်</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>အိမ်ယာ/ကွန်ဒို</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label>မြို့နယ်</label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>Registration Date</label>
+                                    <input type="date" placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>Available Date</label>
+                                    <input type="date" placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label>Last Checked Date</label>
+                                    <input type="date" placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>မှတ်ချက်</label>
+                                    <textarea style="height: 5em;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Map</label>
+                                    <input placeholder="?" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mx-auto w-90">
+                    <div class="card-header">
+                        Property Information
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Owner </label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Property Type</label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
+                                        <option value="1">ဝယ်ရန်</option>
+                                        <option value="2">ငှားရန်</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label>အမှတ်</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label>အခန်း</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label>အခန်း</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-12">
+                                <div class="form-group">
+                                    <label>အခန်း</label>
+                                    <input placeholder="?" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>မှတ်ချက်</label>
+                                    <textarea style="height: 5em;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label>Map</label>
+                                    <input placeholder="?" class="form-control" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+     document.getElementById("selectedFacility").addEventListener("change", function() {
+        const inputAutoGenerate = document.getElementById("inputAutoGenerate");
+        const inputRegular = document.getElementById("inputRegular");
+
+        if (this.checked) {
+            inputAutoGenerate.style.display = "block";  // Show the "Auto Generate" field
+            inputRegular.style.display = "none";        // Hide the regular input field
+            inputRegular.value = "";
+        } else {
+            inputAutoGenerate.style.display = "none";   // Hide the "Auto Generate" field
+            inputRegular.style.display = "block";       // Show the regular input field
+        }
+    });
+
+    // Initial check when the page loads to set the correct state.
+    if (document.getElementById("selectedFacility").checked) {
+        document.getElementById("inputAutoGenerate").style.display = "block";
+        document.getElementById("inputRegular").style.display = "none";
+    } else {
+        document.getElementById("inputAutoGenerate").style.display = "none";
+        document.getElementById("inputRegular").style.display = "block";
+    }
+
+
+</script>

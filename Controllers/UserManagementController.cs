@@ -28,7 +28,17 @@ namespace CloseFriendMyanamr.Controllers
 
             if (id != null && id > 0)
             {
-                return View(await _context.Client.FindAsync(id));
+                var requirementObj = await _context.ClientRequirement.AsNoTracking()
+                    .Where(x => x.ClientId == id)
+                    .ToListAsync();
+
+                var client = await _context.Client.FindAsync(id);
+                if (client != null)
+                {
+                    client.ClientRequirements = new List<string>();
+                    client.ClientRequirements.Add("#1: (Condo အဝယ်)     New\r\nBudget >>> သိန်း 4000 မှ သိန်း 6000 အတွင်း\r\nလိုချင်သည့် အမျိုးအစား >>> RC (????)\r\nလိုချင်သည့် မြို့နယ် >>> သန်လျင်\r\nလမ်း >>> Housing streetရပ်ကွက် >>> Aurora\r\n\r\nအခြားလိုအပ်ချက်များ\r\n  >>> Master အနည်းဆုံး (1)ခန်း၊\r\n  >>> အကျယ် အနည်းဆုံး (1200) ရှိရပါမယ်\r\n  >>> အလွှာ အနိမ့်ဆုံး (6)လွှာ   >>> အလွှာ အမြင့်ဆုံး (16) ရှိရပါမယ်\r\n  >>> Swimming Pool, Balcony, Elevator, 24hrs Electricity, 24hrs Security, Car Parking\r\n\r\n\r\n");
+                }
+                return View(client);
             }
 
             return View();

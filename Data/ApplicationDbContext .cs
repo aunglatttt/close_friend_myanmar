@@ -1,5 +1,6 @@
 ﻿using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.Models.CashManagement;
+using CloseFriendMyanamr.Models.ClientManagement;
 using CloseFriendMyanamr.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,5 +37,12 @@ namespace SimpleDataWebsite.Data
         public DbSet<CompanyExpenseModel> Expense { get; set; }
         public DbSet<CashBookTransaction> CashBookTransaction { get; set; }
         #endregion
+
+        #region client management
+        public DbSet<ClientRequirementModel> ClientRequirement { get; set; }
+
+        #endregion
+
+        public DbSet<TownshipModel> Township { get; set; }
     }
 }
