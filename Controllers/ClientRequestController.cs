@@ -20,7 +20,7 @@ namespace CloseFriendMyanamr.Controllers
             return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
         }
 
-        public async Task<IActionResult> ClientRequirement(int clientId)
+        public async Task<IActionResult> ClientRequirement(int clientId, int? clrId)
         {
             #region for select value
             var propertyTypes = await _context.PropertyType.AsNoTracking()
@@ -86,7 +86,32 @@ namespace CloseFriendMyanamr.Controllers
 
             #endregion
 
-            return View(new ClientRequirementModel());
+            ClientRequirementModel model;
+            if (clrId.HasValue) // Check if it's an update
+            {
+                model = await _context.ClientRequirement.FindAsync(clrId.Value);
+                if (model == null)
+                {
+                    return NotFound();
+                }
+            }
+            else
+            {
+                model = new ClientRequirementModel { ClientId = clientId }; // Set ClientId for new record
+            }
+
+
+            // Pre-select townships and facilities for update
+            if (model.Township != null)
+            {
+                ViewBag.SelectedTownships = model.Township.Split(',');
+            }
+            if (model.Facilities != null)
+            {
+                ViewBag.SelectedFacilities = model.Facilities.Split(',');
+            }
+
+            return View(model);
         }
 
         [HttpPost]
@@ -97,7 +122,15 @@ namespace CloseFriendMyanamr.Controllers
                 model.Township = string.Join(",", selectedTownships ?? new List<string>());
                 model.Facilities = string.Join(",", selectedFacilities ?? new List<string>());
 
-                _context.ClientRequirement.Add(model);
+                if (model.Id == 0) // Check if it's a new record or update
+                {
+                    _context.ClientRequirement.Add(model);
+                }
+                else
+                {
+                    _context.ClientRequirement.Update(model);  // Use Update for existing record
+                }
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("ClicentRequestList");
@@ -166,7 +199,24 @@ namespace CloseFriendMyanamr.Controllers
 
             #endregion
 
+            ViewBag.SelectedTownships = selectedTownships;
+            ViewBag.SelectedFacilities = selectedFacilities;
+
             return View(model);
+        }
+
+        //Delete Action
+        public async Task<IActionResult> Delete(int id)
+        {
+            var clientRequirement = await _context.ClientRequirement.FindAsync(id);
+            if (clientRequirement == null)
+            {
+                return NotFound();
+            }
+
+            _context.ClientRequirement.Remove(clientRequirement);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("ClicentRequestList"); // Or wherever you want to redirect
         }
     }
 }

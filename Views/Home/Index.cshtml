@@ -1,9 +1,206 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<CloseFriendMyanamr.Models.UserManagement.ClientModel>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-    
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
+
+
+<div class="row my-3 mx-auto">
+    <div class="col-sm-12">
+
+        <div class="d-flex flex-wrap justify-content-between mb-3">
+            <div class="">
+                <a href="#" class="btn action-btn btn-icon-split py-1 mb-2">
+                    <span class="icon text-white-50">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </span>
+                    <span class="text" style="font-size:13px;">Split Button Primary</span>
+                </a>
+            </div>
+            <div class="">
+                <a href="#" class="btn action-btn btn-icon-split py-1">
+                    <span class="icon text-white-50">
+                        <i class="fa-solid fa-calculator"></i>
+                    </span>
+                    <span class="text" style="font-size:13px;">Split Button Primary</span>
+                </a>
+            </div>
+        </div>
+
+        <form asp-action="ClientCreate" method="post" id="employeeForm">
+            <div class="row">
+                <!-- Left Column: Employee Details -->
+                <div class="col-md-6 col-sm-12">
+                    <div class="card mx-auto">
+                        <div class="card-header">
+                         @*    <div class="row">
+                                <span class="col-md-3 col-sm-12">
+                                    Client List
+                                </span>
+                                <a href="@Url.Action("ClientRequirement", "ClientRequest")" class="btn action-btn-new btn-sm col-md-3 col-sm-12">
+                                    New
+                                </a>
+                                <div class="col"></div>
+                            </div> *@
+
+                            <a class="text-white" asp-controller="UserManagement" asp-action="ClientList">Client List</a>   {>><a class="text-white" asp-controller="UserManagement" asp-action="ClientCreate">New</a><<}
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr style="font-size:15px;">
+                                            <th>Name</th>
+                                            <th>Reg. Date</th>
+                                            <th>Request Count</th>
+                                            <th>Status</th>                                           
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach(var client in Model){
+                                            <tr style="font-size:15px;">
+                                                <td class="text-primary"><a asp-controller="UserManagement" asp-action="ClientCreate" asp-route-id="@client.Id">@client.ClientName [@client.ClientPhone]</a></td>
+                                                <td>@client.RegistrationDate.ToString("MMM dd, yyyy")</td>
+                                                <td>@client.ClientRequirements.Count</td>
+                                                <td>@client.Status</td>
+                                            </tr>
+                                            @foreach(var item in client.ClientRequirements){
+                                                <tr class="border">
+                                                    <td colspan="4" class="border">
+                                                        {@(item.Purpose == "1" ? "အဝယ်" : "အငှား")} @item.Township; @(
+                                                (item.StartPrice > 0 && item.EndPrice > 0)
+                                                ? $"သိန်း {item.EndPrice} မှ သိန်း {item.StartPrice} အတွင်း"
+                                                : (item.StartPrice <= 0 && item.EndPrice > 0)
+                                                ? $"သိန်း {item.EndPrice} အောက်"
+                                                : (item.StartPrice > 0 && item.EndPrice <=0)
+                                                ? $"သိန်း {item.StartPrice} အထက်"
+                                                : ""
+                                                )
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-sm-12">
+                    <div class="card mx-auto">
+                        <div class="card-header">
+                            <a class="text-white" asp-controller="ClientRequest" asp-action="ClicentRequestList">Latest Requirement List</a>
+                        </div>
+                        <div class="card-body">
+                            @if (ViewBag.CreateOrUpdate != null && ViewBag.CreateOrUpdate == "Create New")
+                            {
+                                <div class="row my-2 text-center">
+                                    <strong>Please add client data first.</strong>
+                                </div>
+                            }
+                            else
+                            {
+                                int index = 1;
+                                foreach (var client in Model)
+                                {
+                                    foreach (var item in client.ClientRequirements)
+                                    {
+                                        <div class="d-flex flex-wrap">
+                                            <a class="me-3" asp-controller="UserManagement" asp-action="ClientCreate" asp-route-id="@client.Id" style="cursor:pointer; font-size:20px;">#@index: (@item.PropertyType @(item.Purpose == "1" ? "အဝယ်" : "အငှား"))</a>
+                                            <button type="button" class="btn action-btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                                @item.Status
+                                            </button>
+                                        </div>
+                                        <div class="row">
+                                            @if (item.StartPrice > 0 && item.EndPrice > 0)
+                                            {
+                                                <span class="col-12">Budget >>> သိန်း @item.StartPrice မှ သိန်း @item.EndPrice အတွင်း</span>
+                                            }
+                                            else if (item.StartPrice > 0 && item.EndPrice <= 0)
+                                            {
+                                                <span class="col-12">Budget >>> သိန်း @item.StartPrice အထက်</span>
+                                            }
+                                            else if (item.StartPrice <= 0 && item.EndPrice > 0)
+                                            {
+                                                <span class="col-12">Budget >>> သိန်း @item.EndPrice အောက်</span>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.BuildingType))
+                                            {
+                                                <span class="col-12">လိုချင်သည့် အမျိုးအစား >>> @item.BuildingType</span>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.Township))
+                                            {
+                                                <span class="col-12">လိုချင်သည့် မြို့နယ် >>> @item.Township</span>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.Street))
+                                            {
+                                                <span class="col-12">လမ်း >>> @item.Street</span>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.Ward))
+                                            {
+                                                <span class="col-12">ရပ်ကွက် >>> @item.Ward</span>
+                                            }
+                                        </div>
+                                        <div class="row mt-3 mb-5">
+                                            <strong class="col-12">အခြားလိုအပ်ချက်များ</strong>
+                                            @if (item.MasterBed > 0)
+                                            {
+                                                <span class="col-12">>>> Master အနည်းဆုံး (@item.MasterBed) ခန်း</span>
+                                            }
+                                            @if (item.Area > 0)
+                                            {
+                                                <span class="col-12">>>> အကျယ် အနည်းဆုံး (@item.Area) ရှိရပါမယ်</span>
+                                            }
+                                            @if (item.FloorMin > 0)
+                                            {
+                                                <span class="col-12">>>> အလွှာ အနိမ့်ဆုံး (@item.FloorMin) လွှာ</span>
+                                            }
+                                            @if (item.FloorMax > 0)
+                                            {
+                                                <span class="col-12">>>> အလွှာ အမြင့်ဆုံး (@item.FloorMax) လွှာရှိရပါမယ်</span>
+                                            }
+
+                                            @if (!string.IsNullOrEmpty(item.Facilities))
+                                            {
+                                                <span class="col-12">>>> @item.Facilities</span>
+                                            }
+                                        </div>
+                                        index++;
+                                    }
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> @* Add Bootstrap JS *@

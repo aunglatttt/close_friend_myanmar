@@ -78,8 +78,69 @@
                                     <strong>Please add client data first.</strong>
                                 </div>
                             }else{
+                                int index = 1;
                                 foreach(var item in Model.ClientRequirements){
-                                    @item
+                                    <div class="d-flex flex-wrap">
+
+                                        <a class="me-3" asp-controller="ClientRequest" asp-action="ClientRequirement" asp-route-clientId="@item.ClientId" asp-route-clrId="@item.Id" style="cursor:pointer; font-size:20px;">#@index: (@item.PropertyType @(item.Purpose == "1" ? "အဝယ်" : "အငှား"))</a>
+                                        <button type="button" class="btn action-btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            @item.Status
+                                        </button>
+                                    </div>
+                                    <div class="row">
+                                        @if(item.StartPrice > 0 && item.EndPrice > 0) {
+                                            <span class="col-12">Budget >>> သိန်း @item.StartPrice မှ သိန်း @item.EndPrice အတွင်း</span>
+                                        }else if(item.StartPrice > 0 && item.EndPrice <= 0) {
+                                            <span class="col-12">Budget >>> သိန်း @item.StartPrice အထက်</span>
+                                        }
+                                        else if (item.StartPrice <= 0 && item.EndPrice > 0)
+                                        {
+                                            <span class="col-12">Budget >>> သိန်း @item.EndPrice အောက်</span>
+                                        }
+
+                                        @if(!string.IsNullOrEmpty(item.BuildingType)){
+                                            <span class="col-12">လိုချင်သည့် အမျိုးအစား >>> @item.BuildingType</span>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(item.Township))
+                                        {
+                                            <span class="col-12">လိုချင်သည့် မြို့နယ် >>> @item.Township</span>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(item.Street))
+                                        {
+                                            <span class="col-12">လမ်း >>> @item.Street</span>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(item.Ward))
+                                        {
+                                            <span class="col-12">ရပ်ကွက် >>> @item.Ward</span>
+                                        }
+                                    </div>
+                                    <div class="row mt-3 mb-4">
+                                        <strong class="col-12">အခြားလိုအပ်ချက်များ</strong>
+                                        @if(item.MasterBed > 0) {
+                                            <span class="col-12">>>> Master အနည်းဆုံး (@item.MasterBed) ခန်း</span>
+                                        }
+                                        @if (item.Area > 0)
+                                        {
+                                            <span class="col-12">>>> အကျယ် အနည်းဆုံး (@item.Area) ရှိရပါမယ်</span>
+                                        }
+                                        @if (item.FloorMin > 0)
+                                        {
+                                            <span class="col-12">>>> အလွှာ အနိမ့်ဆုံး (@item.FloorMin) လွှာ</span>
+                                        }
+                                        @if (item.FloorMax > 0)
+                                        {
+                                            <span class="col-12">>>> အလွှာ အမြင့်ဆုံး (@item.FloorMax) လွှာရှိရပါမယ်</span>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(item.Facilities))
+                                        {
+                                            <span class="col-12">>>> @item.Facilities</span>
+                                        }
+                                    </div>
+                                    index++;
                                 }
                             }
                         </div>
@@ -94,7 +155,25 @@
         </form>
     </div>
 </div>
-
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> @* Add Bootstrap JS *@

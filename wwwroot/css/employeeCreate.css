@@ -92,16 +92,33 @@ h2 {
         transform: translateY(0);
     }
 
-/* Secondary Button to match btn-primary style but with slight variation */
-.btn-secondary {
-    background-color: #95a5a6;
+.action-btn, action-btn-new {
+    background-color: #003366;
     border: none;
     border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 1em;
+    /*padding: 10px 20px;*/
+    font-size: 12px;
     color: white;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
+
+.action-btn-new{
+    background-color: sandybrown;
+    color: #FFFFFF;
+}
+    .action-btn-new:hover {
+        transform: translateY(-2px);
+    }
+    /* Secondary Button to match btn-primary style but with slight variation */
+    .btn-secondary {
+        background-color: #95a5a6;
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 1em;
+        color: white;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
 
     .btn-secondary:hover {
         background-color: #7f8c8d;

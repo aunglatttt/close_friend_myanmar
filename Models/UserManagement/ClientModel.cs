@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using CloseFriendMyanamr.Models.ClientManagement;
 
 namespace CloseFriendMyanamr.Models.UserManagement
 {
@@ -34,10 +35,10 @@ namespace CloseFriendMyanamr.Models.UserManagement
         [DisplayName("Shown Property")]
         public int ShownProperty { get; set; }
 
-        //[Required(ErrorMessage = "Remark is required.")]
-        [NotMapped]
-        public List<string> ClientRequirements { get; set; }
+
         public string? Remark { get; set; }
+
+        public virtual List<ClientRequirementModel> ClientRequirements { get; set; }
 
     }
 }
