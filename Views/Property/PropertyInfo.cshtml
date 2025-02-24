@@ -1,0 +1,173 @@
+﻿@model CloseFriendMyanamr.Models.Property.PropertyModel
+
+@{
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <ul class="breadcrumb">
+                    <li><a href="@Url.Action("SearchProperty", "Property")">Search Property</a> <span class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
+                    <li><a href="@Url.Action("NewProperty", "Property")">New Property</a> <span class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
+                    <li class="active"><span id="lblCode">@Model.Code &nbsp; &nbsp; (@Model.Township)</span></li>&nbsp; &nbsp; | &nbsp; &nbsp;
+                </ul>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 col-sm-12 mb-3">
+                <div class="row">
+                    <div class="col-12">
+                        @if(Model.Photos != null && Model.Photos.Count >0) {
+                            <a href="@Url.Content("~/PropertyPhoto/" + Model.Photos[0].Location)" data-lightbox="gallery" data-title="@Model.Photos[0].Location">
+                                <img src="@Url.Content("~/PropertyPhoto/" + Model.Photos[0].Location)" alt="" class="img-thumbnail w-100">
+                            </a>
+                        }
+                    </div>
+                </div>
+
+
+                @if(Model.Photos != null && Model.Photos.Count > 1){
+                    @for (var i = 1; i < Model.Photos.Count; i++) {
+                        <a href="@Url.Content("~/PropertyPhoto/" + Model.Photos[i].Location)" data-lightbox="gallery" data-title="@Model.Photos[i].Location">
+                            <img src="@Url.Content("~/PropertyPhoto/" + Model.Photos[i].Location)" alt="" class="img-thumbnail" style="width:29%" >
+                        </a>
+                    }
+                }
+
+                <hr class="border-soft-bottom">
+                <div class="row">
+                    <div class="text-center">
+                        <a href="@Url.Action("Gallery", "Property", new { propertyId = @Model.Id })" class="btn btn-primary text-center">Gallery</a>
+                        <a href="@Url.Action("NewProperty", "Property", new { id = @Model.Id })" class="btn btn-secondary text-center">Edit Info</a>
+                    </div>
+                </div>
+                <hr class="border-soft-bottom">
+
+                <div class="row">
+                    <div class="col-12">
+                        <h5>Facilities</h5>
+
+                        @if(Model.Facilities != null) {
+                            <ul>
+                                @foreach(var item in Model.Facilities.Split(",") as string[]){
+                                    <li>@item</li>
+                                }
+                            </ul>
+
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-md-8 col-sm-12">
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        @if(Model.Owner != null) {
+                            <h3>@Model.Owner.OwnerName (@Model.Owner.OwnerPhone)</h3>
+                        }
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <span>@Model.Street</span>
+                    </div>
+                    @if(Model.CondoName != null){
+                        <div class="col-12">
+                            <span>@Model.CondoName</span>
+                        </div>
+                    }
+                
+                    <div class="col-12">
+                    <hr class="border-soft-bottom ">
+                        <span>@Model.Purpose Price (@(Model.Purpose == "Sale" ? Model.SalePrice : Model.RentPrice)) &nbsp;&nbsp;&nbsp; >>>> &nbsp;&nbsp;&nbsp; @(Model.Purpose == "Sale" ? Model.SaleCommissionString : Model.RentCommisionString)</span>
+                    <hr class="border-soft-bottom mt-3">
+                    </div>
+
+
+                    <div class="row g-0 mb-3">
+                        <div class="col-md-2 col-6">
+                            <a href="#" class="btn btn-info btn-icon-split">
+                                <span class="icon text-white-50"><i class="fas fa-flag"></i></span>
+                                <span class="text">@Model.Status</span>
+                            </a>
+                        </div>
+
+                        <div class="col-md-2 col-6">
+                            <a href="#" class="btn btn-success btn-icon-split">
+                                <span class="icon text-white-50">
+                                    <i class="fas fa-check"></i>
+                                </span>
+                                <span id="lblPostStatus" class="text">@Model.PostStatus</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <span>@Model.Remark</span>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <span>@Model.Comment</span>
+                    </div>
+
+                    <div class="col-12">
+                        <table class="table table-bordered bg-gray-100">
+                            <tbody>
+                                <tr>
+                                    <th class="bg-gray-100" colspan="2">Property Details</th>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-100">Property Type: </td>
+                                    <td class="bg-gray-100">@Model.PropertyType</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-100">Building Type: </td>
+                                    <td class="bg-gray-100">@Model.BuildingType</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-100">Face: </td>
+                                    <td class="bg-gray-100">@Model.Face</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-100">Area: </td>
+                                    <td class="bg-gray-100">@Model.Area</td>
+                                </tr>
+                                 <tr>
+                                    <td class="bg-gray-100">Room Type:</td>
+                                    <td class="bg-gray-100">
+                                       @Model.MasterBed M, @Model.SingleBed S
+                                    </td>
+                                </tr>
+                                 <tr>
+                                    <td class="bg-gray-100">Ownership:</td>
+                                    <td class="bg-gray-100">@Model.Ownership</td>
+                                </tr>
+                                 <tr>
+                                    <td class="bg-gray-100">Saler Own Type:</td>
+                                    <td class="bg-gray-100">@Model.SalerOwnerType</td>
+                                </tr>
+                                 <tr>
+                                    <td class="bg-gray-100">Registration Date: </td>
+                                    <td class="bg-gray-100">@Model.RegistrationDate.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-100">Available Date:</td>
+                                    <td class="bg-gray-100">@Model.AvailableDate.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-100">Last Check Date:</td>
+                                    <td class="bg-gray-100">@Model.LastCheckedDate.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+               
+            </div>
+        </div>
+
+    </div>
+</div>

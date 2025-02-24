@@ -25,7 +25,7 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td>@item.LogsDate.ToString("MMM-dd-yyyy")</td>
+                                            <td>@item.LogsDate.ToString("MMM-dd-yyyy h:mm:ss tt")</td>
                                             <td>@(item.Employee != null? item.Employee.EmployeeName : "")</td>
                                             <td>@item.Type</td>
                                             <td>@item.Logs</td>

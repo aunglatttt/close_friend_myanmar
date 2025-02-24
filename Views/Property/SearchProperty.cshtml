@@ -1,0 +1,628 @@
+﻿@model CloseFriendMyanamr.ViewModel.PaginationViewModelForProperty
+
+@{
+    ViewData["Title"] = "Property Search";
+}
+<link rel="stylesheet" href="~/css/table.css" asp-append-version="true" />
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="card p-0 shadow">
+            <div class="card-body py-3 px-2">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="PropertyType">Property Type </label>
+                                    <select class="form-select mb-1" id="PropertyType" asp-items="@ViewBag.PropertyTypeList" asp-for="PropertyType" name="PropertyType">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="BuildingType">Building Type</label>
+                                    <select class="form-select mb-1" id="BuildingType" asp-items="@ViewBag.BuildingTypeList" name="BuildingType" asp-for="BuildingType">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="OwnerAgent">Owner / Agent </label>
+                                    <select class="form-select mb-1" id="OwnerAgent" asp-items="@ViewBag.OwnerList" asp-for="OwnerAgent" name="OwnerAgent">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Purpose">Purpose</label>
+                                    <select class="form-select mb-1" id="Purpose" name="Purpose" asp-for="Purpose">
+                                        <option value="">{{All}}</option>
+                                        <option value="Sale">Sale (အရောင်း)</option>
+                                        <option value="Rent">Rent (အငှား)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="PriceFrom">Price From (သိန်း)</label>
+                                    <input type="number" placeholder="?" name="PriceFrom" id="PriceFrom" asp-for="PriceFrom" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="PriceTo">Price To (သိန်း)</label>
+                                    <input type="number" placeholder="?" name="PriceTo" id="PriceTo" asp-for="PriceTo" class="form-control" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="CondoName">Condo Name</label>
+                                    <select class="form-select mb-1" id="CondoName" asp-items="@ViewBag.CondoNameList" asp-for="CondoName" name="CondoName">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Face">အလှည့်</label>
+                                    <select class="form-select mb-1" id="Face" name="Face" asp-for="Face">
+                                        <option value="">{{All}}</option>
+                                        <option value="None">{မသိ}</option>
+                                        <option value="East">E (အရှေ့လှည့်)</option>
+                                        <option value="West">W (အနောက်လှည့်)</option>
+                                        <option value="North">N (မြောက်လှည့်)</option>
+                                        <option value="South">S (တောင်လှည့်)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="BuildingNo">Building No</label>
+                                    <input type="number" placeholder="?" name="BuildingNo" id="BuildingNo" class="form-control" asp-for="BuildingNo" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Street">လမ်း</label>
+                                    <input type="text" placeholder="?" class="form-control" asp-for="Street" name="Street" id="Street" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Ward">ရပ်ကွက်</label>
+                                    <input type="text" placeholder="?" class="form-control" asp-for="Ward" id="Ward" name="Ward" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="CommentInfo">Comment / Info</label>
+                                    <input type="text" placeholder="?" class="form-control" asp-for="CommentInfo" name="CommentInfo" id="CommentInfo" />
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Ownership">Ownership</label>
+                                    <select class="form-select mb-1" id="Ownership" asp-for="Ownership" name="Ownership">
+                                        <option value="">{{All}}</option>
+                                        <option value="Grant_Original">Grant (မူရင်း)</option>
+                                        <option value="Grant_Copy">Grant (မိတ္တူ)</option>
+                                        <option value="Permit_Original">Permit (မူရင်း)</option>
+                                        <option value="Permit_Copy">Permit (မိတ္တူ)</option>
+                                        <option value="FreeHoldLand">FreeHold Land</option>
+                                        <option value="BCC">BCC</option>
+                                        <option value="Contract">အစဉ်အဆက်စာချုပ်</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="SalerOwnType">Saler Own Type</label>
+                                    <select class="form-select mb-1" id="SalerOwnType" name="SalerOwnType" asp-for="SalerOwnType">
+                                        <option value="">{{All}}</option>
+                                        <option value="1">အမည်ပေါက်</option>
+                                        <option value="2">Special Power</option>
+                                        <option value="3">General Owner</option>
+                                        <option value="4">အမွေဆက်ခံ</option>
+                                        <option value="5">ဂရံဂတုံး</option>
+                                        <option value="7">အဆက်ဆက်စာချုပ်</option>
+                                        <option value="6">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Floor">အလွှာ</label>
+                                    <select class="form-select mb-1" id="Floor" name="Floor" asp-for="Floor">
+                                        <option value="">{{All}}</option>
+                                        <option value="0">(လုံးချင်း / မြေကွက်)</option>
+                                        <option value="1">1 (မြေညီ)</option>
+                                        <option value="2">2 (ပထမထပ် (ခ) ၂လွှာ)</option>
+                                        <option value="3">3 (ဒုတိယထပ် (ိခ) ၃လွှာ)</option>
+                                        <option value="4">4 (တတိယထပ် (ိခ) ၄လွှာ)</option>
+                                        <option value="5">5 (စတုတ္ထထပ် (ိခ) ၅လွှာ)</option>
+                                        <option value="6">6 (ပဉ္စမထပ် (ခ) ၆လွှာ)</option>
+                                        <option value="7">7 (ဆဋ္ဌမထပ် (ခ) ၇လွှာ)</option>
+                                        <option value="8">8 (သတ္ထမထပ် (ခ) ၈လွှာ)</option>
+                                        <option value="9">9 (အဋ္ဌမထပ် (ခ) ၉လွှာ)</option>
+                                        <option value="10">10 (နဝမထပ် (ခ) ၁၀လွှာ)</option>
+                                        <option value="11">11 (ဒသမထပ် (ခ) ၁၁လွှာ)</option>
+                                        <option value="12">12 (၁၁ထပ် (ခ) ၁၂လွှာ)</option>
+                                        <option value="13">13 (၁၂ထပ် (ခ) ၁၃လွှာ)</option>
+                                        <option value="14">14 (၁၃ထပ် (ခ) ၁၄လွှာ)</option>
+                                        <option value="15">15 (၁၄ထပ် (ခ) ၁၅လွှာ)</option>
+                                        <option value="16">16 (၁၅ထပ် (ခ) ၁၆လွှာ)</option>
+                                        <option value="17">17 (၁၆ထပ် (ခ) ၁၇လွှာ)</option>
+                                        <option value="18">18 (၁၇ထပ် (ခ) ၁၈လွှာ)</option>
+                                        <option value="19">19 (၁၈ထပ် (ခ) ၁၉လွှာ)</option>
+                                        <option value="20">20 (၁၉ထပ် (ခ) ၂၀လွှာ)</option>
+                                        <option value="21">21 (၂၀ထပ် (ခ) ၂၁လွှာ)</option>
+                                        <option value="22">22 (၂၁ထပ် (ခ) ၂၂လွှာ)</option>
+                                        <option value="23">23 (၂၂ထပ် (ခ) ၂၃လွှာ)</option>
+                                        <option value="24">24 (၂၃ထပ် (ခ) ၂၄လွှာ)</option>
+                                        <option value="25">25 (၂၄ထပ် (ခ) ၂၅လွှာ)</option>
+                                        <option value="26">26 (၂၅ထပ် (ခ) ၂၆လွှာ)</option>
+                                        <option value="27">27 (၂၆ထပ် (ခ) ၂၇လွှာ)</option>
+                                        <option value="28">28 (၂၇ထပ် (ခ) ၂၈လွှာ)</option>
+                                        <option value="29">29 (၂၈ထပ် (ခ) ၂၉လွှာ)</option>
+                                        <option value="30">30 (၂၉ထပ် (ခ) ၃၀လွှာ)</option>
+                                        <option value="31">31 (၃၀ထပ် (ခ) ၃၁လွှာ)</option>
+                                        <option value="32">32 (၃၁ထပ် (ခ) ၃၂လွှာ)</option>
+                                        <option value="33">33 (၃၂ထပ် (ခ) ၃၃လွှာ)</option>
+                                        <option value="34">34 (၃၃ထပ် (ခ) ၃၄လွှာ)</option>
+                                        <option value="35">35 (၃၄ထပ် (ခ) ၃၅လွှာ)</option>
+                                        <option value="36">36 (၃၅ထပ် (ခ) ၃၆လွှာ)</option>
+                                        <option value="37">37 (၃၆ထပ် (ခ) ၃၇လွှာ)</option>
+                                        <option value="38">38 (၃၇ထပ် (ခ) ၃၈လွှာ)</option>
+                                        <option value="39">39 (၃၈ထပ် (ခ) ၃၉လွှာ)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Size</label>
+                                    <select class="form-select mb-1" id="Size" asp-items="@ViewBag.SizeList" name="Size" asp-for="Size">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Area">Area (SqFt)</label>
+                                    <select class="form-select mb-1" id="Area" asp-items="@ViewBag.AreaList" name="Area" asp-for="Area">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-12">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="MasterRoom">MB</label>
+                                            <select class="form-select mb-1" asp-for="MasterRoom" id="MasterRoom" name="MasterRoom">
+                                                <option value="">{{All}}</option>
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                                <option value="13">13</option>
+                                                <option value="14">14</option>
+                                                <option value="15">15</option>
+                                                <option value="16">16</option>
+                                                <option value="17">17</option>
+                                                <option value="18">18</option>
+                                                <option value="19">19</option>
+                                                <option value="20">20</option>
+                                                <option value="21">21</option>
+                                                <option value="22">22</option>
+                                                <option value="23">23</option>
+                                                <option value="24">24</option>
+                                                <option value="25">25</option>
+                                                <option value="26">26</option>
+                                                <option value="27">27</option>
+                                                <option value="28">28</option>
+                                                <option value="29">29</option>
+                                                <option value="30">30</option>
+                                                <option value="31">31</option>
+                                                <option value="32">32</option>
+                                                <option value="33">33</option>
+                                                <option value="34">34</option>
+                                                <option value="35">35</option>
+                                                <option value="36">36</option>
+                                                <option value="37">37</option>
+                                                <option value="38">38</option>
+                                                <option value="39">39</option>
+                                                <option value="40">40</option>
+                                                <option value="41">41</option>
+                                                <option value="42">42</option>
+                                                <option value="43">43</option>
+                                                <option value="44">44</option>
+                                                <option value="45">45</option>
+                                                <option value="46">46</option>
+                                                <option value="47">47</option>
+                                                <option value="48">48</option>
+                                                <option value="49">49</option>
+                                                <option value="50">50</option>
+                                                <option value="51">51</option>
+                                                <option value="52">52</option>
+                                                <option value="53">53</option>
+                                                <option value="54">54</option>
+                                                <option value="55">55</option>
+                                                <option value="56">56</option>
+                                                <option value="57">57</option>
+                                                <option value="58">58</option>
+                                                <option value="59">59</option>
+                                                <option value="60">60</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="form-group">
+                                            <label class="form-label" for="SigleRoom">SB</label>
+                                            <select class="form-select mb-1" id="SigleRoom" asp-for="SigleRoom" name="SigleRoom">
+                                                <option value="">{{All}}</option>
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                                <option value="9">9</option>
+                                                <option value="10">10</option>
+                                                <option value="11">11</option>
+                                                <option value="12">12</option>
+                                                <option value="13">13</option>
+                                                <option value="14">14</option>
+                                                <option value="15">15</option>
+                                                <option value="16">16</option>
+                                                <option value="17">17</option>
+                                                <option value="18">18</option>
+                                                <option value="19">19</option>
+                                                <option value="20">20</option>
+                                                <option value="21">21</option>
+                                                <option value="22">22</option>
+                                                <option value="23">23</option>
+                                                <option value="24">24</option>
+                                                <option value="25">25</option>
+                                                <option value="26">26</option>
+                                                <option value="27">27</option>
+                                                <option value="28">28</option>
+                                                <option value="29">29</option>
+                                                <option value="30">30</option>
+                                                <option value="31">31</option>
+                                                <option value="32">32</option>
+                                                <option value="33">33</option>
+                                                <option value="34">34</option>
+                                                <option value="35">35</option>
+                                                <option value="36">36</option>
+                                                <option value="37">37</option>
+                                                <option value="38">38</option>
+                                                <option value="39">39</option>
+                                                <option value="40">40</option>
+                                                <option value="41">41</option>
+                                                <option value="42">42</option>
+                                                <option value="43">43</option>
+                                                <option value="44">44</option>
+                                                <option value="45">45</option>
+                                                <option value="46">46</option>
+                                                <option value="47">47</option>
+                                                <option value="48">48</option>
+                                                <option value="49">49</option>
+                                                <option value="50">50</option>
+                                                <option value="51">51</option>
+                                                <option value="52">52</option>
+                                                <option value="53">53</option>
+                                                <option value="54">54</option>
+                                                <option value="55">55</option>
+                                                <option value="56">56</option>
+                                                <option value="57">57</option>
+                                                <option value="58">58</option>
+                                                <option value="59">59</option>
+                                                <option value="60">60</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="Status">Status</label>
+                                    <select class="form-select mb-1" id="Status" asp-for="Status" name="Status">
+                                        <option value="">{{All}}</option>
+                                        <option value="Available">Available</option>
+                                        <option value="NotAvailable">(ခေတ္တ) အရောင်းပိတ်/အငှားပိတ်</option>
+                                        <option value="Rent">အငှားရှိ</option>
+                                        <option value="Cancel">Cancel (Sold)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="PostStatus">Post Status</label>
+                                    <select class="form-select mb-1" asp-for="PostStatus" id="PostStatus" name="PostStatus">
+                                        <option value="">{{All}}</option>
+                                        <option value="NoPost">NoPost</option>
+                                        <option value="Posted">Posted</option>
+                                        <option value="Boost">Boost</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="required">မြို့နယ်</label>
+                            </div>
+                            <div class="col-12">
+                                <select id="Townships" name="Townships" asp-for="Townships" asp-items="@ViewBag.TownshipList" multiple="multiple" class="form-control">
+                                    <option value="">{{All}}</option>
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card shadow-sm">
+                                    <div class="card-header">
+                                        Facilities
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            @if (ViewData["Facilities"] is List<string> facilities)
+                                            {
+                                                int id = 0;
+                                                foreach (var facility in facilities)
+                                                {
+                                                    id++;
+                                                    <div class="col-md-6 col-sm-12 col-12 mb-3">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input border border-dark" type="checkbox" id="selectedFacility_@id" name="selectedFacilities" value="@facility" />
+                                                            <label class="form-check-label" for="selectedFacility_@id">@facility</label>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-secondary mt-3 text-center">Submit</button>
+                                <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Reset</a>
+                                <!-- Add Delete Button -->
+                                <a href="@Url.Action("PropertyList", "Property")" class="btn btn-info mt-3">Back To List</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm-12">
+        <div class="card mx-auto shadow">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Code</th>
+                            <th>မြို့နယ်</th>
+                            <th>လိပ်စာ</th>
+                            <th>Info</th>
+                            <th>Room</th>
+                            <th>Price(L)</th>
+                            <th>Owner</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody id="property-container">
+                        @await Html.PartialAsync("_PropertyPartial", Model)
+                    </tbody>
+                </table>
+            </div>
+             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 px-3">
+                <div class="mb-3 mb-md-0">
+                    <label for="pageSize" class="me-2">Page Size:</label>
+                    <select id="pageSize" class="form-select d-inline w-auto">
+                        @foreach (var size in Model.PageSizes)
+                        {
+                            <option value="@size" selected="@(size == Model.PageSize)">@size</option>
+                        }
+                    </select>
+                    <span class="ms-3"> @(Model.TotalPages == 0 ? 0 : Model.CurrentPage) — @Model.TotalPages of @Model.TotalItems </span>
+                </div>
+                <nav>
+                    <ul class="pagination justify-content-center flex-wrap">
+                        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                            <a class="page-link" href="#" onclick="changePage(@(Model.CurrentPage - 1))">Previous</a>
+                        </li>
+
+                        @if (Model.CurrentPage > 3)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="changePage(1)">1</a>
+                            </li>
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                        }
+
+                        @for (int pageItem = Model.CurrentPage; pageItem <= Model.TotalPages; pageItem++)
+                        {
+                            <li class="page-item @(pageItem == Model.CurrentPage ? "active" : "")">
+                                <a class="page-link" href="#" onclick="changePage(@pageItem)">@pageItem</a>
+                            </li>
+                        }
+
+                        @if (Model.CurrentPage < Model.TotalPages - 2)
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">...</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="changePage(@Model.TotalPages)">@Model.TotalPages</a>
+                            </li>
+                        }
+
+                        <li class="page-item @(Model.CurrentPage == Model.TotalPages || Model.TotalPages == 0 ? "disabled" : "")">
+                            <a class="page-link" href="#" onclick="changePage(@(Model.CurrentPage + 1))">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+      $(document).ready(function () {
+        $('#Townships').select2({
+            placeholder: "Select categories",
+            allowClear: true,
+            dropdownAutoWidth: true,
+            width: '100%'
+        });
+
+        $('#pageSize').change(function () {
+            changePageSize($(this).val());
+        });
+
+        // Submit button click event
+        $('button[type="submit"]').click(function (e) {
+            e.preventDefault(); // Prevent default form submission
+            fetchData(1, $('#pageSize').val()); // Fetch data with filters
+        });
+    });
+
+    function changePage(page) {
+        fetchData(page, $('#pageSize').val());
+    }
+
+    function changePageSize(size) {
+        fetchData(1, size);
+    }
+
+       function fetchData(page, pageSize) {
+        const filters = {
+            PropertyType: $('#PropertyType').val(),
+            BuildingType: $('#BuildingType').val(),
+            OwnerAgent: $('#OwnerAgent').val(),
+            Purpose: $('#Purpose').val(),
+            PriceFrom: $('#PriceFrom').val(),
+            PriceTo: $('#PriceTo').val(),
+            CondoName: $('#CondoName').val(),
+            Face: $('#Face').val(),
+            BuildingNo: $('#BuildingNo').val(),
+            Street: $('#Street').val(),
+            Ward: $('#Ward').val(),
+            CommentInfo: $('#CommentInfo').val(),
+            Ownership: $('#Ownership').val(),
+            SalerOwnType: $('#SalerOwnType').val(),
+            Floor: $('#Floor').val(),
+            Size: $('#Size').val(),
+            Area: $('#Area').val(),
+            MasterRoom: $('#MasterRoom').val(),
+            SigleRoom: $('#SigleRoom').val(),
+            Status: $('#Status').val(),
+            PostStatus: $('#PostStatus').val(),
+            Townships: $('#Townships').val(), // Townships as an array
+            Facilities: $('input[name="selectedFacilities"]:checked').map(function () {
+                return this.value;
+            }).get() // Facilities as an array
+        };
+
+        console.log('Filters:', filters);
+
+        // Send data to backend via AJAX
+        $.ajax({
+            url: '@Url.Action("GetProperties", "Property")', // Replace with your backend endpoint
+            type: 'GET', // Use GET or POST based on your backend
+            traditional: true, // Important for sending arrays in GET requests
+            data: {
+                page: page,
+                pageSize: pageSize,
+                propertyType: filters.PropertyType,
+                buildingType: filters.BuildingType,
+                ownerAgent: filters.OwnerAgent,
+                purpose: filters.Purpose,
+                priceFrom: filters.PriceFrom,
+                priceTo: filters.PriceTo,
+                condoName: filters.CondoName,
+                face: filters.Face,
+                buildingNo: filters.BuildingNo,
+                street: filters.Street,
+                ward: filters.Ward,
+                commentInfo: filters.CommentInfo,
+                ownership: filters.Ownership,
+                salerOwnType: filters.SalerOwnType,
+                floor: filters.Floor,
+                size: filters.Size,
+                area: filters.Area,
+                masterRoom: filters.MasterRoom,
+                sigleRoom: filters.SigleRoom,
+                status: filters.Status,
+                postStatus: filters.PostStatus,
+                townships: filters.Townships, // Townships as an array
+                facilities: filters.Facilities // Facilities as an array
+            },
+            success: function (response) {
+                $('#property-container').html(response); // Update the table with the new data
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data: ", error);
+            }
+        });
+    }
+</script>

@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Create Agent";
 }
-<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
 
 
 <div class="row my-3 mx-auto">
@@ -13,9 +12,9 @@
             <div class="row">
                 <!-- Left Column: Employee Details -->
                 <div class="col-md-12 col-sm-12">
-                    <div class="card mx-auto w-80">
+                    <div class="card mx-auto w-80 shadow">
                         <div class="card-header">
-                            Agent Information
+                            <span class="text-primary fw-bold"> Agent Information</span>
                         </div>
                         <div class="card-body">
                             <div class="form-group">
@@ -53,6 +52,8 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

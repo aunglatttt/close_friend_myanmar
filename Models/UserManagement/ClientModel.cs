@@ -38,7 +38,7 @@ namespace CloseFriendMyanamr.Models.UserManagement
 
         public string? Remark { get; set; }
 
-        public virtual List<ClientRequirementModel> ClientRequirements { get; set; }
+        public virtual List<ClientRequirementModel>? ClientRequirements { get; set; }
 
     }
 }

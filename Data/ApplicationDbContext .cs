@@ -1,6 +1,7 @@
 ﻿using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.Models.CashManagement;
 using CloseFriendMyanamr.Models.ClientManagement;
+using CloseFriendMyanamr.Models.Property;
 using CloseFriendMyanamr.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,5 +45,8 @@ namespace SimpleDataWebsite.Data
         #endregion
 
         public DbSet<TownshipModel> Township { get; set; }
+
+        public DbSet<PropertyModel> Property { get; set; }
+        public DbSet<PhotoModel> Photo { get; set; }
     }
 }

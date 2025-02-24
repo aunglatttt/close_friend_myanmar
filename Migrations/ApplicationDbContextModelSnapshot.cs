@@ -442,6 +442,158 @@ namespace CloseFriendMyanamr.Migrations
                     b.ToTable("Log");
                 });
 
+            modelBuilder.Entity("CloseFriendMyanamr.Models.Property.PhotoModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Location")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PropertyId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PropertyModelId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PropertyModelId");
+
+                    b.ToTable("Photo");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.Property.PropertyModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Area")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("AvailableDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Building")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BuildingType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Comment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CondoName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Face")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Facilities")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Floor")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastCheckedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Map")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MasterBed")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Ownership")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PropertyType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Purpose")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Remark")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RentCommision")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RentPrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("RentPriceCurrency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Room")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SaleCommission")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalePrice")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SalePriceCurrency")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SalerOwnerType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SingleBed")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Size")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Township")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ward")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Property");
+                });
+
             modelBuilder.Entity("CloseFriendMyanamr.Models.PropertyTypeModel", b =>
                 {
                     b.Property<int>("Id")
@@ -628,7 +780,7 @@ namespace CloseFriendMyanamr.Migrations
             modelBuilder.Entity("CloseFriendMyanamr.Models.ClientManagement.ClientRequirementModel", b =>
                 {
                     b.HasOne("CloseFriendMyanamr.Models.UserManagement.ClientModel", "Client")
-                        .WithMany()
+                        .WithMany("ClientRequirements")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -656,6 +808,34 @@ namespace CloseFriendMyanamr.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.Property.PhotoModel", b =>
+                {
+                    b.HasOne("CloseFriendMyanamr.Models.Property.PropertyModel", null)
+                        .WithMany("Photos")
+                        .HasForeignKey("PropertyModelId");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.Property.PropertyModel", b =>
+                {
+                    b.HasOne("CloseFriendMyanamr.Models.UserManagement.OwnerModel", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.Property.PropertyModel", b =>
+                {
+                    b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("CloseFriendMyanamr.Models.UserManagement.ClientModel", b =>
+                {
+                    b.Navigation("ClientRequirements");
                 });
 #pragma warning restore 612, 618
         }

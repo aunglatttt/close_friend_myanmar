@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CloseFriendMyanamr.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class initials : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -329,6 +329,58 @@ namespace CloseFriendMyanamr.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Property",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Code = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OwnerId = table.Column<int>(type: "int", nullable: false),
+                    PropertyType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BuildingType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Building = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Purpose = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Room = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Floor = table.Column<int>(type: "int", nullable: false),
+                    Street = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Ward = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CondoName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Township = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AvailableDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastCheckedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Remark = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Map = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Face = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Ownership = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SalerOwnerType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Area = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MasterBed = table.Column<int>(type: "int", nullable: false),
+                    SingleBed = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SalePrice = table.Column<int>(type: "int", nullable: false),
+                    RentPrice = table.Column<int>(type: "int", nullable: false),
+                    SaleCommission = table.Column<int>(type: "int", nullable: false),
+                    RentCommision = table.Column<int>(type: "int", nullable: false),
+                    Facilities = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostStatus = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    SalePriceCurrency = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RentPriceCurrency = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Property", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Property_Owner_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Owner",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Log",
                 columns: table => new
                 {
@@ -350,6 +402,27 @@ namespace CloseFriendMyanamr.Migrations
                         principalTable: "Employee",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Photo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PropertyId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PropertyModelId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Photo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Photo_Property_PropertyModelId",
+                        column: x => x.PropertyModelId,
+                        principalTable: "Property",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -376,6 +449,16 @@ namespace CloseFriendMyanamr.Migrations
                 name: "IX_Log_EmployeeId",
                 table: "Log",
                 column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Photo_PropertyModelId",
+                table: "Photo",
+                column: "PropertyModelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Property_OwnerId",
+                table: "Property",
+                column: "OwnerId");
         }
 
         /// <inheritdoc />
@@ -409,7 +492,7 @@ namespace CloseFriendMyanamr.Migrations
                 name: "Log");
 
             migrationBuilder.DropTable(
-                name: "Owner");
+                name: "Photo");
 
             migrationBuilder.DropTable(
                 name: "PropertyType");
@@ -430,7 +513,13 @@ namespace CloseFriendMyanamr.Migrations
                 name: "Employee");
 
             migrationBuilder.DropTable(
+                name: "Property");
+
+            migrationBuilder.DropTable(
                 name: "EmployeeType");
+
+            migrationBuilder.DropTable(
+                name: "Owner");
         }
     }
 }

@@ -1,12 +1,15 @@
 ﻿using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.Models.UserManagement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
+using System.Security.Claims;
 
 namespace CloseFriendMyanamr.Controllers
 {
+    [Authorize]
     public class UserManagementController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -50,6 +53,9 @@ namespace CloseFriendMyanamr.Controllers
             if (ModelState.IsValid)
             {
                 string returnMsg = "Created";
+                var log = new LogModel();
+                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Client.FindAsync(model.Id);
@@ -64,6 +70,7 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.Status = model.Status;
 
                         returnMsg = "Updated";
+                        log.Logs = $"{loginUserName} Modify Client ({existingModel.ClientName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                     }
                 }
                 else
@@ -72,12 +79,22 @@ namespace CloseFriendMyanamr.Controllers
                     _context.Client.Add(model);
 
                     returnMsg = "Created";
+                    log.Logs = $"{loginUserName} Add new Client ({model.ClientName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
+
+                #region log area
+                log.EmployeeId = int.Parse(userId ?? "0");
+                log.LogsDate = DateTime.Now;
+                log.Type = "ClientRelated";
+
+                _context.Log.Add(log);
+                #endregion
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("SuccessClient", new { message = returnMsg });
             }
-            return View();
+            return View(model);
         }
 
         [HttpPost]
@@ -122,6 +139,9 @@ namespace CloseFriendMyanamr.Controllers
             if (ModelState.IsValid)
             {
                 string returnMsg = "Created";
+                var log = new LogModel();
+                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Owner.FindAsync(model.Id);
@@ -134,6 +154,7 @@ namespace CloseFriendMyanamr.Controllers
                         model.UpdatedAt = DateTime.Now;
 
                         returnMsg = "Updated";
+                        log.Logs = $"{loginUserName} Modify Partner ({existingModel.OwnerName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                     }
                 }
                 else
@@ -142,7 +163,17 @@ namespace CloseFriendMyanamr.Controllers
                     _context.Owner.Add(model);
 
                     returnMsg = "Created";
+                    log.Logs = $"{loginUserName} Add new Partner ({model.OwnerName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
+
+                #region log area
+                log.EmployeeId = int.Parse(userId ?? "0");
+                log.LogsDate = DateTime.Now;
+                log.Type = "OwnerRelated";
+
+                _context.Log.Add(log);
+                #endregion
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("SuccessOwner", new { message = returnMsg });
@@ -207,6 +238,9 @@ namespace CloseFriendMyanamr.Controllers
             if (ModelState.IsValid)
             {
                 string returnMsg = "Created";
+                var log = new LogModel();
+                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Agent.FindAsync(model.Id);
@@ -220,6 +254,7 @@ namespace CloseFriendMyanamr.Controllers
                         model.UpdatedAt = DateTime.Now;
 
                         returnMsg = "Updated";
+                        log.Logs = $"{loginUserName} Modify Partner ({existingModel.AgentName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                     }
                 }
                 else
@@ -228,7 +263,17 @@ namespace CloseFriendMyanamr.Controllers
                     _context.Agent.Add(model);
 
                     returnMsg = "Created";
+                    log.Logs = $"{loginUserName} Add new Partner ({model.AgentName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
+
+                #region log area
+                log.EmployeeId = int.Parse(userId ?? "0");
+                log.LogsDate = DateTime.Now;
+                log.Type = "AgentRelated";
+
+                _context.Log.Add(log);
+                #endregion
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("SuccessAgent", new { message = returnMsg });

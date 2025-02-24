@@ -1,15 +1,19 @@
-﻿using CloseFriendMyanamr.Models.CashManagement;
+﻿using CloseFriendMyanamr.Models;
+using CloseFriendMyanamr.Models.CashManagement;
 using CloseFriendMyanamr.Models.UserManagement;
 using CloseFriendMyanamr.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using SimpleDataWebsite.Data;
 using System;
+using System.Security.Claims;
 
 namespace CloseFriendMyanamr.Controllers
 {
+    [Authorize]
     public class CashManagementController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -53,6 +57,10 @@ namespace CloseFriendMyanamr.Controllers
                     await _context.IncomeTitle.AsNoTracking().Where(x => x.Id == model.IncomeTitleId).Select(x => x.Name).FirstOrDefaultAsync()??""
                     : "";
 
+                var log = new LogModel();
+                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
+
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Income.FindAsync(model.Id);
@@ -67,6 +75,7 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.UpdatedAt = DateTime.Now;
 
                         title = "Company Income Updated";
+                        log.Logs = $"{loginUserName} Update Income ({existingModel.Amount} to Cash) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                     }
                 }
                 else
@@ -88,7 +97,17 @@ namespace CloseFriendMyanamr.Controllers
                     _context.CashBookTransaction.Add(newCashBookTransaction);
                     #endregion
                     title = "Company Income Created";
+                    log.Logs = $"{loginUserName} Add Income ({model.Amount} to Cash) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
+
+                #region log area
+                log.EmployeeId = int.Parse(userId ?? "0");
+                log.LogsDate = DateTime.Now;
+                log.Type = "AccountRelated";
+
+                _context.Log.Add(log);
+                #endregion
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("SuccessComponent", "Home", new { Title = title, Message = "Your company income data has been saved.", ActionName = "CompanyIncome", ActionName2 = "IncomeList", BtnName = "New Income", ControllerName = "CashManagement" });
@@ -192,6 +211,10 @@ namespace CloseFriendMyanamr.Controllers
                     await _context.ExpenseTitle.AsNoTracking().Where(x => x.Id == model.ExpenseTitleId).Select(x => x.Name).FirstOrDefaultAsync()??""
                     : "";
 
+                var log = new LogModel();
+                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
+
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Expense.FindAsync(model.Id);
@@ -206,6 +229,8 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.UpdatedAt = DateTime.Now;
 
                         title = "Company Expense Updated";
+
+                        log.Logs = $"{loginUserName} Update Expense ({existingModel.Amount} From Cash) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                     }
                 }
                 else
@@ -227,7 +252,15 @@ namespace CloseFriendMyanamr.Controllers
                     _context.CashBookTransaction.Add(newCashBookTransaction);
                     #endregion
                     title = "Company Expense Created";
+                    log.Logs = $"{loginUserName} Add Expense ({model.Amount} From Cash) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
+                #region log area
+                log.EmployeeId = int.Parse(userId ?? "0");
+                log.LogsDate = DateTime.Now;
+                log.Type = "AccountRelated";
+
+                _context.Log.Add(log);
+                #endregion
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction("SuccessComponent", "Home", new { Title = title, Message = "Your company expense data has been saved.", ActionName = "CompanyExpense", ActionName2 = "ExpenseList", BtnName = "New Expense", ControllerName = "CashManagement" });
@@ -306,13 +339,26 @@ namespace CloseFriendMyanamr.Controllers
         {
             if (ModelState.IsValid)
             {
+                string fromtitle = "";
                 string defDesc = "Account Transfer From: Main Cash, To: APM AYA Bank, Remark: ";
                 string title = "Account transfer data added";
                 model.Descritpion = defDesc + model.Descritpion;
                 model.Account = model.TransactionType == "Debit" ? "APM AYA Bank" : "Cash";
+                fromtitle = model.TransactionType == "Debit" ? "Cash" : "APM AYA Bank";
                 model.CreatedAt = DateTime.Now;
                 _context.CashBookTransaction.Add(model);
 
+                #region log area
+                var log = new LogModel();
+                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
+                log.Logs = $"{loginUserName} Add Transfer ({model.Amount} from {fromtitle} to {model.Account}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                log.EmployeeId = int.Parse(userId ?? "0");
+                log.LogsDate = DateTime.Now;
+                log.Type = "AccountRelated";
+
+                _context.Log.Add(log);
+                #endregion
 
                 await _context.SaveChangesAsync();
 

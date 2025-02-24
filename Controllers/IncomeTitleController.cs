@@ -1,10 +1,12 @@
 ﻿using CloseFriendMyanamr.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
 
 namespace CloseFriendMyanamr.Controllers
 {
+    [Authorize]
     public class IncomeTitleController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -342,7 +344,7 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> LogList(int id)
         {
-            return View(await _context.Log.AsNoTracking().ToListAsync());
+            return View(await _context.Log.AsNoTracking().OrderByDescending(x => x.LogsDate).Include(x => x.Employee).ToListAsync());
         }
     }
 }

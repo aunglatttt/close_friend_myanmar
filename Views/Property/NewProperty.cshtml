@@ -1,112 +1,661 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model CloseFriendMyanamr.Models.Property.PropertyModel
+
 @{
+    var selectedFacilities = ViewBag.SelectedFacilities as string[];
 }
-<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" /> 
+@* <link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" /> *@
 
 
-<div class="row">
+<div class="row mb-4">
     <div class="col-sm-12">
-        <div class="row">
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card border-left-primary h-70 shadow py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Code :
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" checked />
-                                            <label class="form-check-label" for="selectedFacility">Auto</label>
+        <form method="post" asp-action="NewProperty">
+            <div class="row">
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-4 col-md-6 mb-1">
+                    <div class="card border-left-primary h-70 shadow py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Code :
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" checked />
+                                                <label class="form-check-label" for="selectedFacility">Auto</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12" id="autoFields">
+                                            <input class="form-control" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
+                                            <input class="form-control" type="text" asp-for="Code" placeholder="" id="Code" name="Code" style="display: none;" />
                                         </div>
                                     </div>
-                                    <div class="col-12" id="autoFields">
-                                        <input class="form-control" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
-                                        <input class="form-control" type="text" placeholder="" id="inputRegular" style="display: none;" />
-                                    </div>
-                                </div>
 
-                            </div>
-                            <div class="col-auto">
-                                <i class="fa-solid fa-circle-info fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fa-solid fa-circle-info fa-2x text-gray-300"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Pending Requests Card Example -->
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card border-left-warning h-70 shadow py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="row">
+                <!-- Pending Requests Card Example -->
+                <div class="col-xl-4 col-md-6 mb-1">
+                    <div class="card border-left-warning h-70 shadow py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                         Available Date :
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label class="form-label">@(Model.Id > 0 ? Model.AvailableDate.ToString("MMM dd, yyyy") : "Not Defined Yet.")</label>
+                                        </div>
+                                    </div>
+
                                 </div>
                                 <div class="col-auto">
                                     <i class="fa-solid fa-triangle-exclamation fa-2x text-gray-300"></i>
                                 </div>
                             </div>
-                            <div class="row mt-3">
+                           <div class="row no-gutters align-items-center mt-4">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                         Last Checked Date :
                                     </div>
-                                    <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <label class="form-label">@(Model.Id > 0 ? Model.LastCheckedDate.ToString("MMM dd, yyyy") : "Not Defined Yet.")</label>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-auto">
                                     <i class="fa-solid fa-triangle-exclamation fa-2x text-gray-300"></i>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Earnings (Monthly) Card Example -->
-            <div class="col-xl-4 col-md-6 mb-4">
-                <div class="card border-left-info h-70 shadow py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col-12 mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Status:
+                <!-- Earnings (Monthly) Card Example -->
+                <div class="col-xl-4 col-md-6 mb-1">
+                    <div class="card border-left-info h-70 shadow py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-12 mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Status:
+                                    </div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <select class="form-select mb-1" asp-for="Status" id="Status" name="Status" data-val="true" data-val-required="Purpose is required.">
+                                                    <option value="Available">Available</option>
+                                                    <option value="NotAvailable">(ခေတ္တ) အရောင်းပိတ်/အငှားပိတ်</option>
+                                                    <option value="Rent">အငှားရှိ</option>
+                                                    <option value="Cancel">Cancel (Sold)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                                <option value="1">Available</option>
-                                                <option value="2">(ခေတ္တ) အရောင်းပိတ်/အငှားပိတ်</option>
-                                                <option value="2">အငှားရှိ</option>
-                                                <option value="2">Cancel (Sold)</option>
-                                            </select>
+                                <div class="col-12 mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Status:
+                                    </div>
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <select class="form-select mb-1" asp-for="PostStatus" id="PostStatus" name="PostStatus" data-val="true" data-val-required="Purpose is required.">
+                                                    <option value="NoPost">NoPost</option>
+                                                    <option value="Posted">Posted</option>
+                                                    <option value="Boost">Boost</option>
+                                                </select>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Status:
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            @if (!string.IsNullOrEmpty(ViewBag.Error)){
+                <div class="row">
+                    <div class="col-12">
+                        <div class="alert alert-danger" role="alert">
+                            @ViewBag.Error
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="row mt-3">
+                <div class="col-lg-6">
+                    <div class="card mx-auto shadow">
+                        <div class="card-header">
+                            <span class="text-primary fw-bold">General Information</span> 
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Owner </label>
+                                        <select class="form-select mb-1" id="OwnerId" asp-for="OwnerId" asp-items="@ViewBag.OwnerList" name="OwnerId" data-val="true" data-val-required="Purpose is required.">
+                                            <option value="0">{{အသစ်ထည့်ရန်}}</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="row no-gutters align-items-center">
-                                    <div class="col">
-                                        <div class="form-group">
-                                            <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                                <option value="1">NoPost</option>
-                                                <option value="1">Posted</option>
-                                                <option value="2">Boost</option>
-                                            </select>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Property Type</label>
+                                        <select class="form-select mb-1" asp-for="PropertyType" id="PropertyType" asp-items="@ViewBag.PropertyTypeList" name="PropertyType" data-val="true" data-val-required="Purpose is required.">
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Building Type</label>
+                                        <select class="form-select mb-1" id="BuildingType" asp-for="BuildingType" name="BuildingType" asp-items="@ViewBag.BuildingTypeList" data-val="true" data-val-required="Purpose is required.">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label>အမှတ်</label>
+                                        <input placeholder="?" id="Building" name="Building" asp-for="Building" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label>အခန်း</label>
+                                        <input placeholder="?" class="form-control" id="Room" asp-for="Room" name="Room" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">အလွှာ (Level)</label>
+                                        <select class="form-select mb-1" id="Floor" name="Floor" asp-for="Floor" data-val="true" data-val-required="Purpose is required.">
+                                            <option value="0">(လုံးချင်း / မြေကွက်)</option>
+                                            <option value="1">1 (မြေညီ)</option>
+                                            <option value="2">2 (ပထမထပ် (ခ) ၂လွှာ)</option>
+                                            <option value="3">3 (ဒုတိယထပ် (ိခ) ၃လွှာ)</option>
+                                            <option value="4">4 (တတိယထပ် (ိခ) ၄လွှာ)</option>
+                                            <option value="5">5 (စတုတ္ထထပ် (ိခ) ၅လွှာ)</option>
+                                            <option value="6">6 (ပဉ္စမထပ် (ခ) ၆လွှာ)</option>
+                                            <option value="7">7 (ဆဋ္ဌမထပ် (ခ) ၇လွှာ)</option>
+                                            <option value="8">8 (သတ္ထမထပ် (ခ) ၈လွှာ)</option>
+                                            <option value="9">9 (အဋ္ဌမထပ် (ခ) ၉လွှာ)</option>
+                                            <option value="10">10 (နဝမထပ် (ခ) ၁၀လွှာ)</option>
+                                            <option value="11">11 (ဒသမထပ် (ခ) ၁၁လွှာ)</option>
+                                            <option value="12">12 (၁၁ထပ် (ခ) ၁၂လွှာ)</option>
+                                            <option value="13">13 (၁၂ထပ် (ခ) ၁၃လွှာ)</option>
+                                            <option value="14">14 (၁၃ထပ် (ခ) ၁၄လွှာ)</option>
+                                            <option value="15">15 (၁၄ထပ် (ခ) ၁၅လွှာ)</option>
+                                            <option value="16">16 (၁၅ထပ် (ခ) ၁၆လွှာ)</option>
+                                            <option value="17">17 (၁၆ထပ် (ခ) ၁၇လွှာ)</option>
+                                            <option value="18">18 (၁၇ထပ် (ခ) ၁၈လွှာ)</option>
+                                            <option value="19">19 (၁၈ထပ် (ခ) ၁၉လွှာ)</option>
+                                            <option value="20">20 (၁၉ထပ် (ခ) ၂၀လွှာ)</option>
+                                            <option value="21">21 (၂၀ထပ် (ခ) ၂၁လွှာ)</option>
+                                            <option value="22">22 (၂၁ထပ် (ခ) ၂၂လွှာ)</option>
+                                            <option value="23">23 (၂၂ထပ် (ခ) ၂၃လွှာ)</option>
+                                            <option value="24">24 (၂၃ထပ် (ခ) ၂၄လွှာ)</option>
+                                            <option value="25">25 (၂၄ထပ် (ခ) ၂၅လွှာ)</option>
+                                            <option value="26">26 (၂၅ထပ် (ခ) ၂၆လွှာ)</option>
+                                            <option value="27">27 (၂၆ထပ် (ခ) ၂၇လွှာ)</option>
+                                            <option value="28">28 (၂၇ထပ် (ခ) ၂၈လွှာ)</option>
+                                            <option value="29">29 (၂၈ထပ် (ခ) ၂၉လွှာ)</option>
+                                            <option value="30">30 (၂၉ထပ် (ခ) ၃၀လွှာ)</option>
+                                            <option value="31">31 (၃၀ထပ် (ခ) ၃၁လွှာ)</option>
+                                            <option value="32">32 (၃၁ထပ် (ခ) ၃၂လွှာ)</option>
+                                            <option value="33">33 (၃၂ထပ် (ခ) ၃၃လွှာ)</option>
+                                            <option value="34">34 (၃၃ထပ် (ခ) ၃၄လွှာ)</option>
+                                            <option value="35">35 (၃၄ထပ် (ခ) ၃၅လွှာ)</option>
+                                            <option value="36">36 (၃၅ထပ် (ခ) ၃၆လွှာ)</option>
+                                            <option value="37">37 (၃၆ထပ် (ခ) ၃၇လွှာ)</option>
+                                            <option value="38">38 (၃၇ထပ် (ခ) ၃၈လွှာ)</option>
+                                            <option value="39">39 (၃၈ထပ် (ခ) ၃၉လွှာ)</option>
+                                        </select>
+                                    
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">အလှည့်</label>
+                                        <select class="form-select mb-1" id="Face" asp-for="Face" name="Face" data-val="true" data-val-required="Purpose is required.">
+                                            <option value="None">{မသိ}</option>
+                                            <option value="East">E (အရှေ့လှည့်)</option>
+                                            <option value="West">W (အနောက်လှည့်)</option>
+                                            <option value="North">N (မြောက်လှည့်)</option>
+                                            <option value="South">S (တောင်လှည့်)</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">လမ်း</label>
+                                        <input placeholder="?" id="Street" name="Street" asp-for="Street" class="form-control" />
+                                        <span class="text-danger" asp-validation-for="Street"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label>ရပ်ကွက်</label>
+                                        <input placeholder="?" id="Ward" name="Ward" asp-for="Ward" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label>အိမ်ယာ/ကွန်ဒို</label>
+                                        <input placeholder="?" asp-for="CondoName" name="CondoName" id="CondoName" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">မြို့နယ်</label>
+                                        <select class="form-select mb-1" id="Township" asp-for="Township" asp-items="@ViewBag.TownshipList" name="Township" data-val="true" data-val-required="Purpose is required.">
+                                            <option value="">{{ရွေးပါ}}</option>
+                                        </select>
+                                        <span class="text-danger" asp-validation-for="Township"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Registration Date</label>
+                                        <input type="date" placeholder="?" asp-for="RegistrationDate" name="RegistrationDate" id="RegistrationDate" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Available Date</label>
+                                        <input type="date" placeholder="?" asp-for="AvailableDate" name="AvailableDate" id="AvailableDate" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Last Checked Date</label>
+                                        <input type="date" placeholder="?" asp-for="LastCheckedDate" name="LastCheckedDate" id="LastCheckedDate" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>မှတ်ချက်</label>
+                                        <textarea class="form-control" asp-for="Remark" name="Remark" id="Remark" style="height: 5em;"></textarea>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Map</label>
+                                        <input placeholder="?" name="Map" asp-for="Map" id="Map" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-secondary mt-3 text-center">Submit</button>
+                                    <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-primary mt-3 text-center">Gallery</a>
+                                    <!-- Add Delete Button -->
+                                    <a href="@Url.Action("SearchProperty", "Property")" class="btn btn-info mt-3">Back To List</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card mx-auto shadow">
+                        <div class="card-header">
+                             <span class="text-primary fw-bold">Property Information</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Ownership</label>
+                                        <select class="form-select mb-1" asp-for="Township" id="Ownership" name="Ownership" data-val="true" data-val-required="Purpose is required.">
+                                            <option value="Grant_Original">Grant (မူရင်း)</option>
+                                            <option value="Grant_Copy">Grant (မိတ္တူ)</option>
+                                            <option value="Permit_Original">Permit (မူရင်း)</option>
+                                            <option value="Permit_Copy">Permit (မိတ္တူ)</option>
+                                            <option value="FreeHoldLand">FreeHold Land</option>
+                                            <option value="BCC">BCC</option>
+                                            <option value="Contract">အစဉ်အဆက်စာချုပ်</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Saler Own Type</label>
+                                        <select class="form-select mb-1" asp-for="SalerOwnerType" id="SalerOwnerType" name="SalerOwnerType" data-val="true" data-val-required="Purpose is required.">
+                                            <option value="1">အမည်ပေါက်</option>
+                                            <option value="2">Special Power</option>
+                                            <option value="3">General Owner</option>
+                                            <option value="4">အမွေဆက်ခံ</option>
+                                            <option value="5">ဂရံဂတုံး</option>
+                                            <option value="7">အဆက်ဆက်စာချုပ်</option>
+                                            <option value="6">Other</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3 col-sm-12">
+                                    <div class="form-group">
+                                        <label>(အလျှား x အနံ)</label>
+                                        <input placeholder="?" name="Size" asp-for="Size" id="Size" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-12">
+                                    <div class="form-group">
+                                        <label>Area (SqFt)</label>
+                                        <input placeholder="?" name="Area" asp-for="Area" id="Area" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-12">
+                                    <div class="form-group">
+                                        <label>MB</label>
+                                        <select class="form-select mb-1" id="MasterBed" asp-for="MasterBed" name="MasterBed" data-val="true" data-val-required="Purpose is required.">
+                                            <option selected="selected" value="0">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                            <option value="13">13</option>
+                                            <option value="14">14</option>
+                                            <option value="15">15</option>
+                                            <option value="16">16</option>
+                                            <option value="17">17</option>
+                                            <option value="18">18</option>
+                                            <option value="19">19</option>
+                                            <option value="20">20</option>
+                                            <option value="21">21</option>
+                                            <option value="22">22</option>
+                                            <option value="23">23</option>
+                                            <option value="24">24</option>
+                                            <option value="25">25</option>
+                                            <option value="26">26</option>
+                                            <option value="27">27</option>
+                                            <option value="28">28</option>
+                                            <option value="29">29</option>
+                                            <option value="30">30</option>
+                                            <option value="31">31</option>
+                                            <option value="32">32</option>
+                                            <option value="33">33</option>
+                                            <option value="34">34</option>
+                                            <option value="35">35</option>
+                                            <option value="36">36</option>
+                                            <option value="37">37</option>
+                                            <option value="38">38</option>
+                                            <option value="39">39</option>
+                                            <option value="40">40</option>
+                                            <option value="41">41</option>
+                                            <option value="42">42</option>
+                                            <option value="43">43</option>
+                                            <option value="44">44</option>
+                                            <option value="45">45</option>
+                                            <option value="46">46</option>
+                                            <option value="47">47</option>
+                                            <option value="48">48</option>
+                                            <option value="49">49</option>
+                                            <option value="50">50</option>
+                                            <option value="51">51</option>
+                                            <option value="52">52</option>
+                                            <option value="53">53</option>
+                                            <option value="54">54</option>
+                                            <option value="55">55</option>
+                                            <option value="56">56</option>
+                                            <option value="57">57</option>
+                                            <option value="58">58</option>
+                                            <option value="59">59</option>
+                                            <option value="60">60</option>
+                                        </select>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-12">
+                                    <div class="form-group">
+                                        <label>SB</label>
+                                        <select class="form-select mb-1" id="SingleBed" asp-for="SingleBed" name="SingleBed" data-val="true" data-val-required="Purpose is required.">
+                                            <option selected="selected" value="0">0</option>
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                            <option value="13">13</option>
+                                            <option value="14">14</option>
+                                            <option value="15">15</option>
+                                            <option value="16">16</option>
+                                            <option value="17">17</option>
+                                            <option value="18">18</option>
+                                            <option value="19">19</option>
+                                            <option value="20">20</option>
+                                            <option value="21">21</option>
+                                            <option value="22">22</option>
+                                            <option value="23">23</option>
+                                            <option value="24">24</option>
+                                            <option value="25">25</option>
+                                            <option value="26">26</option>
+                                            <option value="27">27</option>
+                                            <option value="28">28</option>
+                                            <option value="29">29</option>
+                                            <option value="30">30</option>
+                                            <option value="31">31</option>
+                                            <option value="32">32</option>
+                                            <option value="33">33</option>
+                                            <option value="34">34</option>
+                                            <option value="35">35</option>
+                                            <option value="36">36</option>
+                                            <option value="37">37</option>
+                                            <option value="38">38</option>
+                                            <option value="39">39</option>
+                                            <option value="40">40</option>
+                                            <option value="41">41</option>
+                                            <option value="42">42</option>
+                                            <option value="43">43</option>
+                                            <option value="44">44</option>
+                                            <option value="45">45</option>
+                                            <option value="46">46</option>
+                                            <option value="47">47</option>
+                                            <option value="48">48</option>
+                                            <option value="49">49</option>
+                                            <option value="50">50</option>
+                                            <option value="51">51</option>
+                                            <option value="52">52</option>
+                                            <option value="53">53</option>
+                                            <option value="54">54</option>
+                                            <option value="55">55</option>
+                                            <option value="56">56</option>
+                                            <option value="57">57</option>
+                                            <option value="58">58</option>
+                                            <option value="59">59</option>
+                                            <option value="60">60</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <label>Comment / Info</label>
+                                        <textarea class="form-control" name="Comment" asp-for="Comment" id="Comment" style="height: 5em;"></textarea>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3 col-sm-12 col-12 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input border border-dark" asp-for="PurposeSale" type="checkbox" id="PurposeSale" name="PurposeSale" />
+                                        <label class="form-check-label fw-bold" for="PurposeSale">အရောင်း</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12 col-12 mb-3">
+                                    <div class="form-group">
+                                        <label>ရောင်းဈေး (သိန်း)</label>
+                                        <input placeholder="?" asp-for="SalePrice" name="SalePrice" id="SalePrice" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">အကျိုးဆောင်ခ</label>
+                                        <select class="form-select mb-1" id="SaleCommission" asp-for="SaleCommission" name="SaleCommission" data-val="true" data-val-required="Purpose is required.">
+                                            <option selected value="1">2% (အပြည့်အဝ)</option>
+                                            <option value="2">1% (တစ်ဝက်)</option>
+                                            <option value="3">1/3 (သုံးပုံတစ်ပုံ)</option>
+                                            <option value="4">အကျိုးတူ (အညီမျှ)</option>
+                                            <option value="5">အဆင်ပြေသလို ညှိယူရန်</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3 col-sm-12 col-12 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input border border-dark" asp-for="PurposeRent" type="checkbox" id="PurposeRent" name="PurposeRent" />
+                                        <label class="form-check-label fw-bold" for="PurposeRent">အငှား</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12 col-12 mb-3">
+                                    <div class="form-group">
+                                        <label>ငှားဈေး (သိန်း)</label>
+                                        <input placeholder="?" asp-for="RentPrice" id="RentPrice" name="RentPrice" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">အကျိုးဆောင်ခ</label>
+                                        <select class="form-select mb-1" id="RentCommision" asp-for="RentCommision" name="RentCommision" data-val="true" data-val-required="Purpose is required.">
+                                            <option selected value="1">၁လစာ (အိမ်ရှင်+အိမ်ငှား)</option>
+                                            <option value="2">၁လစာ (တစ်ခြမ်း)</option>
+                                            <option value="3">1/3 (သုံးပုံတစ်ပုံ)</option>
+                                            <option value="4">အကျိုးတူ (အညီအမျှ)</option>
+                                            <option value="5">အဆင်ပြေသလို ညှိယူရန်</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mx-auto mt-3 shadow-sm">
+                        <div class="card-header">
+                             <span class="text-primary fw-bold">Facilities</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                @if (ViewData["Facilities"] is List<string> facilities)
+                                {
+                                    int id = 0;
+                                    foreach (var facility in facilities)
+                                    {
+                                        id++;
+                                        <div class="col-md-4 col-sm-12 col-12 mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input border border-dark" type="checkbox" id="selectedFacility_@id" name="selectedFacilities" value="@facility"
+                                                @(selectedFacilities != null && selectedFacilities.Contains(facility) ? "checked" : "") />
+                                                <label class="form-check-label" for="selectedFacility_@id">@facility</label>
+                                            </div>
                                         </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mx-auto mt-3 shadow">
+                        <div class="card-header">
+                             <span class="text-primary fw-bold">Owner Information</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Name </label>
+                                        <input placeholder="?" name="OwnerName" asp-for="OwnerName" id="OwnerName" class="form-control" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Phone </label>
+                                        <input placeholder="?" name="OwnerPhone" asp-for="OwnerPhone" id="OwnerPhone" class="form-control" />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label class="required">Owner Type</label>
+                                        <select class="form-select mb-1" id="OwnerTypeSelect" asp-for="OwnerTypeSelect" name="OwnerTypeSelect" data-val="true" data-val-required="Purpose is required.">
+                                            <option selected="selected" value="1">ပိုင်ရှင်တိုက်ရိုက်</option>
+                                            <option value="2">အကျိုးဆောင်</option>
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-12 col-12">
+                                    <div class="form-group">
+                                        <label>Address</label>
+                                        <textarea class="form-control" name="OwnerAddress" asp-for="OwnerAddress" id="OwnerAddress" style="height: 1em;"></textarea>
+                                        <span class="text-danger"></span>
                                     </div>
                                 </div>
                             </div>
@@ -114,245 +663,18 @@
                     </div>
                 </div>
             </div>
-
-        </div>
-
-        <div class="row">
-            <div class="col-lg-6">
-                <div class="card mx-auto w-90">
-                    <div class="card-header">
-                        General Information
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required">Owner </label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required">Property Type</label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required">Building Type</label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>အမှတ်</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span  class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>အခန်း</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required">Building Type</label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>အလှည့်</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>လမ်း</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>ရပ်ကွက်</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label>အိမ်ယာ/ကွန်ဒို</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label>မြို့နယ်</label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>Registration Date</label>
-                                    <input type="date" placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>Available Date</label>
-                                    <input type="date" placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label>Last Checked Date</label>
-                                    <input type="date" placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>မှတ်ချက်</label>
-                                    <textarea style="height: 5em;"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Map</label>
-                                    <input placeholder="?" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="card mx-auto w-90">
-                    <div class="card-header">
-                        Property Information
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required">Owner </label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6 col-sm-12">
-                                <div class="form-group">
-                                    <label class="required">Property Type</label>
-                                    <select class="form-select mb-1" id="Purpose" name="Purpose" data-val="true" data-val-required="Purpose is required.">
-                                        <option value="1">ဝယ်ရန်</option>
-                                        <option value="2">ငှားရန်</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-md-3 col-sm-12">
-                                <div class="form-group">
-                                    <label>အမှတ်</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-12">
-                                <div class="form-group">
-                                    <label>အခန်း</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-12">
-                                <div class="form-group">
-                                    <label>အခန်း</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                            <div class="col-md-3 col-sm-12">
-                                <div class="form-group">
-                                    <label>အခန်း</label>
-                                    <input placeholder="?" class="form-control" />
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>မှတ်ချက်</label>
-                                    <textarea style="height: 5em;"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="form-group">
-                                    <label>Map</label>
-                                    <input placeholder="?" class="form-control" />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
-
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
 <script>
      document.getElementById("selectedFacility").addEventListener("change", function() {
         const inputAutoGenerate = document.getElementById("inputAutoGenerate");
-        const inputRegular = document.getElementById("inputRegular");
+        const inputRegular = document.getElementById("Code");
 
         if (this.checked) {
             inputAutoGenerate.style.display = "block";  // Show the "Auto Generate" field
@@ -367,10 +689,10 @@
     // Initial check when the page loads to set the correct state.
     if (document.getElementById("selectedFacility").checked) {
         document.getElementById("inputAutoGenerate").style.display = "block";
-        document.getElementById("inputRegular").style.display = "none";
+        document.getElementById("Code").style.display = "none";
     } else {
         document.getElementById("inputAutoGenerate").style.display = "none";
-        document.getElementById("inputRegular").style.display = "block";
+        document.getElementById("Code").style.display = "block";
     }
 
 

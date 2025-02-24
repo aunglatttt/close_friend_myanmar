@@ -1,0 +1,62 @@
+﻿@model List<CloseFriendMyanamr.Models.Property.PhotoModel>
+
+<h3>Photo Gallery</h3>
+
+<form asp-action="Upload" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-12">
+            <input type="file" name="files" multiple accept=".jpg,.jpeg,.png,.gif,.bmp" required />
+            <input type="hidden" name="propertyId" value="@ViewBag.PropertyId" />
+            <input type="hidden" name="TempId" value="456" />
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary text-center">Upload</button>
+            <a class="btn btn-info text-center" href="@Url.Action("PropertyInfo", "Property", new { propertyId = ViewBag.PropertyId })">Back</a>
+        </div>
+    </div>
+</form>
+
+<div class="table-responsive mt-3">
+    <table class="table table-bordered border-1">
+        <thead>
+            <tr>
+                <th class="bg-gray-100">Photo</th>
+                <th class="bg-gray-100">Title</th>
+                <th class="bg-gray-100">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0)
+            {
+                @foreach (var image in Model)
+                {
+                    <tr>
+                        <td class="bg-gray-100"><img src="@Url.Content("~/PropertyPhoto/" + @image.Location)" alt="@image.Title" width="100" /></td>
+                        <td class="bg-gray-100">@image.Title</td>
+                        <td class="bg-gray-100">
+                            <form asp-action="Delete" method="post" onsubmit="return confirmDelete();">
+                                <input type="hidden" name="id" value="@image.Id" />
+                                <input type="hidden" name="propertyId" value="@ViewBag.PropertyId" />
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3" style="text-align:center">No photo found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this photo?");
+    }
+</script>

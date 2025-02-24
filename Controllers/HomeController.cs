@@ -1,11 +1,14 @@
 using System.Diagnostics;
+using System.Security.Claims;
 using CloseFriendMyanamr.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
 
 namespace CloseFriendMyanamr.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -19,6 +22,7 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return View(await _context.Client.Include(x => x.ClientRequirements).ToListAsync());
         }
 

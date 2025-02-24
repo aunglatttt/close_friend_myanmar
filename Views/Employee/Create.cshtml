@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Create Employee";
 }
-<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
 
 
 <div class="row my-3">
@@ -14,7 +13,7 @@
                 <!-- Left Column: Employee Details -->
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header text-primary">
                             Personal Information
                         </div>
                         <div class="card-body">
@@ -48,7 +47,7 @@
                 <!-- Right Column: Password Card -->
                 <div class="col-md-6">
                     <div class="card">
-                        <div class="card-header">
+                        <div class="card-header text-primary">
                             Login Information
                         </div>
                         <div class="card-body">
@@ -71,15 +70,23 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary mt-3">Submit</button>
-            <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary mt-3">Back To List</a>
+
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary mt-3">Submit</button>
+                    <a href="@Url.Action("Index", "Employee")" class="btn btn-secondary mt-3">Back To List</a>
+                </div>
+            </div>
         </form>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
 <script>
     // Optional: Additional client-side check to alert if passwords don't match before submission.
     $(document).ready(function () {

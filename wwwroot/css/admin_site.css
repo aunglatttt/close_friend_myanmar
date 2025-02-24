@@ -10893,6 +10893,15 @@ a:focus {
     border-bottom: 0.25rem solid #858796 !important;
 }
 
+.border-soft-bottom {
+    border-bottom: 1px solid #858796 !important;
+}
+
+.border-soft-top {
+    border-top: 1px solid #858796 !important;
+}
+
+
 .border-left-success {
     border-left: 0.25rem solid #1cc88a !important;
 }
@@ -12226,9 +12235,9 @@ body.sidebar-toggled footer.sticky-footer {
 }
 
 .logo_img {
-    border-radius: 50%;
-    width: 80px;
-   height: 80px;
+    /*border-radius: 10%;*/
+    width: 100%;
+   height: auto;
 }
 
 .logo_text {
@@ -12237,28 +12246,50 @@ body.sidebar-toggled footer.sticky-footer {
     margin-top: 12px;
 }
 
+.login-card{
+    width: 50%;
+}
+
+.lginlogmsg{
+    font-size: 13px;
+}
 
 @media (max-width: 576px) {
     .logo_img {
-        width: 50px !important;
-        height: 50px !important;
+        width: 100% !important;
+        height: 35px !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
     }
 
     .logo_text {
         font-size: 11px;
-        margin-top: 0px;
+        padding-top: 0px;
+    }
+    .lginlogmsg {
+        font-size: 13px;
     }
 }
 
 @media (max-width: 768px) {
     .logo_img {
-        width: 60px !important;
-        height: 60px !important;
+        width: 100% !important;
+        height: 35px !important;
+        padding-top: 0 !important;
+        margin-top: 0 !important;
     }
 
     .logo_text {
+        font-size: 11px;
+        padding-top: 0px;
+    }
+
+    .login-card {
+        width: 80%;
+    }
+
+    .lginlogmsg {
         font-size: 12px;
-        margin-top: 0px;
     }
 }
 

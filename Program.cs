@@ -9,6 +9,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+builder.Services.AddAuthentication("CookieAuth")
+        .AddCookie("CookieAuth", options =>
+        {
+            options.LoginPath = "/Account/Login"; // Set the login path
+            options.LogoutPath = "/Account/Logout";
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(15); // Set the cookie expiration time
+        });
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,7 +32,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

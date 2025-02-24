@@ -1,0 +1,38 @@
+﻿@model CloseFriendMyanamr.ViewModel.PaginationViewModelForProperty
+
+@if(Model != null && Model.Propertys.Count > 0) {
+    @foreach (var item in Model.Propertys)
+    {
+        <tr style="font-size: 14px;">
+            <td class="text-center">
+                <i class="fa-solid fa-pen-to-square" onclick="window.location.href='@Url.Action("NewProperty", "Property", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i><br />
+                <i class="fa-solid fa-images" onclick="window.location.href='@Url.Action("Gallery", "Property", new { propertyId = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Galllery"></i><br>
+                <i class="fa-solid fa-circle-info" onclick="window.location.href='@Url.Action("PropertyInfo", "Property", new { propertyId = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail"></i>
+            </td>
+            <td>
+                @item.Code <br />
+                @if(item.Status == "Available"){
+                    <span class="badge rounded-pill bg-primary py-2 px-3">@item.Status</span>
+                }
+                else if (item.Status == "Rent")
+                {
+                    <span class="badge rounded-pill bg-info py-2 px-3">@item.Status</span> <br />
+                    <span class="text-warning fw-bold" style="font-size:12px;">@item.AvaliableDate</span>
+                }else{
+                    <span class="badge rounded-pill bg-warning py-2 px-3">@item.Status</span>
+                }
+            </td>
+            <td>@item.Township</td>
+            <td>@item.Street</td>
+            <td>@item.Comment</td>
+            <td>@item.Room</td>
+            <td>@item.Price</td>
+            <td>@item.Owner</td>
+            <td>@item.Remark</td>
+        </tr>
+    }
+}else{
+    <tr>
+        <td colspan="9" style="text-align:center">No data found.</td>
+    </tr>
+}

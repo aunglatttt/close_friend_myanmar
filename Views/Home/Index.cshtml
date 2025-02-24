@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Dashboard";
 }
-<link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" />
+@* <link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" /> *@
 
 
 <div class="row my-3 mx-auto">
@@ -11,19 +11,19 @@
 
         <div class="d-flex flex-wrap justify-content-between mb-3">
             <div class="">
-                <a href="#" class="btn action-btn btn-icon-split py-1 mb-2">
+                <a href="#" class="btn btn-primary mb-1">
                     <span class="icon text-white-50">
                         <i class="fa-solid fa-chart-column"></i>
                     </span>
-                    <span class="text" style="font-size:13px;">Split Button Primary</span>
+                    <span class="text" style="font-size:12px;">Split Button Primary</span>
                 </a>
             </div>
             <div class="">
-                <a href="#" class="btn action-btn btn-icon-split py-1">
+                <a href="#" class="btn btn-primary">
                     <span class="icon text-white-50">
                         <i class="fa-solid fa-calculator"></i>
                     </span>
-                    <span class="text" style="font-size:13px;">Split Button Primary</span>
+                    <span class="text" style="font-size:12px;">Split Button Primary</span>
                 </a>
             </div>
         </div>
@@ -32,7 +32,7 @@
             <div class="row">
                 <!-- Left Column: Employee Details -->
                 <div class="col-md-6 col-sm-12">
-                    <div class="card mx-auto">
+                    <div class="card mx-auto shadow">
                         <div class="card-header">
                          @*    <div class="row">
                                 <span class="col-md-3 col-sm-12">
@@ -44,7 +44,7 @@
                                 <div class="col"></div>
                             </div> *@
 
-                            <a class="text-white" asp-controller="UserManagement" asp-action="ClientList">Client List</a>   {>><a class="text-white" asp-controller="UserManagement" asp-action="ClientCreate">New</a><<}
+                            <a class="text-primary fw-bold" asp-controller="UserManagement" asp-action="ClientList">Client List</a>  <span class="text-primary">{>></span> <a class="text-primary fw-bold" asp-controller="UserManagement" asp-action="ClientCreate">New</a><span class="text-primary"><<}</span>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -60,7 +60,7 @@
                                     <tbody>
                                         @foreach(var client in Model){
                                             <tr style="font-size:15px;">
-                                                <td class="text-primary"><a asp-controller="UserManagement" asp-action="ClientCreate" asp-route-id="@client.Id">@client.ClientName [@client.ClientPhone]</a></td>
+                                                <td class="text-primary fw-bold"><a asp-controller="UserManagement" asp-action="ClientCreate" asp-route-id="@client.Id">@client.ClientName [@client.ClientPhone]</a></td>
                                                 <td>@client.RegistrationDate.ToString("MMM dd, yyyy")</td>
                                                 <td>@client.ClientRequirements.Count</td>
                                                 <td>@client.Status</td>
@@ -89,9 +89,9 @@
                 </div>
 
                 <div class="col-md-6 col-sm-12">
-                    <div class="card mx-auto">
+                    <div class="card mx-auto shadow">
                         <div class="card-header">
-                            <a class="text-white" asp-controller="ClientRequest" asp-action="ClicentRequestList">Latest Requirement List</a>
+                            <a class="text-primary fw-bold" asp-controller="ClientRequest" asp-action="ClicentRequestList">Latest Requirement List</a>
                         </div>
                         <div class="card-body">
                             @if (ViewBag.CreateOrUpdate != null && ViewBag.CreateOrUpdate == "Create New")
@@ -109,11 +109,11 @@
                                     {
                                         <div class="d-flex flex-wrap">
                                             <a class="me-3" asp-controller="UserManagement" asp-action="ClientCreate" asp-route-id="@client.Id" style="cursor:pointer; font-size:20px;">#@index: (@item.PropertyType @(item.Purpose == "1" ? "အဝယ်" : "အငှား"))</a>
-                                            <button type="button" class="btn action-btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                            <button type="button" class="btn btn-primary btn-sm" style="border-radius: 6px;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                                 @item.Status
                                             </button>
                                         </div>
-                                        <div class="row">
+                                        <div class="row mt-2">
                                             @if (item.StartPrice > 0 && item.EndPrice > 0)
                                             {
                                                 <span class="col-12">Budget >>> သိန်း @item.StartPrice မှ သိန်း @item.EndPrice အတွင်း</span>
@@ -200,7 +200,3 @@
         </div>
     </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> @* Add Bootstrap JS *@

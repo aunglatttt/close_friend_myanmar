@@ -5,7 +5,7 @@
     DateTime fromDate = ViewBag.FromDate ?? DateTime.Today;  // Default to today if no fromdate
     DateTime toDate = ViewBag.ToDate ?? DateTime.Today;  // Default to today if no todate
 }
-<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+
 
 <div class="row">
     <div class="col-sm-12">
@@ -34,7 +34,7 @@
             <div class="col-md-12 mb-4">
                 <div class="card border-2 shadow-sm">
                     <div class="card-header">
-                        <h5 class="card-title">Cash Book</h5>
+                        <span class="text-primary fw-bold"> Cash Book</span>
                     </div>
                     <div class="card-body">
                                 @if (fromDate == toDate)

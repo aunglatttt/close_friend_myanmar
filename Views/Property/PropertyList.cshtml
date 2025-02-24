@@ -1,0 +1,98 @@
+﻿@model List<CloseFriendMyanamr.ViewModel.PropertyViewModel>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Property List";
+}
+<div class="row d-flex">
+    <div class="col-sm-12 d-flex justify-content-end">
+        <a class="btn btn-secondary col-md-2 col-sm-4" asp-controller="Property" asp-action="NewProperty">
+            <i class="fas fa-user-plus"></i> Add New Property
+        </a>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-sm-12">
+        <div class="card mx-auto shadow">
+            <div class="card-header px-0">
+                <div class="col-12 ms-2">
+                    <span class="text-primary fw-bold">Property List</span>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="employeeTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Code</th>
+                                <th>Last Checked</th>
+                                <th>လိပ်စာ</th>
+                                <th>Info</th>
+                                <th>Price(L)</th>
+                                <th>Owner</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="property-container">
+                            @foreach (var item in Model)
+                            {
+                                <tr style="font-size: 14px;">
+                                    <td><span class="text-primary fw-bold" onclick="window.location.href='@Url.Action("PropertyInfo", "Property", new { propertyId = item.Id })'" style="cursor:pointer;">Info</span></td>
+                                    <td>
+                                        @item.Code <br />
+                                        @if (item.Status == "Available")
+                                        {
+                                            <span class="badge rounded-pill bg-primary py-2 px-3">@item.Status</span>
+                                        }
+                                        else if (item.Status == "Rent")
+                                        {
+                                            <span class="badge rounded-pill bg-info py-2 px-3">@item.Status</span> <br />
+                                            <span class="text-warning fw-bold" style="font-size:12px;">@item.AvaliableDate</span>
+                                        }else if(item.Status == "Delete") {
+                                            <span class="badge rounded-pill bg-danger py-2 px-3">@item.Status</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill bg-warning py-2 px-3">@item.Status</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @item.LastCheckedDate <br />
+                                        <span class="text-primary" style="font-size:12px;">will update later</span>
+                                    </td>
+                                    <td>@item.Street</td>
+                                    <td>@item.Comment</td>
+                                    <td>@item.Price</td>
+                                    <td>@item.Owner</td>
+                                    <td>@item.Remark</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#employeeTable').DataTable({
+            responsive: true, // Enable responsive feature
+            paging: true,     // Enable pagination
+            searching: true,  // Enable search
+            ordering: true,   // Enable sorting
+            info: true,       // Show table information
+            autoWidth: false, // Disable automatic column width calculation
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
+                { responsivePriority: 2, targets: -1 } // Make Action column high priority
+            ]
+        });
+    });
+
+</script>
