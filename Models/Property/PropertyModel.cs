@@ -47,9 +47,9 @@ namespace CloseFriendMyanamr.Models.Property
         public string? Map { get; set; }
         public string? Face { get; set; }
         public string Ownership { get; set; }
-        public string SalerOwnerType { get; set; }
+        public int SalerOwnType { get; set; }
         public string? Size { get; set; }
-        public string? Area { get; set; }
+        public int? Area { get; set; }
         public int MasterBed { get; set; } = 0;
         public int SingleBed { get; set; } = 0;
         public string? Comment { get; set; }
@@ -57,12 +57,13 @@ namespace CloseFriendMyanamr.Models.Property
         public int RentPrice { get; set; } = 0;
         public int SaleCommission { get; set; } = 0;
         [NotMapped]
-        public string SaleCommissionString { get; set; }
+        public string? SaleCommissionString { get; set; }
         public int RentCommision { get; set; } = 0;
         [NotMapped]
-        public string RentCommisionString { get; set; }
-        public string? Facilities { get; set; } // not found at old db
-        public string Status { get; set; }
+        public string? RentCommisionString { get; set; }
+        //public string? Facilities { get; set; } // not found at old db
+        public int? LastCheckedById { get; set; }
+        public string? Status { get; set; }
         public string? PostStatus { get; set; }
         public string? SalePriceCurrency { get; set; }
         public string? RentPriceCurrency { get; set; }
@@ -78,6 +79,7 @@ namespace CloseFriendMyanamr.Models.Property
         [NotMapped]
         public string OwnerTypeSelect { get; set; }
         public virtual List<PhotoModel>? Photos { get; set; }
-
+        public virtual List<PropertyFacilityModel>? PropertyFacilities { get; set; }
+        public virtual EmployeeModel? LastCheckedBy { get; set; }
     }
 }

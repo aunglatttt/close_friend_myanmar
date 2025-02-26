@@ -17,14 +17,14 @@ namespace CloseFriendMyanamr.Models.CashManagement
         [DisplayName("Amount")]
         [Required(ErrorMessage = "Amount is required.")]
         [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "Please enter a valid number (e.g., 123 or 123.45).")]
-        public double Amount { get; set; }
+        public int Amount { get; set; }
 
 
         [DisplayName("Transaction Type")]
         [Required(ErrorMessage = "Transaction Type is required.")]
         public string TransactionType { get; set; }
 
-        public string? Descritpion { get; set; }
+        public string? Description { get; set; }
 
         public string? Account { get; set; }
 

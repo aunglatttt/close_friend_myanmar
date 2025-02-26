@@ -6,11 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
 using SimpleDataWebsite.Data;
 using System.Security.Claims;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace CloseFriendMyanamr.Controllers
 {
@@ -110,12 +107,20 @@ namespace CloseFriendMyanamr.Controllers
 
             if (id > 0)
             {
-                var model = await _context.Property.AsNoTracking().Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == id);
+                var model = await _context.Property.AsNoTracking().Include(x => x.PropertyFacilities).Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == id);
                 if (model != null)
                 {
-                    if (model.Facilities != null)
+                    //if (model.Facilities != null)
+                    //{
+                    //ViewBag.SelectedFacilities = "aung, bb, adfdsf, ss".Split(',');
+                    //}
+                    if (model.PropertyFacilities.Any())
                     {
-                        ViewBag.SelectedFacilities = model.Facilities.Split(',');
+                        ViewBag.SelectedFacilities = model.PropertyFacilities.Select(x => x.Facility).ToList();
+                    }
+                    else
+                    {
+                        ViewBag.SelectedFacilities = new List<string>();
                     }
                     model.PurposeSale = model.Purpose == "Sale";
                     model.PurposeRent = model.Purpose == "Rent";
@@ -128,7 +133,13 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> NewProperty(PropertyModel model, List<string> selectedFacilities)
         {
-            if (ModelState.IsValid)
+            bool isCodeOk = true;
+            if (!string.IsNullOrEmpty(model.Code) && model.Id <= 0)
+            {
+                bool isFound = await _context.Property.AsNoTracking().AnyAsync(x => x.Code == model.Code);
+                isCodeOk = isFound == true ? false : true;
+            }
+            if (ModelState.IsValid && isCodeOk)
             {
                 // Check if the user selected "အသစ်ထည့်ရန်" (Add New Owner)
                 if (model.OwnerId == 0)
@@ -231,12 +242,28 @@ namespace CloseFriendMyanamr.Controllers
                     };
                 }
 
-                model.Facilities = string.Join(",", selectedFacilities ?? new List<string>());
+                //model.Facilities = string.Join(",", selectedFacilities ?? new List<string>());
+                var facilites = new List<PropertyFacilityModel>();
+
+                if(selectedFacilities != null && selectedFacilities.Any())
+                {
+                    foreach(var item in selectedFacilities)
+                    {
+                        facilites.Add(new PropertyFacilityModel
+                        {
+                            Facility = item
+                        });
+                    }
+                }
                 model.Purpose = model.PurposeSale == true ? "Sale" : "Rent";
 
                 var log = new LogModel();
                 var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
+
+                model.LastCheckedById = int.Parse(userId??"0");
+                model.LastCheckedDate = DateTime.Now;
+
                 if (model.Id == 0)
                 {
                     if (string.IsNullOrEmpty(model.Code))
@@ -245,6 +272,7 @@ namespace CloseFriendMyanamr.Controllers
                         model.Code = model.PropertyType + random.Next(100000, 999999).ToString();
                     }
 
+                    model.PropertyFacilities = facilites;
 
                     _context.Property.Add(model);
 
@@ -252,6 +280,11 @@ namespace CloseFriendMyanamr.Controllers
                 }
                 else
                 {
+                    var oldfacilites = await _context.PropertyFacilities.Where(x => x.PropertyId == model.Id).ToListAsync();
+                    _context.PropertyFacilities.RemoveRange(oldfacilites);
+
+                    model.PropertyFacilities = facilites;
+
                     _context.Property.Update(model);
                     log.Logs = $"{loginUserName} Modify Property {model.Code} @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
@@ -347,6 +380,11 @@ namespace CloseFriendMyanamr.Controllers
                     ViewData["Facilities"] = facilities;
                 }
                 #endregion
+
+                if (!isCodeOk)
+                {
+                    ViewBag.Error = $"Code ({model.Code}) is already exist.";
+                }
 
                 #endregion
 
@@ -450,7 +488,7 @@ namespace CloseFriendMyanamr.Controllers
                 ViewData["SizeList"] = new SelectList(sizeOptoins, "Size", "Size");
             }
 
-            var areaOptoins = propertyObj.Select(x => new { x.Area, x.Id }).Where(x => !string.IsNullOrEmpty(x.Area)).Distinct().ToList();
+            var areaOptoins = propertyObj.Select(x => new { x.Area, x.Id }).Where(x => x.Area != null).Distinct().ToList();
             if (areaOptoins == null || !areaOptoins.Any())
             {
                 ViewData["AreaList"] = new SelectList(new List<object>(), "Area", "Area");
@@ -485,113 +523,87 @@ namespace CloseFriendMyanamr.Controllers
         }
 
         public async Task<IActionResult> GetProperties(
-                 int page = 1,
-                int pageSize = 10,
-                string propertyType = null,
-                string buildingType = null,
-                string ownerAgent = null,
-                string purpose = null,
-                int priceFrom = 0,
-                int priceTo = 0,
-                string condoName = null,
-                string face = null,
-                string buildingNo = null,
-                string street = null,
-                string ward = null,
-                string commentInfo = null,
-                string ownership = null,
-                string salerOwnType = null,
-                int floor = 0,
-                string size = null,
-                string area = null,
-                int masterRoom = 0,
-                int sigleRoom = 0,
-                string status = null,
-                string postStatus = null,
-                List<string> townships = null,
-                List<string> facilities = null)
+     int page = 1,
+     int pageSize = 10,
+     string propertyType = null,
+     string buildingType = null,
+     string ownerAgent = null,
+     string purpose = null,
+     int priceFrom = 0,
+     int priceTo = 0,
+     string condoName = null,
+     string face = null,
+     string buildingNo = null,
+     string street = null,
+     string ward = null,
+     string commentInfo = null,
+     string ownership = null,
+     string salerOwnType = null,
+     int floor = 0,
+     string size = null,
+     string area = null,
+     int masterRoom = 0,
+     int sigleRoom = 0,
+     string status = null,
+     string postStatus = null,
+     List<string> townships = null,
+     List<string> facilities = null)
         {
-
             try
             {
+                var query = _context.Property.AsNoTracking()
+                    .Where(x => x.Status != "Delete" &&
+                        (string.IsNullOrEmpty(propertyType) || x.PropertyType == propertyType) &&
+                        (string.IsNullOrEmpty(buildingType) || x.BuildingType == buildingType) &&
+                        (string.IsNullOrEmpty(ownerAgent) || x.Owner.OwnerName == ownerAgent) &&
+                        (string.IsNullOrEmpty(purpose) || x.Purpose == purpose) &&
+                        (priceFrom <= 0 || (x.SalePrice >= priceFrom || x.RentPrice >= priceFrom)) &&
+                        (priceTo <= 0 || (x.SalePrice <= priceTo || x.RentPrice <= priceTo)) &&
+                        (string.IsNullOrEmpty(condoName) || x.CondoName == condoName) &&
+                        (string.IsNullOrEmpty(face) || x.Face == face) &&
+                        (string.IsNullOrEmpty(buildingNo) || x.Building == buildingNo) &&
+                        (string.IsNullOrEmpty(street) || EF.Functions.Like(x.Street.ToLower(), $"%{street.ToLower()}%")) &&
+                        (string.IsNullOrEmpty(ward) || EF.Functions.Like(x.Ward.ToLower(), $"%{ward.ToLower()}%")) &&
+                        (string.IsNullOrEmpty(commentInfo) || EF.Functions.Like(x.Comment.ToLower(), $"%{commentInfo.ToLower()}%")) &&
+                        (string.IsNullOrEmpty(ownership) || x.Township == ownership) &&
+                        (string.IsNullOrEmpty(salerOwnType) || x.SalerOwnType ==  int.Parse(salerOwnType)) &&
+                        (floor <= 0 || x.Floor == floor) &&
+                        (string.IsNullOrEmpty(size) || x.Size == size) &&
+                        (string.IsNullOrEmpty(area) || x.Area == int.Parse(area)) &&
+                        (masterRoom <= 0 || x.MasterBed == masterRoom) &&
+                        (sigleRoom <= 0 || x.SingleBed == sigleRoom) &&
+                        (string.IsNullOrEmpty(status) || x.Status == status) &&
+                        (string.IsNullOrEmpty(postStatus) || x.PostStatus == postStatus) &&
+                        (townships == null || townships.Contains(x.Township)) &&
+                        (facilities == null || x.PropertyFacilities.Any(d => facilities.Contains(d.Facility))))
+                    .Include(x => x.Owner)
+                    .Include(x => x.PropertyFacilities);
 
-                var query = await _context.Property.AsNoTracking()
-                     .Where(x => x.Status != "Delete" &&
-                         (string.IsNullOrEmpty(propertyType) || x.PropertyType == propertyType) &&
-                         (string.IsNullOrEmpty(buildingType) || x.BuildingType == buildingType) &&
-                         (string.IsNullOrEmpty(ownerAgent) || x.Owner.OwnerName == ownerAgent) &&
-                         (string.IsNullOrEmpty(purpose) || x.Purpose == purpose) &&
-                         (priceFrom <= 0 || (x.SalePrice >= priceFrom || x.RentPrice >= priceFrom)) &&
-                         (priceTo <= 0 || (x.SalePrice <= priceTo || x.RentPrice <= priceTo)) &&
-                         (string.IsNullOrEmpty(condoName) || x.CondoName == condoName) &&
-                         (string.IsNullOrEmpty(face) || x.Face == face) &&
-                         (string.IsNullOrEmpty(buildingNo) || x.Building == buildingNo) &&
-                         (string.IsNullOrEmpty(street) || EF.Functions.Like(x.Street.ToLower(), $"%{street.ToLower()}%")) &&
-                         (string.IsNullOrEmpty(ward) || EF.Functions.Like(x.Ward.ToLower(), $"%{ward.ToLower()}%")) &&
-                         (string.IsNullOrEmpty(commentInfo) || EF.Functions.Like(x.Comment.ToLower(), $"%{commentInfo.ToLower()}%")) &&
-                         (string.IsNullOrEmpty(ownership) || x.Township == ownership) &&
-                         (string.IsNullOrEmpty(salerOwnType) || x.SalerOwnerType == salerOwnType) &&
-                         (floor <= 0 || x.Floor == floor) &&
-                         (string.IsNullOrEmpty(size) || x.Size == size) &&
-                         (string.IsNullOrEmpty(area) || x.Area == area) &&
-                         (masterRoom <= 0 || x.MasterBed == masterRoom) &&
-                         (sigleRoom <= 0 || x.SingleBed == sigleRoom) &&
-                         (string.IsNullOrEmpty(status) || x.Status == status) &&
-                         (string.IsNullOrEmpty(postStatus) || x.PostStatus == postStatus) &&
-                         (townships == null || townships.Contains(x.Township)) &&
-                         (facilities == null || facilities.Any(f => EF.Functions.Like(x.Facilities.ToLower(), "%" + f.ToLower() + "%"))))
-                     .Include(x => x.Owner)
-                     .Skip((page - 1) * pageSize)
-                     .Take(pageSize)
-                     .Select(x => new PropertyViewModel
-                     {
-                         Id = x.Id,
-                         Code = x.Code,
-                         AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
-                         Status = x.Status,
-                         Township = x.Township,
-                         Street = x.Street,
-                         Comment = x.Comment,
-                         Room = x.Room,
-                         Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
-                         Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
-                         Remark = x.Remark
-                     })
-                     .ToListAsync();
+                var totalItems = await query.CountAsync();
+                var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-
-                var count = await _context.Property.AsNoTracking()
-                       .Where(x => x.Status != "Delete" &&
-                         (string.IsNullOrEmpty(propertyType) || x.PropertyType == propertyType) &&
-                         (string.IsNullOrEmpty(buildingType) || x.BuildingType == buildingType) &&
-                         (string.IsNullOrEmpty(ownerAgent) || x.Owner.OwnerName == ownerAgent) &&
-                         (string.IsNullOrEmpty(purpose) || x.Purpose == purpose) &&
-                         (priceFrom <= 0 || (x.SalePrice >= priceFrom || x.RentPrice >= priceFrom)) &&
-                         (priceTo <= 0 || (x.SalePrice <= priceTo || x.RentPrice <= priceTo)) &&
-                         (string.IsNullOrEmpty(condoName) || x.CondoName == condoName) &&
-                         (string.IsNullOrEmpty(face) || x.Face == face) &&
-                         (string.IsNullOrEmpty(buildingNo) || x.Building == buildingNo) &&
-                         (string.IsNullOrEmpty(street) || EF.Functions.Like(x.Street.ToLower(), $"%{street.ToLower()}%")) &&
-                         (string.IsNullOrEmpty(ward) || EF.Functions.Like(x.Ward.ToLower(), $"%{ward.ToLower()}%")) &&
-                         (string.IsNullOrEmpty(commentInfo) || EF.Functions.Like(x.Comment.ToLower(), $"%{commentInfo.ToLower()}%")) &&
-                         (string.IsNullOrEmpty(ownership) || x.Township == ownership) &&
-                         (string.IsNullOrEmpty(salerOwnType) || x.SalerOwnerType == salerOwnType) &&
-                         (floor <= 0 || x.Floor == floor) &&
-                         (string.IsNullOrEmpty(size) || x.Size == size) &&
-                         (string.IsNullOrEmpty(area) || x.Area == area) &&
-                         (masterRoom <= 0 || x.MasterBed == masterRoom) &&
-                         (sigleRoom <= 0 || x.SingleBed == sigleRoom) &&
-                         (string.IsNullOrEmpty(status) || x.Status == status) &&
-                         (string.IsNullOrEmpty(postStatus) || x.PostStatus == postStatus) &&
-                         (townships == null || townships.Contains(x.Township)) &&
-                         (facilities == null || facilities.Any(f => EF.Functions.Like(x.Facilities.ToLower(), "%" + f.ToLower() + "%"))))
-                     .Include(x => x.Owner)
-                     .CountAsync();
-
+                var properties = await query
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(x => new PropertyViewModel
+                    {
+                        Id = x.Id,
+                        Code = x.Code,
+                        AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
+                        Status = x.Status,
+                        Township = x.Township,
+                        Street = x.Street,
+                        Comment = x.Comment,
+                        Room = x.Room,
+                        Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
+                        Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
+                        Remark = x.Remark
+                    })
+                    .ToListAsync();
 
                 var filters = new PaginationViewModelForProperty
                 {
-                    Propertys = query,
+                    Propertys = properties,
                     PropertyType = propertyType,
                     BuildingType = buildingType,
                     OwnerAgent = ownerAgent,
@@ -613,10 +625,13 @@ namespace CloseFriendMyanamr.Controllers
                     SigleRoom = sigleRoom,
                     Status = status,
                     PostStatus = postStatus,
-                    Townships = townships, // Include townships
-                    Facilities = facilities // Include facilities
+                    Townships = townships,
+                    Facilities = facilities,
+                    CurrentPage = page,
+                    TotalPages = totalPages,
+                    TotalItems = totalItems,
+                    PageSize = pageSize
                 };
-
 
                 return PartialView("_PropertyPartial", filters);
             }
@@ -627,8 +642,30 @@ namespace CloseFriendMyanamr.Controllers
         }
 
         #endregion
-       
+
         public async Task<IActionResult> PropertyList()
+        {
+            var model = await _context.Property.AsNoTracking()
+                .Select(x => new PropertyViewModel
+                {
+                    Id = x.Id,
+                    Code = x.Code,
+                    Status = x.Status??"",
+                    AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
+                    LastCheckedDate = x.LastCheckedDate.ToString("MMM dd, yyyy"),
+                    Street = x.Street,
+                    Comment = x.Comment,
+                    Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
+                    Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
+                    Remark = x.Remark
+                })
+                .Where(x => x.Status != "Delete")
+                .OrderByDescending(d => d.Id)
+                .ToListAsync();
+            return View(model);
+        }
+
+        public async Task<IActionResult> DeletedPropertyList()
         {
             var model = await _context.Property.AsNoTracking()
                 .Select(x => new PropertyViewModel
@@ -644,13 +681,14 @@ namespace CloseFriendMyanamr.Controllers
                     Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
                     Remark = x.Remark
                 })
+                .Where(x => x.Status == "Delete")
                 .ToListAsync();
             return View(model);
         }
 
         public async Task<IActionResult> PropertyInfo(int propertyId)
         {
-            var model = await _context.Property.AsNoTracking().Include(x => x.Photos).Include(x => x.Owner).Where(x => x.Id == propertyId).FirstOrDefaultAsync();
+            var model = await _context.Property.AsNoTracking().Include(x => x.Photos).Include(x => x.PropertyFacilities).Include(x => x.Owner).Where(x => x.Id == propertyId).FirstOrDefaultAsync();
 
             if(model != null)
             {
@@ -714,7 +752,7 @@ namespace CloseFriendMyanamr.Controllers
             {
                 int propertyId = await _context.Property
                     .AsNoTracking()
-                    .Where(x => x.Code.ToLower() == code.ToLower())
+                    .Where(x => x.Code.ToLower() == code.ToLower() && x.Status != "Delete")
                     .Select(x => x.Id)
                     .FirstOrDefaultAsync();
                 if (propertyId >0)
@@ -787,6 +825,71 @@ namespace CloseFriendMyanamr.Controllers
             ViewBag.PropertyId = propertyId;
 
             return RedirectToAction("Gallery", new { propertyId = propertyId });
+        }
+
+
+        public async Task<IActionResult> AlertCenter()
+        {
+            var alert = await _context.Alert.AsNoTracking().ToListAsync();
+
+            var code = alert.Select(x => x.Code).ToList();
+
+            var propertyByCode = await _context.Property.AsNoTracking()
+                .Select(x => new
+                {
+                    x.Street,
+                    x.Comment,
+                    x.Code,
+                    x.Id,
+                    x.AvailableDate
+                })
+                .Where(x => code.Contains(x.Code??""))
+                .ToListAsync();
+
+            var alertModels = new List<AlertViewModel>();
+            foreach(var item in alert)
+            {
+                var property = propertyByCode.FirstOrDefault(x => x.Code == item.Code);
+
+                alertModels.Add(new AlertViewModel
+                {
+                    Id = item.Id,
+                    PropertyId = property == null? 0 : property.Id,
+                    Message = item.Message,
+                    Status = item.Status,
+                    AvailableDate = property == null? null : property.AvailableDate,
+                    Code = item.Code,
+                    Address = property == null?  "" : property.Street??"",
+                    Info = property == null? "" : property.Comment ?? ""
+                });
+            }
+
+            return View(alertModels);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AlertStatusUpdate(int updateId)
+        {
+            var alert = await _context.Alert.FirstOrDefaultAsync(x => x.Id == updateId);
+            if(alert != null)
+            {
+                alert.Status = "Read";
+                _context.Alert.Update(alert);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("AlertCenter");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AlertDelete(int id)
+        {
+            var alert = await _context.Alert.FirstOrDefaultAsync(x => x.Id == id);
+            if (alert != null)
+            {
+                _context.Alert.Remove(alert);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("AlertCenter");
         }
     }
 }

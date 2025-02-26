@@ -527,102 +527,112 @@
 </div>
 
 <script>
-      $(document).ready(function () {
-        $('#Townships').select2({
-            placeholder: "Select categories",
-            allowClear: true,
-            dropdownAutoWidth: true,
-            width: '100%'
-        });
-
-        $('#pageSize').change(function () {
-            changePageSize($(this).val());
-        });
-
-        // Submit button click event
-        $('button[type="submit"]').click(function (e) {
-            e.preventDefault(); // Prevent default form submission
-            fetchData(1, $('#pageSize').val()); // Fetch data with filters
-        });
+     $(document).ready(function () {
+    $('#Townships').select2({
+        placeholder: "Select categories",
+        allowClear: true,
+        dropdownAutoWidth: true,
+        width: '100%'
     });
 
-    function changePage(page) {
-        fetchData(page, $('#pageSize').val());
-    }
+    $('#pageSize').change(function () {
+        changePageSize($(this).val());
+    });
 
-    function changePageSize(size) {
-        fetchData(1, size);
-    }
+    // Submit button click event
+    $('button[type="submit"]').click(function (e) {
+        e.preventDefault(); // Prevent default form submission
+        fetchData(1, $('#pageSize').val()); // Fetch data with filters
+    });
 
-       function fetchData(page, pageSize) {
-        const filters = {
-            PropertyType: $('#PropertyType').val(),
-            BuildingType: $('#BuildingType').val(),
-            OwnerAgent: $('#OwnerAgent').val(),
-            Purpose: $('#Purpose').val(),
-            PriceFrom: $('#PriceFrom').val(),
-            PriceTo: $('#PriceTo').val(),
-            CondoName: $('#CondoName').val(),
-            Face: $('#Face').val(),
-            BuildingNo: $('#BuildingNo').val(),
-            Street: $('#Street').val(),
-            Ward: $('#Ward').val(),
-            CommentInfo: $('#CommentInfo').val(),
-            Ownership: $('#Ownership').val(),
-            SalerOwnType: $('#SalerOwnType').val(),
-            Floor: $('#Floor').val(),
-            Size: $('#Size').val(),
-            Area: $('#Area').val(),
-            MasterRoom: $('#MasterRoom').val(),
-            SigleRoom: $('#SigleRoom').val(),
-            Status: $('#Status').val(),
-            PostStatus: $('#PostStatus').val(),
-            Townships: $('#Townships').val(), // Townships as an array
-            Facilities: $('input[name="selectedFacilities"]:checked').map(function () {
-                return this.value;
-            }).get() // Facilities as an array
-        };
+    // Initial load
+    fetchData(1, $('#pageSize').val());
+});
 
-        console.log('Filters:', filters);
+function changePage(page) {
+    fetchData(page, $('#pageSize').val());
+}
 
-        // Send data to backend via AJAX
-        $.ajax({
-            url: '@Url.Action("GetProperties", "Property")', // Replace with your backend endpoint
-            type: 'GET', // Use GET or POST based on your backend
-            traditional: true, // Important for sending arrays in GET requests
-            data: {
-                page: page,
-                pageSize: pageSize,
-                propertyType: filters.PropertyType,
-                buildingType: filters.BuildingType,
-                ownerAgent: filters.OwnerAgent,
-                purpose: filters.Purpose,
-                priceFrom: filters.PriceFrom,
-                priceTo: filters.PriceTo,
-                condoName: filters.CondoName,
-                face: filters.Face,
-                buildingNo: filters.BuildingNo,
-                street: filters.Street,
-                ward: filters.Ward,
-                commentInfo: filters.CommentInfo,
-                ownership: filters.Ownership,
-                salerOwnType: filters.SalerOwnType,
-                floor: filters.Floor,
-                size: filters.Size,
-                area: filters.Area,
-                masterRoom: filters.MasterRoom,
-                sigleRoom: filters.SigleRoom,
-                status: filters.Status,
-                postStatus: filters.PostStatus,
-                townships: filters.Townships, // Townships as an array
-                facilities: filters.Facilities // Facilities as an array
-            },
-            success: function (response) {
-                $('#property-container').html(response); // Update the table with the new data
-            },
-            error: function (xhr, status, error) {
-                console.error("Error fetching data: ", error);
-            }
-        });
-    }
+function changePageSize(size) {
+    fetchData(1, size);
+}
+
+function fetchData(page, pageSize) {
+    const filters = {
+        PropertyType: $('#PropertyType').val(),
+        BuildingType: $('#BuildingType').val(),
+        OwnerAgent: $('#OwnerAgent').val(),
+        Purpose: $('#Purpose').val(),
+        PriceFrom: $('#PriceFrom').val(),
+        PriceTo: $('#PriceTo').val(),
+        CondoName: $('#CondoName').val(),
+        Face: $('#Face').val(),
+        BuildingNo: $('#BuildingNo').val(),
+        Street: $('#Street').val(),
+        Ward: $('#Ward').val(),
+        CommentInfo: $('#CommentInfo').val(),
+        Ownership: $('#Ownership').val(),
+        SalerOwnType: $('#SalerOwnType').val(),
+        Floor: $('#Floor').val(),
+        Size: $('#Size').val(),
+        Area: $('#Area').val(),
+        MasterRoom: $('#MasterRoom').val(),
+        SigleRoom: $('#SigleRoom').val(),
+        Status: $('#Status').val(),
+        PostStatus: $('#PostStatus').val(),
+        Townships: $('#Townships').val(), // Townships as an array
+        Facilities: $('input[name="selectedFacilities"]:checked').map(function () {
+            return this.value;
+        }).get() // Facilities as an array
+    };
+
+    console.log('Filters:', filters);
+
+    // Send data to backend via AJAX
+    $.ajax({
+        url: '@Url.Action("GetProperties", "Property")', // Replace with your backend endpoint
+        type: 'GET', // Use GET or POST based on your backend
+        traditional: true, // Important for sending arrays in GET requests
+        data: {
+            page: page,
+            pageSize: pageSize,
+            propertyType: filters.PropertyType,
+            buildingType: filters.BuildingType,
+            ownerAgent: filters.OwnerAgent,
+            purpose: filters.Purpose,
+            priceFrom: filters.PriceFrom,
+            priceTo: filters.PriceTo,
+            condoName: filters.CondoName,
+            face: filters.Face,
+            buildingNo: filters.BuildingNo,
+            street: filters.Street,
+            ward: filters.Ward,
+            commentInfo: filters.CommentInfo,
+            ownership: filters.Ownership,
+            salerOwnType: filters.SalerOwnType,
+            floor: filters.Floor,
+            size: filters.Size,
+            area: filters.Area,
+            masterRoom: filters.MasterRoom,
+            sigleRoom: filters.SigleRoom,
+            status: filters.Status,
+            postStatus: filters.PostStatus,
+            townships: filters.Townships, // Townships as an array
+            facilities: filters.Facilities // Facilities as an array
+        },
+        success: function (response) {
+            $('#property-container').html(response); // Update the table with the new data
+            updatePaginationControls(page, pageSize); // Update pagination controls
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching data: ", error);
+        }
+    });
+}
+
+function updatePaginationControls(page, pageSize) {
+    // Update the current page and total pages in the pagination controls
+    // You can add logic here to update the pagination controls based on the response from the backend
+    // For example, you can update the current page number and disable/enable the previous/next buttons
+}
 </script>

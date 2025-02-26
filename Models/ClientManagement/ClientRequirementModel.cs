@@ -60,6 +60,7 @@ namespace CloseFriendMyanamr.Models.ClientManagement
 
         [StringLength(50)]
         public string Status { get; set; } = "New";
+        public DateTime? RequestDate { get; set; }
         public virtual ClientModel? Client { get; set; }
     }
 }

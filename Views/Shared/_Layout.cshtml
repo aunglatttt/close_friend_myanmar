@@ -82,7 +82,7 @@
 
                 <!-- Nav Item - To do list -->
                 <li class="nav-item active">
-                    <a class="nav-link" href="index.html">
+                    <a class="nav-link" asp-controller="Property" asp-action="AlertCenter">
                         <i class="fa-solid fa-phone menu-icon"></i>
                         <span>To Do List (Alert Center)</span>
                     </a>
@@ -110,7 +110,8 @@
                             <h6 class="collapse-header">Property:</h6>
                             <a class="collapse-item" asp-controller="Property" asp-action="NewProperty">Add New Property</a>
                             <a class="collapse-item" asp-controller="Property" asp-action="SearchProperty">Property Search</a>
-                            <a class="collapse-item" asp-controller="Property" asp-action="PropertyList">Recent Update Data</a>
+                                <a class="collapse-item" asp-controller="Property" asp-action="PropertyList">Recent Update Data</a>
+                                    <a class="collapse-item" asp-controller="Property" asp-action="DeletedPropertyList">Deleted Property</a>
                             @*     <a class="collapse-item" asp-controller="Property" asp-action="Gallery">Gallery</a>
                         <a class="collapse-item" asp-controller="Property" asp-action="PropertyInfo">PropertyInfo</a> *@
                         </div>
@@ -272,13 +273,13 @@
                                 <!-- Dropdown - Messages -->
                                 <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
                                      aria-labelledby="searchDropdown">
-                                    <form class="form-inline mr-auto w-100 navbar-search">
+                                    <form class="form-inline mr-auto w-100 navbar-search" method="post" asp-controller="Property" asp-action="PropertySearchByCode">
                                         <div class="input-group">
-                                            <input type="text" class="form-control bg-light border-0 small"
-                                                   placeholder="Search for..." aria-label="Search"
+                                            <input type="text" class="form-control bg-light border-0 small" required
+                                                   placeholder="Search for..." aria-label="Search" id="code" name="code"
                                                    aria-describedby="basic-addon2">
                                             <div class="input-group-append">
-                                                <button class="btn btn-primary" type="button">
+                                                <button class="btn btn-secondary" type="submit">
                                                     <i class="fas fa-search fa-sm"></i>
                                                 </button>
                                             </div>

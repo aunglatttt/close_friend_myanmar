@@ -60,7 +60,7 @@
                                             <td>@item.ExpenseTitleName</td>
                                             <td>@item.ExpenseType</td>
                                             <td>@item.Amount</td>
-                                            <td>@item.Remark</td>
+                                            <td>@item.Description</td>
                                             <td>@(item.CreatedAt != null ? item.CreatedAt.Value.ToString("MMM dd, yyyy  hh:mm tt") : "")</td>
                                          @*    <td>
                                                 <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("CompanyExpense", "CashManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>

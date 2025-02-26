@@ -1,7 +1,7 @@
 ﻿@model CloseFriendMyanamr.Models.Property.PropertyModel
 
 @{
-    var selectedFacilities = ViewBag.SelectedFacilities as string[];
+    var selectedFacilities = ViewBag.SelectedFacilities;
 }
 @* <link rel="stylesheet" href="~/css/employeeCreate.css" asp-append-version="true" /> *@
 
@@ -22,13 +22,13 @@
                                     <div class="row">
                                         <div class="col-12">
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" checked />
+                                                <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" @(Model.Code != null? "" :"checked") />
                                                 <label class="form-check-label" for="selectedFacility">Auto</label>
                                             </div>
                                         </div>
                                         <div class="col-12" id="autoFields">
                                             <input class="form-control" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
-                                            <input class="form-control" type="text" asp-for="Code" placeholder="" id="Code" name="Code" style="display: none;" />
+                                            <input class="form-control" type="text" asp-for="Code" placeholder="" id="Code" name="Code" style="@(Model.Code != null? "" :"display: none")" />
                                         </div>
                                     </div>
 
@@ -126,7 +126,7 @@
             </div>
 
             @if (!string.IsNullOrEmpty(ViewBag.Error)){
-                <div class="row">
+                <div class="row mt-3">
                     <div class="col-12">
                         <div class="alert alert-danger" role="alert">
                             @ViewBag.Error
@@ -360,7 +360,7 @@
                                 <div class="col-md-6 col-sm-12">
                                     <div class="form-group">
                                         <label class="required">Saler Own Type</label>
-                                        <select class="form-select mb-1" asp-for="SalerOwnerType" id="SalerOwnerType" name="SalerOwnerType" data-val="true" data-val-required="Purpose is required.">
+                                        <select class="form-select mb-1" asp-for="SalerOwnType" id="SalerOwnerType" name="SalerOwnerType" data-val="true" data-val-required="Purpose is required.">
                                             <option value="1">အမည်ပေါက်</option>
                                             <option value="2">Special Power</option>
                                             <option value="3">General Owner</option>

@@ -1,0 +1,84 @@
+﻿@model List<CloseFriendMyanamr.ViewModel.AlertViewModel>
+@{
+    ViewData["Title"] = "Alert Center";
+}
+
+
+<div class="row mt-3">
+    <div class="col-sm-12">
+        <div class="card mx-auto shadow">
+            <div class="card-header px-0">
+                <div class="col-12 ms-2">
+                    <span class="text-primary fw-bold">To Do List (Alert Center)</span>
+
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="employeeTable" class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th class="text-danger fw-bold">Lert! (To Do)</th>
+                                <th>Status</th>
+                                <th>Available</th>
+                                <th>Code</th>
+                                <th>လိပ်စာ</th>
+                                <th>Info</th>
+                            </tr>
+                        </thead>
+                        <tbody id="property-container">
+                            @foreach (var item in Model)
+                            {
+                                <tr style="font-size: 14px;">
+                                    <td class="text-center">
+                                        <i class="fa-solid fa-pen-to-square" onclick="window.location.href='@Url.Action("NewProperty", "Property", new { id = @item.PropertyId })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i><br />
+                                        <i class="fa-solid fa-images" onclick="window.location.href='@Url.Action("Gallery", "Property", new { propertyId = @item.PropertyId })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Galllery"></i><br>
+                                        <i class="fa-solid fa-circle-info" onclick="window.location.href='@Url.Action("PropertyInfo", "Property", new { propertyId = @item.PropertyId })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail"></i>
+                                    </td>
+                                    <td class="@(item.Status !="Read"? "text-primary fw-bold" : "") ">@item.Message</td>
+                                    <td class="text-center">
+                                        <span class="text-primary">@item.Status</span> <br />
+                                        @if(item.Status != "Read"){
+                                            <form method="post" asp-controller="Property" asp-action="AlertStatusUpdate">
+                                                <input value="@item.Id" hidden name="updateId" id="updateId" />
+
+                                                <button class="border-0" style="background-color: transparent;" type="submit"><i class="fa-regular fa-registered fs-6"> </i> </button> <br />
+                                            </form>
+                                        }
+                                        <form method="post" asp-controller="Property" asp-action="AlertDelete">
+                                            <input value="@item.Id" hidden name="Id" id="Id" />
+                                            <button class="border-0" style="background-color: transparent;" type="submit"><i class="fa-regular fa-circle-xmark text-danger fs-6"></i></button>
+                                        </form>
+                                    </td>
+                                    <td>@(item.AvailableDate != null ? item.AvailableDate.Value.ToString("MMM dd, yyyy") : "")</td>
+                                    <td>@item.Code</td>
+                                    <td>@item.Address</td>
+                                    <td>@item.Info</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#employeeTable').DataTable({
+            responsive: true, // Enable responsive feature
+            paging: true,     // Enable pagination
+            searching: true,  // Enable search
+            ordering: true,   // Enable sorting
+            info: true,       // Show table information
+            autoWidth: false, // Disable automatic column width calculation
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
+                { responsivePriority: 2, targets: -1 } // Make Action column high priority
+            ]
+        });
+    });
+
+</script>

@@ -30,10 +30,10 @@
                                 </div>
                                 <div class="col-md-6 mt-4">
                                     <button type="submit" class="btn btn-secondary form-btn mt-2">Search</button>
-                                    <button class="btn btn-secondary form-btn mt-2">Account Transfer</button>
+                                    <a class="btn btn-secondary form-btn mt-2" href="@Url.Action("CashBookList", "CashManagement")">Account Transfer</a>
                                     <a class="btn btn-warning text-white mt-2 form-btn" href="@Url.Action("CompanyIncome", "CashManagement")">New Income</a>
                                     @* <button class="btn btn-warning text-white mt-2 form-btn" onclick="window.location.href='@Url.Action("CompanyIncome", "CashManagement")'">New Income</button> *@
-                                    <button class="btn btn-primary form-btn mt-2">Cash Book</button>
+                                    <a class="btn btn-primary form-btn mt-2" href="@Url.Action("CashBookList", "CashManagement")">Cash Book</a>
                                 </div>
                             </div>
                         </form>

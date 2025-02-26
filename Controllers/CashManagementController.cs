@@ -90,7 +90,7 @@ namespace CloseFriendMyanamr.Controllers
                         TransactionDate = model.IncomeDate,
                         Amount = model.Amount,
                         TransactionType = "Debit",
-                        Descritpion = $"Income To: Cash, Remark: {model.Remark}",
+                        Description = $"Income To: Cash, Remark: {model.Remark}",
                         Account = "Cash",
                         CreatedAt = DateTime.Now,
                     };
@@ -128,7 +128,7 @@ namespace CloseFriendMyanamr.Controllers
         }
 
 
-        public async Task<IActionResult> IncomeList(DateTime? fromdate, DateTime? todate, int? incomeTitle)
+        public async Task<IActionResult> IncomeList(DateTime? fromdate, DateTime? todate, string? incomeTitle)
         {
             var incomeTitleObj = await _context.IncomeTitle.AsNoTracking()
                 .Select(x => new { x.Id, x.Name })
@@ -136,11 +136,11 @@ namespace CloseFriendMyanamr.Controllers
 
             if (incomeTitleObj == null || !incomeTitleObj.Any())
             {
-                ViewData["IncomeTitle"] = new SelectList(new List<object>(), "Id", "Name");
+                ViewData["IncomeTitle"] = new SelectList(new List<object>(), "Name", "Name");
             }
             else
             {
-                ViewData["IncomeTitle"] = new SelectList(incomeTitleObj, "Id", "Name", incomeTitle);
+                ViewData["IncomeTitle"] = new SelectList(incomeTitleObj, "Name", "Name", incomeTitle);
             }
 
             // Pass the selected values back to the view
@@ -166,9 +166,9 @@ namespace CloseFriendMyanamr.Controllers
                     incomes = incomes.Where(i => i.IncomeDate <= todate.Value);
                 }
 
-                if (incomeTitle.HasValue)
+                if (!string.IsNullOrEmpty(incomeTitle))
                 {
-                    incomes = incomes.Where(i => i.IncomeTitleId == incomeTitle.Value);
+                    incomes = incomes.Where(i => i.IncomeTitleName == incomeTitle);
                 }
 
                 return View(await incomes.ToListAsync());
@@ -225,7 +225,7 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.ExpenseTitleName =  expenseTileName;
                         existingModel.Amount = model.Amount;
                         existingModel.ExpenseType = model.ExpenseType;
-                        existingModel.Remark = model.Remark;
+                        existingModel.Description = model.Description;
                         existingModel.UpdatedAt = DateTime.Now;
 
                         title = "Company Expense Updated";
@@ -245,7 +245,7 @@ namespace CloseFriendMyanamr.Controllers
                         TransactionDate = model.ExpenseDate,
                         Amount = model.Amount,
                         TransactionType = "Credit",
-                        Descritpion = $"Expense From: Cash, Remark: {model.Remark}",
+                        Description = $"Expense From: Cash, Remark: {model.Description}",
                         Account = "Cash",
                         CreatedAt = DateTime.Now,
                     };
@@ -342,7 +342,7 @@ namespace CloseFriendMyanamr.Controllers
                 string fromtitle = "";
                 string defDesc = "Account Transfer From: Main Cash, To: APM AYA Bank, Remark: ";
                 string title = "Account transfer data added";
-                model.Descritpion = defDesc + model.Descritpion;
+                model.Description = defDesc + model.Description;
                 model.Account = model.TransactionType == "Debit" ? "APM AYA Bank" : "Cash";
                 fromtitle = model.TransactionType == "Debit" ? "Cash" : "APM AYA Bank";
                 model.CreatedAt = DateTime.Now;
@@ -367,17 +367,18 @@ namespace CloseFriendMyanamr.Controllers
             return View(model);
         }
 
-        public IActionResult CashBookList(DateTime? fromDate, DateTime? toDate)
+        public async Task<IActionResult> CashBookList(DateTime? fromDate, DateTime? toDate)
         {
             // Default to today if no date range is provided
             fromDate = fromDate ?? DateTime.Today;
             toDate = toDate ?? DateTime.Today;
 
             // Fetch transactions within the date range
-            var transactions = _context.CashBookTransaction
+            var transactions = await _context.CashBookTransaction
+                .AsNoTracking()
                 .Where(t => t.TransactionDate >= fromDate && t.TransactionDate <= toDate)
                 .OrderBy(t => t.TransactionDate)
-                .ToList();
+                .ToListAsync();
 
             // Initialize balances
             double cashOpeningBalance = 0; // Fetch from a predefined starting balance if available

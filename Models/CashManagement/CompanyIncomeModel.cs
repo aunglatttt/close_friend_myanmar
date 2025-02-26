@@ -23,7 +23,7 @@ namespace CloseFriendMyanamr.Models.CashManagement
         [DisplayName("Amount")]
         [Required(ErrorMessage = "Amount is required.")]
         [RegularExpression(@"^\d+(\.\d+)?$", ErrorMessage = "Please enter a valid number (e.g., 123 or 123.45).")]
-        public double Amount { get; set; }
+        public int Amount { get; set; }
 
         [DisplayName("To Account")]
         public string? IncomeType { get; set; }

@@ -22,7 +22,6 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
             return View(await _context.Client.Include(x => x.ClientRequirements).ToListAsync());
         }
 

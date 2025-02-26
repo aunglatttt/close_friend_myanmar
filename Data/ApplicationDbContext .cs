@@ -48,5 +48,9 @@ namespace SimpleDataWebsite.Data
 
         public DbSet<PropertyModel> Property { get; set; }
         public DbSet<PhotoModel> Photo { get; set; }
+
+        public DbSet<PropertyFacilityModel> PropertyFacilities {  get; set; }
+
+        public DbSet<AlertModel> Alert { get; set; }
     }
 }
