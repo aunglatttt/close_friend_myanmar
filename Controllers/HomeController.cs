@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Security.Claims;
 using CloseFriendMyanamr.Models;
+using CloseFriendMyanamr.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,39 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> Index()
         {
+            int count = await _context.Alert.AsNoTracking().Where(x => x.Status != "Read").CountAsync();
+            var alert = await _context.Alert.AsNoTracking().OrderByDescending(x => x.Id).Take(3).Where(x => x.Status != "Read").ToListAsync();
+
+            var code = alert.Select(x => x.Code).ToList();
+
+            var propertyByCode = await _context.Property.AsNoTracking()
+                .Select(x => new
+                {
+                    x.Code,
+                    x.Id,
+                    x.AvailableDate
+                })
+                .Where(x => code.Contains(x.Code??""))
+                .ToListAsync();
+
+            var alertModels = new List<AlertViewModel>();
+            foreach (var item in alert)
+            {
+                var property = propertyByCode.FirstOrDefault(x => x.Code == item.Code);
+
+                alertModels.Add(new AlertViewModel
+                {
+                    Id = item.Id,
+                    PropertyId = property == null ? 0 : property.Id,
+                    Message = item.Message,
+                    AvailableDate = property == null ? null : property.AvailableDate,
+                    Code = item.Code,
+                });
+            }
+
+            ViewBag.Notifications = alertModels;
+            ViewBag.NotiCount = count;
+
             return View(await _context.Client.Include(x => x.ClientRequirements).ToListAsync());
         }
 
