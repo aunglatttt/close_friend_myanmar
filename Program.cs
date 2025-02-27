@@ -1,3 +1,4 @@
+using CloseFriendMyanamr.BackgroundJob;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
 
@@ -17,6 +18,8 @@ builder.Services.AddAuthentication("CookieAuth")
             options.ExpireTimeSpan = TimeSpan.FromMinutes(15); // Set the cookie expiration time
         });
 
+
+builder.Services.AddHostedService<RentStatusBackgroundService>();
 
 var app = builder.Build();
 

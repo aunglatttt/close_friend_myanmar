@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
 using SimpleDataWebsite.Data;
+using System.Drawing;
 using System.Security.Claims;
 
 namespace CloseFriendMyanamr.Controllers
@@ -523,31 +526,31 @@ namespace CloseFriendMyanamr.Controllers
         }
 
         public async Task<IActionResult> GetProperties(
-     int page = 1,
-     int pageSize = 10,
-     string propertyType = null,
-     string buildingType = null,
-     string ownerAgent = null,
-     string purpose = null,
-     int priceFrom = 0,
-     int priceTo = 0,
-     string condoName = null,
-     string face = null,
-     string buildingNo = null,
-     string street = null,
-     string ward = null,
-     string commentInfo = null,
-     string ownership = null,
-     string salerOwnType = null,
-     int floor = 0,
-     string size = null,
-     string area = null,
-     int masterRoom = 0,
-     int sigleRoom = 0,
-     string status = null,
-     string postStatus = null,
-     List<string> townships = null,
-     List<string> facilities = null)
+         int page = 1,
+         int pageSize = 10,
+         string propertyType = null,
+         string buildingType = null,
+         string ownerAgent = null,
+         string purpose = null,
+         int priceFrom = 0,
+         int priceTo = 0,
+         string condoName = null,
+         string face = null,
+         string buildingNo = null,
+         string street = null,
+         string ward = null,
+         string commentInfo = null,
+         string ownership = null,
+         string salerOwnType = null,
+         int floor = 0,
+         string size = null,
+         string area = null,
+         int masterRoom = 0,
+         int sigleRoom = 0,
+         string status = null,
+         string postStatus = null,
+         List<string> townships = null,
+         List<string> facilities = null)
         {
             try
             {
@@ -891,5 +894,259 @@ namespace CloseFriendMyanamr.Controllers
             }
             return RedirectToAction("AlertCenter");
         }
+
+        public async Task<IActionResult> ExportPropertiesToExcel()
+        {
+            var properties = await _context.Property
+                .Include(x => x.Owner)
+                .Include(x => x.PropertyFacilities)
+                .ToListAsync();
+
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            using var package = new ExcelPackage();
+
+            var groupedProperties = properties
+                .GroupBy(p => new
+                {
+                    p.PropertyType,
+                    p.Purpose
+                })
+                .ToList();
+
+            var propertyTypes = await _context.PropertyType.AsNoTracking().ToListAsync();
+            var buildingTypes = await _context.BuildingType.AsNoTracking().ToListAsync();
+
+            foreach (var group in groupedProperties)
+            {
+                string sheetName = propertyTypes.Where(x => x.ShortCode == group.Key.PropertyType).Select(x => x.TypeName).FirstOrDefault()?? group.Key.PropertyType;
+                //string sheetName = $"{group.Key.PropertyType}";
+
+                if(group.Key.Purpose == "Sale")
+                {
+                    var saleSheet = package.Workbook.Worksheets.Add($"{sheetName} Sale");
+                    AddPropertiesToSheet(saleSheet, group.Where(p => p.Purpose == "Sale").ToList(), propertyTypes, buildingTypes);
+                }
+
+                if (group.Key.Purpose == "Rent")
+                {
+                    var rentSheet = package.Workbook.Worksheets.Add($"{sheetName} Rent");
+                    AddPropertiesToSheet(rentSheet, group.Where(p => p.Purpose == "Rent").ToList(), propertyTypes, buildingTypes);
+                }
+            }
+
+            // Save the Excel file into a MemoryStream
+            var stream = new MemoryStream();
+            package.SaveAs(stream);
+            stream.Position = 0; // Reset stream position to the beginning
+
+            // Return the Excel file as a download
+            return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Properties.xlsx");
+        }
+
+        private void AddPropertiesToSheet(ExcelWorksheet worksheet, List<PropertyModel> properties, List<PropertyTypeModel> propertyTypes, List<BuildingTypeModel> buildingTypes)
+        {
+            // Add headers for the sheet
+            worksheet.Cells[1, 1].Value = "No.";
+            worksheet.Cells[1, 2].Value = "Code";
+            worksheet.Cells[1, 3].Value = "Building";
+            worksheet.Cells[1, 4].Value = "Room";
+            worksheet.Cells[1, 5].Value = "Floor";
+            worksheet.Cells[1, 6].Value = "Street";
+            worksheet.Cells[1, 7].Value = "Ward";
+            worksheet.Cells[1, 8].Value = "CondoName";
+            worksheet.Cells[1, 9].Value = "Township";
+            worksheet.Cells[1, 10].Value = "Property Type";
+            worksheet.Cells[1, 11].Value = "Building Type";
+            worksheet.Cells[1, 12].Value = "Purpose";
+            worksheet.Cells[1, 13].Value = "Size";
+            worksheet.Cells[1, 14].Value = "Area";
+            worksheet.Cells[1, 15].Value = "Price";
+            worksheet.Cells[1, 16].Value = "Master Bedroom";
+            worksheet.Cells[1, 17].Value = "Single Bedroom";
+            worksheet.Cells[1, 18].Value = "Comment";
+            worksheet.Cells[1, 19].Value = "SaleCommission";
+            worksheet.Cells[1, 20].Value = "RentCommision";
+            worksheet.Cells[1, 21].Value = "Remark";
+            worksheet.Cells[1, 22].Value = "Ownership";
+            worksheet.Cells[1, 23].Value = "Registration Date";
+            worksheet.Cells[1, 24].Value = "Available Date";
+            worksheet.Cells[1, 25].Value = "Last Check Date";
+            worksheet.Cells[1, 26].Value = "Last Check By";
+            worksheet.Cells[1, 27].Value = "OwnerName";
+            worksheet.Cells[1, 28].Value = "OwnerPhone";
+            worksheet.Cells[1, 29].Value = "Map";
+            worksheet.Cells[1, 30].Value = "Face";
+            worksheet.Cells[1, 31].Value = "SalerOwnType";
+            worksheet.Cells[1, 32].Value = "Status";
+            worksheet.Cells[1, 33].Value = "Post Status";
+            worksheet.Cells[1, 34].Value = "Facilities";
+
+            // Apply styles to headers
+            using (var range = worksheet.Cells[1, 1, 1, 34])
+            {
+                range.Style.Font.Bold = true;
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(Color.LightGray);
+                range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                range.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            }
+
+            // Fill data
+            var row = 2;
+            int count = 1;
+            foreach (var property in properties)
+            {
+                int buildingTypeId = int.TryParse(property.BuildingType, out int result) ? result : 0;
+
+                worksheet.Cells[row, 1].Value = count;
+                worksheet.Cells[row, 2].Value = property.Code;
+                worksheet.Cells[row, 3].Value = property.Building;
+                worksheet.Cells[row, 4].Value = property.Room;
+                worksheet.Cells[row, 5].Value = property.Floor;
+                worksheet.Cells[row, 6].Value = property.Street;
+                worksheet.Cells[row, 7].Value = property.Ward;
+                worksheet.Cells[row, 8].Value = property.CondoName;
+                worksheet.Cells[row, 9].Value = property.Township;
+                worksheet.Cells[row, 10].Value = propertyTypes.Where(x => x.ShortCode == property.PropertyType).Select(x => x.TypeName).FirstOrDefault() ?? property.PropertyType;
+                worksheet.Cells[row, 11].Value = buildingTypes.Where(x => x.Id == buildingTypeId).Select(x => x.Name).FirstOrDefault() ?? property.BuildingType;
+                worksheet.Cells[row, 12].Value = property.Purpose;
+                worksheet.Cells[row, 13].Value = property.Size;
+                worksheet.Cells[row, 14].Value = property.Area;
+                worksheet.Cells[row, 15].Value = property.Purpose == "Sale" ? property.SalePrice : property.RentPrice;
+                worksheet.Cells[row, 16].Value = property.MasterBed;
+                worksheet.Cells[row, 17].Value = property.SingleBed;
+                worksheet.Cells[row, 18].Value = property.Comment;
+                worksheet.Cells[row, 19].Value = property.SaleCommission;
+                worksheet.Cells[row, 20].Value = property.RentCommision;
+                worksheet.Cells[row, 21].Value = property.Remark;
+                worksheet.Cells[row, 22].Value = property.Ownership;
+                worksheet.Cells[row, 23].Value = property.RegistrationDate.ToString("MMM dd, yyyy");
+                worksheet.Cells[row, 24].Value = property.AvailableDate.ToString("MMM dd, yyyy");
+                worksheet.Cells[row, 25].Value = property.LastCheckedDate.ToString("MMM dd, yyyy");
+                worksheet.Cells[row, 26].Value = property.LastCheckedBy != null ? property.LastCheckedBy.EmployeeName : "";
+                worksheet.Cells[row, 27].Value = property.Owner != null ? property.Owner.OwnerName : "";
+                worksheet.Cells[row, 28].Value = property.Owner != null ? property.Owner.OwnerPhone : "";
+                worksheet.Cells[row, 29].Value = property.Map;
+                worksheet.Cells[row, 30].Value = property.Face;
+                worksheet.Cells[row, 31].Value = property.SalerOwnType;
+                worksheet.Cells[row, 32].Value = property.Status;
+                worksheet.Cells[row, 33].Value = property.PostStatus;
+                worksheet.Cells[row, 34].Value = property.PropertyFacilities != null ? string.Join(", ", property.PropertyFacilities.Select(x => x.Facility).ToList()) : "";
+
+                // Apply number formatting to specific columns
+                worksheet.Cells[row, 15].Style.Numberformat.Format = "#,##0";  // Price formatting
+                //worksheet.Cells[row, 15].Style.Numberformat.Format = "$#,##0.00";  // Price formatting
+                worksheet.Cells[row, 13].Style.Numberformat.Format = "#,##0";  // Size formatting
+
+                // Apply date formatting
+                worksheet.Cells[row, 23].Style.Numberformat.Format = "MMM dd, yyyy";  // Registration Date
+                worksheet.Cells[row, 24].Style.Numberformat.Format = "MMM dd, yyyy";  // Available Date
+                worksheet.Cells[row, 25].Style.Numberformat.Format = "MMM dd, yyyy";  // Last Check Date
+
+                // Apply border to data rows
+                using (var range = worksheet.Cells[row, 1, row, 34])
+                {
+                    range.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                }
+
+                row++;
+                count++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+        }
+
+
+        //private void AddPropertiesToSheet(ExcelWorksheet worksheet, List<PropertyModel> properties, List<PropertyTypeModel> propertyTypes, List<BuildingTypeModel> buildingTypes)
+        //{
+        //    // Add headers for the sheet
+        //    worksheet.Cells[1, 1].Value = "No.";
+        //    worksheet.Cells[1, 2].Value = "Code";
+        //    worksheet.Cells[1, 3].Value = "Building";
+        //    worksheet.Cells[1, 4].Value = "Room";
+        //    worksheet.Cells[1, 5].Value = "Floor";
+        //    worksheet.Cells[1, 6].Value = "Street";
+        //    worksheet.Cells[1, 7].Value = "Ward";
+        //    worksheet.Cells[1, 8].Value = "CondoName";
+        //    worksheet.Cells[1, 9].Value = "Township";
+        //    worksheet.Cells[1, 10].Value = "Property Type";
+        //    worksheet.Cells[1, 11].Value = "Building Type";
+        //    worksheet.Cells[1, 12].Value = "Purpose";
+        //    worksheet.Cells[1, 13].Value = "Size";
+        //    worksheet.Cells[1, 14].Value = "Area";
+        //    worksheet.Cells[1, 15].Value = "Price";
+        //    worksheet.Cells[1, 16].Value = "Master Bedroom";
+        //    worksheet.Cells[1, 17].Value = "Single Bedroom";
+        //    worksheet.Cells[1, 18].Value = "Comment";
+        //    worksheet.Cells[1, 19].Value = "SaleCommission";
+        //    worksheet.Cells[1, 20].Value = "RentCommision";
+        //    worksheet.Cells[1, 21].Value = "Remark";
+        //    worksheet.Cells[1, 22].Value = "Ownership";
+        //    worksheet.Cells[1, 23].Value = "Registration Date";
+        //    worksheet.Cells[1, 24].Value = "Available Date";
+        //    worksheet.Cells[1, 25].Value = "Last Check Date";
+        //    worksheet.Cells[1, 26].Value = "Last Check By";
+        //    worksheet.Cells[1, 27].Value = "OwnerName";
+        //    worksheet.Cells[1, 28].Value = "OwnerPhone";
+        //    worksheet.Cells[1, 29].Value = "Map";
+        //    worksheet.Cells[1, 30].Value = "Face";
+        //    worksheet.Cells[1, 31].Value = "SalerOwnType";
+        //    worksheet.Cells[1, 32].Value = "Status";
+        //    worksheet.Cells[1, 33].Value = "Post Status";
+        //    worksheet.Cells[1, 34].Value = "Facilities";
+
+        //    // Fill data
+        //    var row = 2;
+        //    int count = 1;
+        //    foreach (var property in properties)
+        //    {
+        //        int buildingTypeId = int.TryParse(property.BuildingType, out int result) ? result : 0;
+        //        worksheet.Cells[row, 1].Value = count;
+        //        worksheet.Cells[row, 2].Value = property.Code;
+        //        worksheet.Cells[row, 3].Value = property.Building;
+        //        worksheet.Cells[row, 4].Value = property.Room;
+        //        worksheet.Cells[row, 5].Value = property.Floor;
+        //        worksheet.Cells[row, 6].Value = property.Street;
+        //        worksheet.Cells[row, 7].Value = property.Ward;
+        //        worksheet.Cells[row, 8].Value = property.CondoName;
+        //        worksheet.Cells[row, 9].Value = property.Township;
+        //        worksheet.Cells[row, 10].Value = propertyTypes.Where(x => x.ShortCode == property.PropertyType).Select(x => x.TypeName).FirstOrDefault()?? property.PropertyType;
+        //        worksheet.Cells[row, 11].Value = buildingTypes.Where(x => x.Id == buildingTypeId).Select(x => x.Name).FirstOrDefault()?? property.BuildingType;
+        //        worksheet.Cells[row, 12].Value = property.Purpose;
+        //        worksheet.Cells[row, 13].Value = property.Size;
+        //        worksheet.Cells[row, 14].Value = property.Area;
+        //        worksheet.Cells[row, 15].Value = property.Purpose == "Sale"? property.SalePrice : property.RentPrice;
+        //        worksheet.Cells[row, 16].Value = property.MasterBed;
+        //        worksheet.Cells[row, 17].Value = property.SingleBed;
+        //        worksheet.Cells[row, 18].Value = property.Comment;
+        //        worksheet.Cells[row, 19].Value = property.SaleCommission;
+        //        worksheet.Cells[row, 20].Value = property.RentCommision;
+        //        worksheet.Cells[row, 21].Value = property.Remark;
+        //        worksheet.Cells[row, 22].Value = property.Ownership;
+        //        worksheet.Cells[row, 23].Value = property.RegistrationDate.ToString("MMM dd, yyyy");
+        //        worksheet.Cells[row, 24].Value = property.AvailableDate.ToString("MMM dd, yyyy");
+        //        worksheet.Cells[row, 25].Value = property.LastCheckedDate.ToString("MMM dd, yyyy");
+        //        worksheet.Cells[row, 26].Value = property.LastCheckedBy != null? property.LastCheckedBy.EmployeeName : "";
+        //        worksheet.Cells[row, 27].Value = property.Owner != null? property.Owner.OwnerName : "";
+        //        worksheet.Cells[row, 28].Value = property.Owner != null? property.Owner.OwnerPhone : "";
+        //        worksheet.Cells[row, 29].Value = property.Map;
+        //        worksheet.Cells[row, 30].Value = property.Face;
+        //        worksheet.Cells[row, 31].Value = property.SalerOwnType;
+        //        worksheet.Cells[row, 32].Value = property.Status;
+        //        worksheet.Cells[row, 33].Value = property.PostStatus;
+        //        worksheet.Cells[row, 34].Value = property.PropertyFacilities != null? string.Join(", ", property.PropertyFacilities.Select(x => x.Facility).ToList()) : "";
+        //        row++;
+        //        count++;
+        //    }
+        //}
+
     }
 }
