@@ -1,0 +1,616 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="row Font_Uni">
+    <div class="col-lg-6">
+        <div class="card shadow mb-1">
+            <div class="card-header py-3">
+                <div class="row text-center">
+                    <div class="col-lg-6 mb-2">
+                        <h6 class="m-0 font-weight-bold text-primary">Area of Triangle Land</h6>
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <img src="@Url.Content("~/images/Triangle.png")" width="150" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-dark small">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card bg-light text-dark shadow">
+                            <div class="card-body bg-dark text-white">
+                                <div class="row">
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            Length of (a to b)
+                                            <input type="text" id="txt3a" class="Length3 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            Length of (b to c)
+                                            <input type="text" id="txt3b" class="Length3 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            Length of (c to a)
+                                            <input type="text" id="txt3c" class="Length3 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            Area:
+                                            <input type="text" id="txt3Area" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            S. Price:
+                                            <input type="text" id="txt3SPrice" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            Price/SqF:
+                                            <input type="text" id="txt3Price" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-1">
+            <div class="card-header py-3">
+                <div class="row text-center">
+                    <div class="col-lg-6 mb-2">
+                        <h6 class="m-0 font-weight-bold text-primary">Area of Rectangular Land</h6>
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <img src="@Url.Content("~/images/Rectangle.png")" width="150" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-dark small">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card bg-light text-dark shadow">
+                            <div class="card-body bg-dark text-white">
+                                <div class="row">
+                                    <div class="col-lg-6 mb-2">
+                                        <div class="form-group">
+                                            Length of (a to b)
+                                            <input type="text" id="txt1a" class="Length1 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 mb-2">
+                                        <div class="form-group">
+                                            Length of (b to c)
+                                            <input type="text" id="txt1b" class="Length1 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            Total SqF (Area):
+                                            <input type="text" id="txt1Area" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            S. Price:
+                                            <input type="text" id="txt1SPrice" class="SPrice form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            Price/SqF:
+                                            <input type="text" id="txt1Price" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-1">
+            <div class="card-header py-3">
+                <div class="row text-center">
+                    <div class="col-lg-6 mb-2">
+                        <h6 class="m-0 font-weight-bold text-primary">Area of Irregular Rectangle Land</h6>
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <img src="@Url.Content("~/images/FourSided.png")" width="150" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-dark small">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card bg-light text-dark shadow">
+                            <div class="card-body bg-dark text-white">
+                                <div class="row">
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (a to b)
+                                            <input type="text" id="txt2ab" class="Length2 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (b to c)
+                                            <input type="text" id="txt2bc" class="Length2 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (c to d)
+                                            <input type="text" id="txt2cd" class="Length2 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (d to a)
+                                            <input type="text" id="txt2da" class="Length2 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (b to d)
+                                            <input type="text" id="txt2bd" class="Length2 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            Area:
+                                            <input type="text" id="txt2Area" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            S. Price:
+                                            <input type="text" id="txt2SPrice" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            Price/SqF:
+                                            <input type="text" id="txt2Price" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-1">
+            <div class="card-header py-3">
+                <div class="row text-center">
+                    <div class="col-lg-6 mb-2">
+                        <h6 class="m-0 font-weight-bold text-primary">Area of Five Sided Land</h6>
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <img src="@Url.Content("~/images/FiveSided.png")" width="150" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-dark small">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card bg-light text-dark shadow">
+                            <div class="card-body bg-dark text-white">
+                                <div class="row">
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (a to b)
+                                            <input type="text" id="txt4ab" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (b to c)
+                                            <input type="text" id="txt4bc" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (c to d)
+                                            <input type="text" id="txt4cd" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (d to e)
+                                            <input type="text" id="txt4de" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            (e to a)
+                                            <input type="text" id="txt4ea" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            (a to d)
+                                            <input type="text" id="txt4ad" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            (b to d)
+                                            <input type="text" id="txt4bd" class="Length4 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            Area:
+                                            <input type="text" id="txt4Area" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            S. Price:
+                                            <input type="text" id="txt4SPrice" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4 mb-2">
+                                        <div class="form-group">
+                                            Price/SqF:
+                                            <input type="text" id="txt4Price" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow mb-1">
+            <div class="card-header py-3">
+                <div class="row text-center">
+                    <div class="col-lg-6 mb-2">
+                        <h6 class="m-0 font-weight-bold text-primary">Area of Six Sided Land</h6>
+                    </div>
+                    <div class="col-lg-6 mb-2">
+                        <img src="@Url.Content("~/images/SixSided.png")" width="150" />
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="text-dark small">
+                    <div class="col-lg-12 mb-2">
+                        <div class="card bg-light text-dark shadow">
+                            <div class="card-body bg-dark text-white">
+                                <div class="row">
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (a to b)
+                                            <input type="text" id="txt5ab" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (b to c)
+                                            <input type="text" id="txt5bc" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (c to d)
+                                            <input type="text" id="txt5cd" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (d to e)
+                                            <input type="text" id="txt5de" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (e to f)
+                                            <input type="text" id="txt5ef" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (f to a)
+                                            <input type="text" id="txt5fa" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (a to d)
+                                            <input type="text" id="txt5ad" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (b to d)
+                                            <input type="text" id="txt5bd" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            (f to d)
+                                            <input type="text" id="txt5fd" class="Length5 Number form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <div class="form-group">
+                                            Area:
+                                            <input type="text" id="txt5Area" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            S. Price:
+                                            <input type="text" id="txt5SPrice" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-3 mb-2">
+                                        <div class="form-group">
+                                            Price/SqF:
+                                            <input type="text" id="txt5Price" class="form-control form-control-user" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.Number').keypress(function (e) {
+            var charCode = (e.which) ? e.which : event.keyCode;
+            if (String.fromCharCode(charCode).match(/[^0-9]/g))
+                return false;
+        });
+        // No(1) Rectangle
+        $(".Length1").keyup(function () {
+            a = parseInt($("#txt1a").val());
+            b = parseInt( $("#txt1b").val() );
+            if ($.trim($("#txt1a").val()) == "") a = 0;
+            if ($.trim($("#txt1b").val()) == "") b = 0;
+            sf = a * b;
+            $("#txt1Area").val(sf);
+            sp = parseFloat($("#txt1SPrice").val());
+            p = sp / sf;
+            $("#txt1Price").val(p.toFixed(2));
+        });
+        $("#txt1Area").change(function () {
+            sp = parseFloat($("#txt1SPrice").val());
+            area = parseInt($("#txt1Area").val());
+            p = sp / area;
+            $("#txt1Price").val(p.toFixed(2));
+        });
+        $("#txt1SPrice").change(function () {
+            sp = parseFloat($("#txt1SPrice").val());
+            area = parseInt($("#txt1Area").val());
+            p = sp / area;
+            $("#txt1Price").val(p.toFixed(2));
+        });
+        $("#txt1Price").change(function () {
+            p = parseFloat($("#txt1Price").val());
+            area = parseInt($("#txt1Area").val());
+            sp = p * area;
+            $("#txt1SPrice").val(sp);
+        });
+
+        // No(3) Triangle
+        $(".Length3").keyup(function () {
+            a = parseInt($("#txt3a").val());
+            b = parseInt($("#txt3b").val());
+            c = parseInt($("#txt3c").val());
+            if ($.trim($("#txt3a").val()) == "") a = 0;
+            if ($.trim($("#txt3b").val()) == "") b = 0;
+            if ($.trim($("#txt3c").val()) == "") c = 0;
+            s = (a + b + c) / 2.0;
+            sf = Math.sqrt(s * (s - a) * (s - b) * (s - c));
+            $("#txt3Area").val(sf.toFixed(2));
+            sp = parseFloat($("#txt3SPrice").val());
+            p = sp / sf;
+            $("#txt3Price").val(p.toFixed(2));
+        });
+        $("#txt3Area").change(function () {
+            sp = parseFloat($("#txt3SPrice").val());
+            area = parseInt($("#txt3Area").val());
+            p = sp / area;
+            $("#txt3Price").val(p.toFixed(2));
+        });
+        $("#txt3SPrice").change(function () {
+            sp = parseFloat($("#txt3SPrice").val());
+            area = parseInt($("#txt3Area").val());
+            p = sp / area;
+            $("#txt3Price").val(p.toFixed(2));
+        });
+        $("#txt3Price").change(function () {
+            p = parseFloat($("#txt3Price").val());
+            area = parseInt($("#txt3Area").val());
+            sp = p * area;
+            $("#txt3SPrice").val(sp);
+        });
+
+        // No(2) FourSided
+        $(".Length2").keyup(function () {
+            ab = parseInt($("#txt2ab").val());
+            bc = parseInt($("#txt2bc").val());
+            cd = parseInt($("#txt2cd").val());
+            da = parseInt($("#txt2da").val());
+            bd = parseInt($("#txt2bd").val());
+            if ($.trim($("#txt2ab").val()) == "") ab = 0;
+            if ($.trim($("#txt2bc").val()) == "") bc = 0;
+            if ($.trim($("#txt2cd").val()) == "") cd = 0;
+            if ($.trim($("#txt2da").val()) == "") da = 0;
+            if ($.trim($("#txt2bd").val()) == "") bd = 0;
+            t1s = (ab + bd + da) / 2.0;
+            sf1 = Math.sqrt(t1s * (t1s - ab) * (t1s - bd) * (t1s - da));
+            t2s = (bc + bd + cd) / 2.0;
+            sf2 = Math.sqrt(t2s * (t2s - bc) * (t2s - bd) * (t2s - cd));
+            $("#txt2Area").val((sf1 + sf2).toFixed(2));
+            sp = parseFloat($("#txt2SPrice").val());
+            p = sp / (sf1 + sf2);
+            $("#txt2Price").val(p.toFixed(2));
+        });
+        $("#txt2Area").change(function () {
+            sp = parseFloat($("#txt2SPrice").val());
+            area = parseInt($("#txt2Area").val());
+            p = sp / area;
+            $("#txt2Price").val(p.toFixed(2));
+        });
+        $("#txt2SPrice").change(function () {
+            sp = parseFloat($("#txt2SPrice").val());
+            area = parseInt($("#txt2Area").val());
+            p = sp / area;
+            $("#txt2Price").val(p.toFixed(2));
+        });
+        $("#txt2Price").change(function () {
+            p = parseFloat($("#txt2Price").val());
+            area = parseInt($("#txt2Area").val());
+            sp = p * area;
+            $("#txt2SPrice").val(sp);
+        });
+
+        // No(4) FiveSided
+        $(".Length4").keyup(function () {
+            ab = parseInt($("#txt4ab").val());
+            bc = parseInt($("#txt4bc").val());
+            cd = parseInt($("#txt4cd").val());
+            de = parseInt($("#txt4de").val());
+            ea = parseInt($("#txt4ea").val());
+            bd = parseInt($("#txt4bd").val());
+            ad = parseInt($("#txt4ad").val());
+            if ($.trim($("#txt4ab").val()) == "") ab = 0;
+            if ($.trim($("#txt4bc").val()) == "") bc = 0;
+            if ($.trim($("#txt4cd").val()) == "") cd = 0;
+            if ($.trim($("#txt4de").val()) == "") de = 0;
+            if ($.trim($("#txt4ea").val()) == "") ea = 0;
+            if ($.trim($("#txt4bd").val()) == "") bd = 0;
+            if ($.trim($("#txt4ad").val()) == "") ad = 0;
+
+            t1s = (bc + cd + bd) / 2.0;
+            sf1 = Math.sqrt(t1s * (t1s - bc) * (t1s - cd) * (t1s - bd));
+            t2s = (ab + bd + ad) / 2.0;
+            sf2 = Math.sqrt(t2s * (t2s - ab) * (t2s - bd) * (t2s - ad));
+            t3s = (ad + de + ea) / 2.0;
+            sf3 = Math.sqrt(t3s * (t3s - ad) * (t3s - de) * (t3s - ea));
+            $("#txt4Area").val((sf1 + sf2 + sf3).toFixed(2));
+            sp = parseFloat($("#txt4SPrice").val());
+            p = sp / (sf1 + sf2 + sf3);
+            $("#txt4Price").val(p.toFixed(2));
+        });
+        $("#txt4Area").change(function () {
+            sp = parseFloat($("#txt4SPrice").val());
+            area = parseInt($("#txt4Area").val());
+            p = sp / area;
+            $("#txt4Price").val(p.toFixed(2));
+        });
+        $("#txt4SPrice").change(function () {
+            sp = parseFloat($("#txt4SPrice").val());
+            area = parseInt($("#txt4Area").val());
+            p = sp / area;
+            $("#txt4Price").val(p.toFixed(2));
+        });
+        $("#txt4Price").change(function () {
+            p = parseFloat($("#txt4Price").val());
+            area = parseInt($("#txt4Area").val());
+            sp = p * area;
+            $("#txt4SPrice").val(sp);
+        });
+
+        // No(5) SixSided
+        $(".Length5").keyup(function () {
+            ab = parseInt($("#txt5ab").val());
+            bc = parseInt($("#txt5bc").val());
+            cd = parseInt($("#txt5cd").val());
+            de = parseInt($("#txt5de").val());
+            ef = parseInt($("#txt5ef").val());
+            fa = parseInt($("#txt5fa").val());
+            ad = parseInt($("#txt5ad").val());
+            bd = parseInt($("#txt5bd").val());
+            fd = parseInt($("#txt5fd").val());
+            if ($.trim($("#txt5ab").val()) == "") ab = 0;
+            if ($.trim($("#txt5bc").val()) == "") bc = 0;
+            if ($.trim($("#txt5cd").val()) == "") cd = 0;
+            if ($.trim($("#txt5de").val()) == "") de = 0;
+            if ($.trim($("#txt5ef").val()) == "") ef = 0;
+            if ($.trim($("#txt5fa").val()) == "") fa = 0;
+            if ($.trim($("#txt5ad").val()) == "") ad = 0;
+            if ($.trim($("#txt5bd").val()) == "") bd = 0;
+            if ($.trim($("#txt5fd").val()) == "") fd = 0;
+
+            t1s = (ab + bd + ad) / 2.0;
+            sf1 = Math.sqrt(t1s * (t1s - ab) * (t1s - bd) * (t1s - ad));
+            t2s = (bc + cd + bd) / 2.0;
+            sf2 = Math.sqrt(t2s * (t2s - bc) * (t2s - cd) * (t2s - bd));
+            t3s = (de + ef + fd) / 2.0;
+            sf3 = Math.sqrt(t3s * (t3s - de) * (t3s - ef) * (t3s - fd));
+            t4s = (ad + fd + fa) / 2.0;
+            sf4 = Math.sqrt(t3s * (t3s - ad) * (t3s - fd) * (t3s - fa));
+            $("#txt5Area").val((sf1 + sf2 + sf3 + sf4).toFixed(2));
+            sp = parseFloat($("#txt5SPrice").val());
+            p = sp / (sf1 + sf2 + sf3 + sf4);
+            $("#txt5Price").val(p.toFixed(2));
+        });
+        $("#txt5Area").change(function () {
+            sp = parseFloat($("#txt5SPrice").val());
+            area = parseInt($("#txt5Area").val());
+            p = sp / area;
+            $("#txt5Price").val(p.toFixed(2));
+        });
+        $("#txt5SPrice").change(function () {
+            sp = parseFloat($("#txt5SPrice").val());
+            area = parseInt($("#txt5Area").val());
+            p = sp / area;
+            $("#txt5Price").val(p.toFixed(2));
+        });
+        $("#txt5Price").change(function () {
+            p = parseFloat($("#txt5Price").val());
+            area = parseInt($("#txt5Area").val());
+            sp = p * area;
+            $("#txt5SPrice").val(sp);
+        });
+    });
+</script>
