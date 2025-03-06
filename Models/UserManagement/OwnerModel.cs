@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel;
+using CloseFriendMyanamr.Models.Property;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models.UserManagement
 {
@@ -8,7 +10,7 @@ namespace CloseFriendMyanamr.Models.UserManagement
         [Key]
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Owner Name is required.")]
+        [Required(ErrorMessage = "This field is required.")]
         [DisplayName("Owner Name")]
         public string OwnerName { get; set; }
 
@@ -29,8 +31,9 @@ namespace CloseFriendMyanamr.Models.UserManagement
         //[Required(ErrorMessage = "Remark is required.")]
         public string? Remark { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public virtual List<PropertyModel> Properties { get; set; }
 
     }
 }

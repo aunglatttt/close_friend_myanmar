@@ -2,7 +2,7 @@
 
 namespace CloseFriendMyanamr.Models
 {
-    public class ExpenseTitleModel
+    public class ExpenseTitleModel : BaseDomain
     {
         [Key]
         public int Id { get; set; }
@@ -11,7 +11,5 @@ namespace CloseFriendMyanamr.Models
         public string Name { get; set; }
 
         public string? Remark { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

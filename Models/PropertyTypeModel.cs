@@ -2,7 +2,7 @@
 
 namespace CloseFriendMyanamr.Models
 {
-    public class PropertyTypeModel
+    public class PropertyTypeModel : BaseDomain
     {
         [Key]
         public int Id { get; set; }
@@ -11,7 +11,5 @@ namespace CloseFriendMyanamr.Models
         public string TypeName { get; set; }
 
         public string ShortCode { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

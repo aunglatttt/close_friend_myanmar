@@ -1,5 +1,6 @@
 ﻿using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.Models.UserManagement;
+using CloseFriendMyanamr.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -119,7 +120,18 @@ namespace CloseFriendMyanamr.Controllers
         #region Owner
         public async Task<IActionResult> OwnerList()
         {
-            return View(await _context.Owner.AsNoTracking().ToListAsync());
+            var model = await _context.Owner.AsNoTracking()
+                .Where(x => x.Type == "1")
+                .Select(x => new AOViewModel
+                {
+                    Id = x.Id,
+                    OwnerName = x.OwnerName,
+                    OwnerPhone = x.OwnerPhone,
+                    Address = x.Address,
+                    Remark = x.Remark,
+                    PropertyCount = x.Properties.Count()
+                }).ToListAsync();
+            return View(model);
         }
         public async Task<IActionResult> OwnerCreate(int? id)
         {
@@ -159,6 +171,7 @@ namespace CloseFriendMyanamr.Controllers
                 }
                 else
                 {
+                    model.Type = "1";
                     model.CreatedAt = DateTime.Now;
                     _context.Owner.Add(model);
 
@@ -217,7 +230,20 @@ namespace CloseFriendMyanamr.Controllers
             //await _context.Agent.AddRangeAsync(ls);
             //await _context.SaveChangesAsync();
 
-            return View(await _context.Agent.AsNoTracking().ToListAsync());
+            //return View(await _context.Agent.AsNoTracking().ToListAsync());
+
+            var model = await _context.Owner.AsNoTracking().Where(x => x.Type == "2")
+                .Select(x => new AOViewModel
+                {
+                    Id = x.Id,
+                    OwnerName = x.OwnerName,
+                    OwnerPhone = x.OwnerPhone,
+                    Address = x.Address,
+                    Remark = x.Remark,
+                    PropertyCount = x.Properties.Count(),
+                }).ToListAsync();
+
+            return View(model);
         }
 
         public async Task<IActionResult> AgentCreate(int? id)
@@ -226,14 +252,14 @@ namespace CloseFriendMyanamr.Controllers
 
             if (id != null && id > 0)
             {
-                return View(await _context.Agent.FindAsync(id));
+                return View(await _context.Owner.FindAsync(id));
             }
 
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> AgentCreate(AgentModel model)
+        public async Task<IActionResult> AgentCreate(OwnerModel model)
         {
             if (ModelState.IsValid)
             {
@@ -243,27 +269,27 @@ namespace CloseFriendMyanamr.Controllers
                 string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
                 if (model.Id > 0)
                 {
-                    var existingModel = await _context.Agent.FindAsync(model.Id);
+                    var existingModel = await _context.Owner.FindAsync(model.Id);
                     if (existingModel != null)
                     {
-                        existingModel.AgentName = model.AgentName;
-                        existingModel.AgentPhone = model.AgentPhone;
+                        existingModel.OwnerName = model.OwnerName;
+                        existingModel.OwnerName = model.OwnerName;
                         existingModel.Address =  model.Address;
-                        existingModel.FBPage = model.FBPage;
                         existingModel.Remark = model.Remark;
                         model.UpdatedAt = DateTime.Now;
 
                         returnMsg = "Updated";
-                        log.Logs = $"{loginUserName} Modify Partner ({existingModel.AgentName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                        log.Logs = $"{loginUserName} Modify Partner ({existingModel.OwnerName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                     }
                 }
                 else
                 {
+                    model.Type = "2";
                     model.CreatedAt = DateTime.Now;
-                    _context.Agent.Add(model);
+                    _context.Owner.Add(model);
 
                     returnMsg = "Created";
-                    log.Logs = $"{loginUserName} Add new Partner ({model.AgentName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                    log.Logs = $"{loginUserName} Add new Partner ({model.OwnerName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
                 }
 
                 #region log area

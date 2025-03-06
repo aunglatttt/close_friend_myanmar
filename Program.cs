@@ -1,4 +1,5 @@
 using CloseFriendMyanamr.BackgroundJob;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
 
@@ -20,6 +21,12 @@ builder.Services.AddAuthentication("CookieAuth")
 
 
 builder.Services.AddHostedService<RentStatusBackgroundService>();
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
 
 var app = builder.Build();
 
@@ -32,11 +39,20 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000");
+    }
+});
 
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseResponseCompression();
+
 
 app.MapControllerRoute(
     name: "default",

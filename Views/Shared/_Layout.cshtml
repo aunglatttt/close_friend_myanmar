@@ -57,7 +57,7 @@
                 <!-- Sidebar - Brand -->
                 @*    <a class="sidebar-brand d-flex align-items-center justify-content-center p-0" style="background-color:black;" href="@Url.Action("Index", "Home")">
                 <div class="sidebar-brand-icon"> *@
-                <img class="logo_img" src="@Url.Content("~/images/Logo2.jpg")">
+                <img class="logo_img" src="@Url.Content("~/images/Logo2.jpg")" onclick="window.location.href='@Url.Action("Index", "Home")'" style="cursor:pointer;">
                 @*    </div>
             </a> *@
                 <div class="sidebar-brand-text logo_text text-center mb-3"><span style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Close Friend Myanamar</span></div>
@@ -210,6 +210,7 @@
                     <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Configuration:</h6>
+                            <a class="collapse-item" asp-controller="Home" asp-action="ShowCodeNumberDetail">Code Information</a>
                             <a class="collapse-item" asp-controller="Employee" asp-action="EmployeeTypeList">Employee Type</a>
                             <a class="collapse-item" asp-controller="Employee" asp-action="Index">Empoyee</a>
                             <a class="collapse-item" asp-controller="IncomeTitle" asp-action="Index">Income Title</a>

@@ -41,6 +41,14 @@
             <div class="col-md-6">
                 <div class="form-container">
                     <h4 class="edittiele responsive-heading" id="edit" name="edit">@ViewData["FormTitle"]</h4>
+
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="alert alert-danger" style="display:none" role="alert">
+                                </div>
+                            </div>
+                        </div>
+
                     <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
                         <input type="hidden" id="Id" name="Id" />
                         <input type="text" id="TypeName" name="TypeName" placeholder="Enter property type" required class="form-control mb-3" />
@@ -86,6 +94,17 @@
         fetch(`/IncomeTitle/${action}`, {
             method: 'POST',
             body: formData
-        }).then(() => window.location.reload());
+        }).then(response => {
+        if (!response.ok) {
+            // Handle the error response here, like showing the error message
+            response.text().then(errorMessage => {
+                console.log('error', errorMessage);
+                document.querySelector('.alert-danger').innerText = errorMessage;
+                document.querySelector('.alert-danger').style.display = 'block';
+            });
+        } else {
+            window.location.reload();
+        }
+    });
     });
 </script>

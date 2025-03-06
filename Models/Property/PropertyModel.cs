@@ -48,6 +48,9 @@ namespace CloseFriendMyanamr.Models.Property
         public string? Face { get; set; }
         public string Ownership { get; set; }
         public int SalerOwnType { get; set; }
+
+        [NotMapped]
+        public string? SalerOwnTypeString { get; set; }
         public string? Size { get; set; }
         public int? Area { get; set; }
         public int MasterBed { get; set; } = 0;
@@ -65,8 +68,8 @@ namespace CloseFriendMyanamr.Models.Property
         public int? LastCheckedById { get; set; }
         public string? Status { get; set; }
         public string? PostStatus { get; set; }
-        public string? SalePriceCurrency { get; set; }
-        public string? RentPriceCurrency { get; set; }
+        //public string? SalePriceCurrency { get; set; }
+        //public string? RentPriceCurrency { get; set; }
 
         public virtual OwnerModel? Owner { get; set; }
 

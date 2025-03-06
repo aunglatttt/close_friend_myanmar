@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models
 {
-    public class EmployeeModel
+    public class EmployeeModel : BaseDomain
     {
         [Key]
         public int Id { get; set; }
@@ -40,8 +40,5 @@ namespace CloseFriendMyanamr.Models
 
         public bool Status { get; set; }
         public virtual EmployeeType? EmployeeType { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

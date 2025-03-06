@@ -193,6 +193,18 @@ namespace CloseFriendMyanamr.Controllers
             if (string.IsNullOrWhiteSpace(item.ShortCode))
                 return BadRequest("ShortCode is required");
 
+            bool isDuplicate = await _context.PropertyType.AsNoTracking()
+                .AnyAsync(x =>
+                
+                    x.ShortCode.ToLower() == item.ShortCode.ToLower()
+                );
+            if (isDuplicate == true)
+            {
+                ViewData["ErrorMessage"] = $"Short Code '{item.ShortCode}' is already exists.";
+                return BadRequest($"Short Code {item.ShortCode} is already exists.");
+            }
+            
+
             item.CreatedAt = DateTime.Now;
             _context.PropertyType.Add(item);
             await _context.SaveChangesAsync();

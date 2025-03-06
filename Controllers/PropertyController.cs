@@ -1,4 +1,5 @@
-﻿using CloseFriendMyanamr.Models;
+﻿using CloseFriendMyanamr.Helper;
+using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.Models.Property;
 using CloseFriendMyanamr.Models.UserManagement;
 using CloseFriendMyanamr.ViewModel;
@@ -33,6 +34,7 @@ namespace CloseFriendMyanamr.Controllers
             #region owner
             var owners = await _context.Owner.AsNoTracking()
                 .Select(x => new { x.Id, x.OwnerName })
+                .OrderBy(x => x.OwnerName)
                 .ToListAsync();
 
             if (owners == null || !owners.Any())
@@ -78,6 +80,7 @@ namespace CloseFriendMyanamr.Controllers
             #region townships
             var townships = await _context.Township.AsNoTracking()
                 .Select(x => new { x.Township, x.TownshipMM })
+                .OrderBy(x => x.TownshipMM)
                 .ToListAsync();
 
             if (townships == null || !townships.Any())
@@ -117,6 +120,10 @@ namespace CloseFriendMyanamr.Controllers
                     //{
                     //ViewBag.SelectedFacilities = "aung, bb, adfdsf, ss".Split(',');
                     //}
+                    model.OwnerName = model.Owner?.OwnerName;
+                    model.OwnerPhone = model.Owner?.OwnerPhone;
+                    model.OwnerTypeSelect = model.Owner?.Type??"";
+                    model.OwnerAddress = model.Owner?.Address;
                     if (model.PropertyFacilities.Any())
                     {
                         ViewBag.SelectedFacilities = model.PropertyFacilities.Select(x => x.Facility).ToList();
@@ -142,7 +149,21 @@ namespace CloseFriendMyanamr.Controllers
                 bool isFound = await _context.Property.AsNoTracking().AnyAsync(x => x.Code == model.Code);
                 isCodeOk = isFound == true ? false : true;
             }
-            if (ModelState.IsValid && isCodeOk)
+
+            // Check for duplicate HouseNo, Street, CondoName, Floor, RoomNo (for both create and update)
+            bool isDuplicate = await _context.Property.AsNoTracking()
+                .AnyAsync(x => (x.Ward == model.Ward) &&
+                            (x.Street == model.Street) &&
+                            (x.CondoName == model.CondoName) &&
+                            (x.Floor == model.Floor) &&
+                            (x.Room == model.Room) &&
+                            (x.Owner.OwnerName == model.OwnerName) &&
+                            (x.Owner.OwnerPhone == model.OwnerPhone) &&
+                            (x.PropertyType == model.PropertyType) &&
+                             x.Id != model.Id);
+
+
+            if (ModelState.IsValid && isCodeOk && !isDuplicate)
             {
                 // Check if the user selected "အသစ်ထည့်ရန်" (Add New Owner)
                 if (model.OwnerId == 0)
@@ -155,6 +176,7 @@ namespace CloseFriendMyanamr.Controllers
                         #region owner
                         var owners = await _context.Owner.AsNoTracking()
                             .Select(x => new { x.Id, x.OwnerName })
+                            .OrderBy(x => x.OwnerName)
                             .ToListAsync();
 
                         if (owners == null || !owners.Any())
@@ -200,6 +222,7 @@ namespace CloseFriendMyanamr.Controllers
                         #region townships
                         var townships = await _context.Township.AsNoTracking()
                             .Select(x => new { x.Township, x.TownshipMM })
+                            .OrderBy(x => x.TownshipMM)
                             .ToListAsync();
 
                         if (townships == null || !townships.Any())
@@ -267,13 +290,17 @@ namespace CloseFriendMyanamr.Controllers
                 model.LastCheckedById = int.Parse(userId??"0");
                 model.LastCheckedDate = DateTime.Now;
 
+                if (string.IsNullOrEmpty(model.Code))
+                {
+                    //Random random = new Random();
+                    //model.Code = model.PropertyType + random.Next(100000, 999999).ToString();
+                    int maxNumber = await GetMaxCodeNumberAsync(model.PropertyType); // Get the maximum number for the prefix
+
+                    model.Code = $"{model.PropertyType}{maxNumber + 1}"; // Generate the new Code
+                }
+
                 if (model.Id == 0)
                 {
-                    if (string.IsNullOrEmpty(model.Code))
-                    {
-                        Random random = new Random();
-                        model.Code = model.PropertyType + random.Next(100000, 999999).ToString();
-                    }
 
                     model.PropertyFacilities = facilites;
 
@@ -302,7 +329,7 @@ namespace CloseFriendMyanamr.Controllers
 
                 await _context.SaveChangesAsync();
 
-                return RedirectToAction("SearchProperty");
+                return RedirectToAction("PropertyList");
             }
             else
             {
@@ -311,6 +338,7 @@ namespace CloseFriendMyanamr.Controllers
                 #region owner
                 var owners = await _context.Owner.AsNoTracking()
                     .Select(x => new { x.Id, x.OwnerName })
+                    .OrderBy(x => x.OwnerName)
                     .ToListAsync();
 
                 if (owners == null || !owners.Any())
@@ -356,6 +384,7 @@ namespace CloseFriendMyanamr.Controllers
                 #region townships
                 var townships = await _context.Township.AsNoTracking()
                     .Select(x => new { x.Township, x.TownshipMM })
+                    .OrderBy(x => x.TownshipMM)
                     .ToListAsync();
 
                 if (townships == null || !townships.Any())
@@ -389,6 +418,11 @@ namespace CloseFriendMyanamr.Controllers
                     ViewBag.Error = $"Code ({model.Code}) is already exist.";
                 }
 
+                if (isDuplicate)
+                {
+                    ViewBag.Error = "property already exists.";
+                }
+
                 #endregion
 
                 return View(model);
@@ -396,7 +430,40 @@ namespace CloseFriendMyanamr.Controllers
 
         }
         #endregion
-        
+
+        private async Task<int> GetMaxCodeNumberAsync(string prefix)
+        {
+            var maxCode = await _context.Property
+                .Where(x => x.Code.StartsWith(prefix))
+                .Select(x => x.Code)
+                .ToListAsync(); // Load the data into memory
+
+            // Extract the numeric part after the prefix and sort the codes
+            var maxCodeWithNumbers = maxCode
+                .Select(code =>
+                {
+                    var numericPart = code.Substring(prefix.Length);
+                    return new
+                    {
+                        Code = code,
+                        Number = int.TryParse(numericPart, out int num) ? num : 0
+                    };
+                })
+                .OrderByDescending(x => x.Number)  // Sort by numeric part in descending order
+                .ThenByDescending(x => x.Code)    // Fallback to sort by full code if needed
+                .FirstOrDefault();                // Get the first result
+
+            if (maxCodeWithNumbers == null)
+            {
+                return 0; // No existing code with this prefix, start from 1
+            }
+
+            // Return the numeric part of the found code (which will be the highest)
+            return maxCodeWithNumbers.Number;
+        }
+
+
+
         #region search property
         public async Task<IActionResult> SearchProperty(int startIndex = 1, int showCount = 10)
         {
@@ -405,6 +472,7 @@ namespace CloseFriendMyanamr.Controllers
             #region owner
             var owners = await _context.Owner.AsNoTracking()
                 .Select(x => new { x.Id, x.OwnerName })
+                .OrderBy(x => x.OwnerName)
                 .ToListAsync();
 
             if (owners == null || !owners.Any())
@@ -450,6 +518,7 @@ namespace CloseFriendMyanamr.Controllers
             #region townships
             var townships = await _context.Township.AsNoTracking()
                 .Select(x => new { x.Township, x.TownshipMM })
+                .OrderBy(x => x.TownshipMM)
                 .ToListAsync();
 
             if (townships == null || !townships.Any())
@@ -586,8 +655,8 @@ namespace CloseFriendMyanamr.Controllers
                 var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
                 var properties = await query
-                    .Skip((page - 1) * pageSize)
-                    .Take(pageSize)
+                    //.Skip((page - 1) * pageSize)
+                    //.Take(pageSize)
                     .Select(x => new PropertyViewModel
                     {
                         Id = x.Id,
@@ -649,6 +718,8 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> PropertyList()
         {
             var model = await _context.Property.AsNoTracking()
+                //.Include(x => x.Owner)
+                //.Include(x => x.LastCheckedBy)
                 .Select(x => new PropertyViewModel
                 {
                     Id = x.Id,
@@ -660,7 +731,8 @@ namespace CloseFriendMyanamr.Controllers
                     Comment = x.Comment,
                     Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
                     Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
-                    Remark = x.Remark
+                    Remark = x.Remark,
+                    LastCheckedBy = x.LastCheckedBy != null? x.LastCheckedBy.EmployeeName : ""
                 })
                 .Where(x => x.Status != "Delete")
                 .OrderByDescending(d => d.Id)
@@ -675,9 +747,10 @@ namespace CloseFriendMyanamr.Controllers
                 {
                     Id = x.Id,
                     Code = x.Code,
-                    Status = x.Status,
+                    Status = x.Status??"",
                     AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
                     LastCheckedDate = x.LastCheckedDate.ToString("MMM dd, yyyy"),
+                    LastCheckedBy = x.LastCheckedBy != null? x.LastCheckedBy.EmployeeName : "",
                     Street = x.Street,
                     Comment = x.Comment,
                     Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
@@ -695,6 +768,76 @@ namespace CloseFriendMyanamr.Controllers
 
             if(model != null)
             {
+                model.PropertyType = await _context.PropertyType.AsNoTracking().Where(x => x.ShortCode == model.PropertyType).Select(x => x.TypeName).FirstOrDefaultAsync()??model.PropertyType;
+                
+                if(model.BuildingType != null)
+                {
+                    int buildingTypeId = int.TryParse(model.BuildingType, out int result) ? result : 0;
+                    model.BuildingType = await _context.BuildingType.AsNoTracking().Where(x => x.Id == buildingTypeId).Select(x => x.Name).FirstOrDefaultAsync()??model.BuildingType;
+                }
+
+                #region ownership
+               
+                switch (model.SalerOwnType)
+                {
+                    case 1:
+                        model.SalerOwnTypeString = "အမည်ပေါက်";
+                        break;
+                    case 2:
+                        model.SalerOwnTypeString = "Special Power";
+                        break;
+                    case 3:
+                        model.SalerOwnTypeString = "General Owner";
+                        break;
+                    case 4:
+                        model.SalerOwnTypeString = "အမွေဆက်ခံ";
+                        break;
+                    case 5:
+                        model.SalerOwnTypeString = "ဂရံဂတုံး";
+                        break;
+                    case 6:
+                        model.SalerOwnTypeString = "Other";
+                        break;
+                    case 7:
+                        model.SalerOwnTypeString = "အဆက်ဆက်စာချုပ်";
+                        break;
+                    default:
+                        model.SalerOwnTypeString = "";
+                        break;
+                }
+               
+                switch (model.Ownership)
+                {
+                    case "Grant_Original":
+                        model.Ownership = "Grant (မူရင်း)";
+                        break;
+                    case "Grant_Copy":
+                        model.Ownership = "Grant (မိတ္တူ)";
+                        break;
+                    case "Permit_Original":
+                        model.Ownership = "Permit (မူရင်း)";
+                        break;
+                    case "Permit_Copy":
+                        model.Ownership = "Permit (မိတ္တူ)";
+                        break;
+                    case "FreeHoldLand":
+                        model.Ownership = "FreeHold Land";
+                        break;
+                    case "BCC":
+                        model.Ownership = "BCC";
+                        break;
+                    case "Contract":
+                        model.Ownership = "အစဉ်အဆက်စာချုပ်";
+                        break;
+                    default:
+                        model.Ownership = "";
+                        break;
+                }
+
+
+                #endregion
+
+                #region commisssion
                 switch (model.SaleCommission)
                 {
                     case 1:
@@ -738,6 +881,7 @@ namespace CloseFriendMyanamr.Controllers
                         model.RentCommisionString = "";
                         break;
                 }
+                #endregion
             }
             return View(model);
         }
@@ -755,11 +899,13 @@ namespace CloseFriendMyanamr.Controllers
             {
                 int propertyId = await _context.Property
                     .AsNoTracking()
-                    .Where(x => x.Code.ToLower() == code.ToLower() && x.Status != "Delete")
+                    .Where(x => x.Code.ToLower() == code.ToLower().Trim()
+                    //&& x.Status != "Delete"
+                    )
                     .Select(x => x.Id)
                     .FirstOrDefaultAsync();
                 if (propertyId >0)
-                    return RedirectToAction("NewProperty", new { id = propertyId });
+                    return RedirectToAction("PropertyInfo", new { propertyId = propertyId });
                 else
                     return View();
             }
@@ -772,34 +918,63 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> Upload(List<IFormFile> files, int propertyId, int TempId)
         {
+            if (files == null || files.Count == 0)
+            {
+                TempData["ErrorMessage"] = "No files were uploaded.";
+                return RedirectToAction("Gallery", new { propertyId = propertyId });
+            }
+
+            int filecount = 0;
+
             foreach (var file in files)
             {
-                if (file.Length > 0 && IsImage(file))
+                try
                 {
-                    string uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{file.FileName}";
-                    var filePath = Path.Combine(_env.WebRootPath, "PropertyPhoto", uniqueFileName);
-
-                    Directory.CreateDirectory(Path.GetDirectoryName(filePath));
-
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    if (file.Length > 0 && IsImage(file))
                     {
-                        await file.CopyToAsync(stream);
+                        //string uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{file.FileName}";
+                        //var filePath = Path.Combine(_env.WebRootPath, "PropertyPhoto", uniqueFileName);
+
+                        //Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                        //using (var stream = new FileStream(filePath, FileMode.Create))
+                        //{
+                        //    await file.CopyToAsync(stream);
+                        //}
+
+                        var uploadFolder = Path.Combine(_env.WebRootPath, "PropertyPhoto");
+                        Directory.CreateDirectory(uploadFolder); // Ensure the folder exists
+
+                        // Generate a unique file name
+                        string uniqueFileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{Path.GetFileNameWithoutExtension(file.FileName)}.jpg";
+
+                        // Reduce image size and save it asynchronously
+                        var filePath = Path.Combine(uploadFolder, uniqueFileName);
+                        await ImageHelper.ReduceImageSizeAsync(file, 800, 600, uploadFolder, uniqueFileName);
+
+                        var image = new PhotoModel
+                        {
+                            PropertyId = propertyId,
+                            Title = file.FileName,
+                            Location = uniqueFileName,
+                            //purposeid = purposeId, // Save PurposeId to the database
+                            //TempId = TempId // Save TempId to the database
+                        };
+
+                        _context.Photo.Add(image);
+                        filecount++;
                     }
-
-                    var image = new PhotoModel
-                    {
-                        PropertyId = propertyId,
-                        Title = file.FileName,
-                        Location = uniqueFileName,
-                        //purposeid = purposeId, // Save PurposeId to the database
-                        //TempId = TempId // Save TempId to the database
-                    };
-
-                    _context.Photo.Add(image);
+                }
+                catch (Exception ex)
+                {
+                    //TempData["ErrorMessage"] = $"An error occurred while processing {file.FileName}: {ex.Message}";
                 }
             }
-            if(files.Count > 0)
+            if(filecount > 0)
+            {
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Files uploaded successfully!";
+            }
             return RedirectToAction("Gallery", new { propertyId = propertyId });
         }
 
@@ -900,6 +1075,7 @@ namespace CloseFriendMyanamr.Controllers
             var properties = await _context.Property
                 .Include(x => x.Owner)
                 .Include(x => x.PropertyFacilities)
+                .Include(x => x.LastCheckedBy)
                 .ToListAsync();
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -924,13 +1100,14 @@ namespace CloseFriendMyanamr.Controllers
                 if(group.Key.Purpose == "Sale")
                 {
                     var saleSheet = package.Workbook.Worksheets.Add($"{sheetName} Sale");
-                    AddPropertiesToSheet(saleSheet, group.Where(p => p.Purpose == "Sale").ToList(), propertyTypes, buildingTypes);
+
+                    AddPropertiesGroup1(saleSheet, group.Where(p => p.Purpose == "Sale").ToList(), propertyTypes, buildingTypes);
                 }
 
                 if (group.Key.Purpose == "Rent")
                 {
                     var rentSheet = package.Workbook.Worksheets.Add($"{sheetName} Rent");
-                    AddPropertiesToSheet(rentSheet, group.Where(p => p.Purpose == "Rent").ToList(), propertyTypes, buildingTypes);
+                    AddPropertiesGroup1(rentSheet, group.Where(p => p.Purpose == "Rent").ToList(), propertyTypes, buildingTypes);
                 }
             }
 
@@ -941,6 +1118,186 @@ namespace CloseFriendMyanamr.Controllers
 
             // Return the Excel file as a download
             return File(stream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "Properties.xlsx");
+        }
+
+        private void AddPropertiesGroup1(ExcelWorksheet worksheet, List<PropertyModel> properties, List<PropertyTypeModel> propertyTypes, List<BuildingTypeModel> buildingTypes)
+        {
+            #region ownership
+            Dictionary<int, string> SalerOwnerTypeMapping = new Dictionary<int, string>
+            {
+                { 0, "" },
+                { 1, "အမည်ပေါက်" },
+                { 2, "Special Power" },
+                { 3, "General Owner" },
+                { 4, "အမွေဆက်ခံ" },
+                { 5, "ဂရံဂတုံး" },
+                { 7, "အဆက်ဆက်စာချုပ်" },
+                { 6, "Other" },
+            };
+
+            Dictionary<string, string> OwnershipMapping = new Dictionary<string, string>
+            {
+                { "", "" },
+                { "Grant_Original", "Grant (မူရင်း)" },
+                { "Grant_Copy", "Grant (မိတ္တူ)" },
+                { "Permit_Original", "Permit (မူရင်း)" },
+                { "Permit_Copy", "Permit (မိတ္တူ)" },
+                { "FreeHoldLand", "FreeHold Land" },
+                { "BCC", "BCC" },
+                { "Contract", "အစဉ်အဆက်စာချုပ်" },
+            };
+            #endregion
+
+            #region commission
+            Dictionary<int, string> SaleCommissionMapping = new Dictionary<int, string>
+            {
+                { 0, "" },
+                { 1, "2% (အပြည့်အဝ)" },
+                { 2, "1% (တစ်ဝက်)" },
+                { 3, "1/3 (သုံးပုံတစ်ပုံ)" },
+                { 4, "အကျိုးတူ (အညီမျှ)" },
+                { 5, "အဆင်ပြေသလို ညှိယူရန်" },
+            };
+
+            Dictionary<int, string> RentCommissionMapping = new Dictionary<int, string>
+            {
+                { 0, "" },
+                { 1, "၁လစာ (အိမ်ရှင်+အိမ်ငှား)" },
+                { 2, "၁လစာ (တစ်ခြမ်း)" },
+                { 3, "1/3 (သုံးပုံတစ်ပုံ)" },
+                { 4, "အကျိုးတူ (အညီမျှ)" },
+                { 5, "အဆင်ပြေသလို ညှိယူရန်" },
+            };
+            #endregion
+
+            int colCellNo = 1;
+
+            worksheet.Cells[1, colCellNo++].Value = "Code";
+            worksheet.Cells[1, colCellNo++].Value = "OwnerName";
+            worksheet.Cells[1, colCellNo++].Value = "OwnerPhone";
+            worksheet.Cells[1, colCellNo++].Value = "Address";
+            worksheet.Cells[1, colCellNo++].Value = "Ward";
+            worksheet.Cells[1, colCellNo++].Value = "Township";
+            worksheet.Cells[1, colCellNo++].Value = "Floor";
+            if(properties.Count > 0 && properties[0].PropertyType == "H")
+                worksheet.Cells[1, colCellNo++].Value = "Building Type";
+            worksheet.Cells[1, colCellNo++].Value = "Sqft";
+
+            if(properties.Count > 0 && properties[0].PropertyType != "L" && properties[0].PropertyType != "I")
+                worksheet.Cells[1, colCellNo++].Value = "Room";
+            worksheet.Cells[1, colCellNo++].Value = "Building";
+
+            if(properties.Count > 0 && properties[0].PropertyType == "C")
+                worksheet.Cells[1, colCellNo++].Value = "Condo Name";
+
+            worksheet.Cells[1, colCellNo++].Value = "Price";
+            if (properties.Count > 0 && properties[0].PropertyType != "L" && properties[0].PropertyType != "I")
+            {
+                worksheet.Cells[1, colCellNo++].Value = "N.of M-Bed";
+                worksheet.Cells[1, colCellNo++].Value = "N.of S-Bed";
+                worksheet.Cells[1, colCellNo++].Value = "Facilities";
+            }
+            worksheet.Cells[1, colCellNo++].Value = "Comment";
+            worksheet.Cells[1, colCellNo++].Value = "%";
+            worksheet.Cells[1, colCellNo++].Value = (properties.Count > 0 && properties[0].Purpose == "Sale") ? "SalerOwnType" : "Ownership";
+            worksheet.Cells[1, colCellNo++].Value = "Status";
+            worksheet.Cells[1, colCellNo++].Value = "Post Status";
+            worksheet.Cells[1, colCellNo++].Value = "Registration Date";
+            worksheet.Cells[1, colCellNo++].Value = "Available Date";
+            worksheet.Cells[1, colCellNo++].Value = "Last Check Date";
+            worksheet.Cells[1, colCellNo++].Value = "Last Check By";
+            worksheet.Cells[1, colCellNo++].Value = "Remark";
+            worksheet.Cells[1, colCellNo++].Value = "Map";
+
+            // Apply styles to headers
+            using (var range = worksheet.Cells[1, 1, 1, --colCellNo])
+            {
+                range.Style.Font.Bold = true;
+                //range.Style.Font.Color.SetColor(Color.White);
+                range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                range.Style.Fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#A3C9F1"));
+                range.Style.Font.Color.SetColor(ColorTranslator.FromHtml("#1D3A6A"));
+                range.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                range.Style.VerticalAlignment = ExcelVerticalAlignment.Center;
+                range.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            }
+            worksheet.Row(1).Height = 25;
+            worksheet.View.FreezePanes(2, 1);
+            worksheet.Cells[1, 1, 1, colCellNo].AutoFilter = true;
+
+            // Fill data
+            var row = 2;
+            foreach (var property in properties)
+            {
+                int rowCellNo = 1;
+
+                var backgroundColor = row % 2 == 0 ? ColorTranslator.FromHtml("#F4F4F4") : ColorTranslator.FromHtml("#FFFFFF");
+
+                worksheet.Cells[row, rowCellNo++].Value = property.Code;
+                worksheet.Cells[row, rowCellNo++].Value = property.Owner != null ? property.Owner.OwnerName : "";
+                worksheet.Cells[row, rowCellNo++].Value = property.Owner != null ? property.Owner.OwnerPhone : "";
+                worksheet.Cells[row, rowCellNo++].Value = property.Street;
+                worksheet.Cells[row, rowCellNo++].Value = property.Ward;
+                worksheet.Cells[row, rowCellNo++].Value = property.Township;
+                worksheet.Cells[row, rowCellNo++].Value = property.Floor == 0? "(လုံးချင်း/မြေကွက်)" : property.Floor == 1? "Ground Floor" : property.Floor + " Floor";
+                if (properties.Count > 0 && properties[0].PropertyType == "H")
+                {
+                    int buildingTypeId = int.TryParse(property.BuildingType, out int result) ? result : 0;
+                    worksheet.Cells[row, rowCellNo++].Value = buildingTypes.Where(x => x.Id == buildingTypeId).Select(x => x.Name).FirstOrDefault() ?? property.BuildingType;
+                }
+
+                worksheet.Cells[row, rowCellNo++].Value = property.Size;
+                if (property.PropertyType != "L" && property.PropertyType != "I")
+                    worksheet.Cells[row, rowCellNo++].Value = property.Room;
+                worksheet.Cells[row, rowCellNo++].Value = property.Building;
+                if (properties.Count > 0 && properties[0].PropertyType == "C")
+                    worksheet.Cells[row, rowCellNo++].Value = property.CondoName;
+
+                worksheet.Cells[row, rowCellNo++].Value = property.Purpose == "Sale" ? property.SalePrice : property.RentPrice;
+                worksheet.Cells[row, rowCellNo].Style.Numberformat.Format = "#,##0";
+                if (property.PropertyType != "L" && property.PropertyType != "I")
+                {
+                    worksheet.Cells[row, rowCellNo++].Value = "M-" + property.MasterBed;
+                    worksheet.Cells[row, rowCellNo++].Value = "S-" + property.SingleBed;
+                    worksheet.Cells[row, rowCellNo++].Value = property.PropertyFacilities != null ? string.Join(", ", property.PropertyFacilities.Select(x => x.Facility).ToList()) : "";
+                }
+                worksheet.Cells[row, rowCellNo++].Value = property.Comment;
+                worksheet.Cells[row, rowCellNo++].Value = property.Purpose == "Sale"? SaleCommissionMapping[property.SaleCommission] : RentCommissionMapping[property.RentCommision];
+                worksheet.Cells[row, rowCellNo++].Value = property.Purpose == "Sale" ? SalerOwnerTypeMapping[property.SalerOwnType] : OwnershipMapping[property.Ownership];
+                worksheet.Cells[row, rowCellNo++].Value = property.Status;
+                worksheet.Cells[row, rowCellNo++].Value = property.PostStatus;
+                worksheet.Cells[row, rowCellNo++].Value = property.RegistrationDate.ToString("MMM dd, yyyy");
+                worksheet.Cells[row, rowCellNo].Style.Numberformat.Format = "MMM dd, yyyy";
+                worksheet.Cells[row, rowCellNo++].Value = property.AvailableDate.ToString("MMM dd, yyyy");
+                worksheet.Cells[row, rowCellNo].Style.Numberformat.Format = "MMM dd, yyyy";
+                worksheet.Cells[row, rowCellNo++].Value = property.LastCheckedDate.ToString("MMM dd, yyyy");
+                worksheet.Cells[row, rowCellNo].Style.Numberformat.Format = "MMM dd, yyyy";
+                worksheet.Cells[row, rowCellNo++].Value = property.LastCheckedBy != null ? property.LastCheckedBy.EmployeeName : "";
+                worksheet.Cells[row, rowCellNo++].Value = property.Remark;
+                worksheet.Cells[row, rowCellNo++].Value = property.Map;
+
+                //worksheet.Cells[row, 15].Style.Numberformat.Format = "$#,##0.00";  // Price formatting
+
+                // Apply border to data rows
+                using (var range = worksheet.Cells[row, 1, row, --rowCellNo])
+                {
+                    range.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    range.Style.Fill.BackgroundColor.SetColor(backgroundColor);
+                    range.Style.Font.Color.SetColor(ColorTranslator.FromHtml("#4A4A4A"));
+                    range.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    range.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    range.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    range.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                }
+
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
         }
 
         private void AddPropertiesToSheet(ExcelWorksheet worksheet, List<PropertyModel> properties, List<PropertyTypeModel> propertyTypes, List<BuildingTypeModel> buildingTypes)

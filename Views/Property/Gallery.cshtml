@@ -18,6 +18,20 @@
     </div>
 </form>
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="table-responsive mt-3">
     <table class="table table-bordered border-1">
         <thead>
@@ -33,7 +47,7 @@
                 @foreach (var image in Model)
                 {
                     <tr>
-                        <td class="bg-gray-100"><img src="@Url.Content("~/PropertyPhoto/" + @image.Location)" alt="@image.Title" width="100" /></td>
+                        <td class="bg-gray-100"><img src="@Url.Content("~/PropertyPhoto/" + @image.Location)" alt="@image.Title" width="100" loading="lazy" /></td>
                         <td class="bg-gray-100">@image.Title</td>
                         <td class="bg-gray-100">
                             <form asp-action="Delete" method="post" onsubmit="return confirmDelete();">

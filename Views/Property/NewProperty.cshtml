@@ -20,14 +20,20 @@
                                         Code :
                                     </div>
                                     <div class="row">
-                                        <div class="col-12">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" @(Model.Code != null? "" :"checked") />
-                                                <label class="form-check-label" for="selectedFacility">Auto</label>
+                                        @if (Model.Id <= 0)
+                                        {
+                                            <div class="col-12">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="selectedFacility" name="selectedFacility" @(Model.Code != null ? "" : "checked") />
+                                                    <label class="form-check-label" for="selectedFacility">Auto</label>
+                                                </div>
                                             </div>
-                                        </div>
+                                        }
                                         <div class="col-12" id="autoFields">
-                                            <input class="form-control" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
+                                            @if (Model.Id <= 0)
+                                            {
+                                                <input class="form-control" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
+                                            }
                                             <input class="form-control" type="text" asp-for="Code" placeholder="" id="Code" name="Code" style="@(Model.Code != null? "" :"display: none")" />
                                         </div>
                                     </div>
@@ -61,7 +67,7 @@
                                     <i class="fa-solid fa-triangle-exclamation fa-2x text-gray-300"></i>
                                 </div>
                             </div>
-                           <div class="row no-gutters align-items-center mt-4">
+                            <div class="row no-gutters align-items-center mt-4">
                                 <div class="col mr-2">
                                     <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
                                         Last Checked Date :
@@ -75,7 +81,7 @@
                                 <div class="col-auto">
                                     <i class="fa-solid fa-triangle-exclamation fa-2x text-gray-300"></i>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -94,9 +100,11 @@
                                             <div class="form-group">
                                                 <select class="form-select mb-1" asp-for="Status" id="Status" name="Status" data-val="true" data-val-required="Purpose is required.">
                                                     <option value="Available">Available</option>
+                                                    <option value="PowerOff">ဖုန်းဆက်မရ</option>
                                                     <option value="NotAvailable">(ခေတ္တ) အရောင်းပိတ်/အငှားပိတ်</option>
-                                                    <option value="Rent">အငှားရှိ</option>
-                                                    <option value="Cancel">Cancel (Sold)</option>
+                                                    <option value="Rented">အငှားရှိ</option>
+                                                    <option value="Delete">Cancel (Sold)</option>
+                                                    <option value="Cancel">Cancel (မရောင်းတော့ပါ)</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -125,7 +133,8 @@
 
             </div>
 
-            @if (!string.IsNullOrEmpty(ViewBag.Error)){
+            @if (!string.IsNullOrEmpty(ViewBag.Error))
+            {
                 <div class="row mt-3">
                     <div class="col-12">
                         <div class="alert alert-danger" role="alert">
@@ -139,7 +148,7 @@
                 <div class="col-lg-6">
                     <div class="card mx-auto shadow">
                         <div class="card-header">
-                            <span class="text-primary fw-bold">General Information</span> 
+                            <span class="text-primary fw-bold">General Information</span>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -228,7 +237,7 @@
                                             <option value="38">38 (၃၇ထပ် (ခ) ၃၈လွှာ)</option>
                                             <option value="39">39 (၃၈ထပ် (ခ) ၃၉လွှာ)</option>
                                         </select>
-                                    
+
                                     </div>
                                 </div>
                             </div>
@@ -328,7 +337,7 @@
                             <div class="row">
                                 <div class="text-center">
                                     <button type="submit" class="btn btn-secondary mt-3 text-center">Submit</button>
-                                    <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-primary mt-3 text-center">Gallery</a>
+                                    <a href="@Url.Action("Gallery", "Property", new { propertyId = @Model.Id })" class="btn btn-primary mt-3 text-center">Gallery</a>
                                     <!-- Add Delete Button -->
                                     <a href="@Url.Action("SearchProperty", "Property")" class="btn btn-info mt-3">Back To List</a>
                                 </div>
@@ -339,7 +348,7 @@
                 <div class="col-lg-6">
                     <div class="card mx-auto shadow">
                         <div class="card-header">
-                             <span class="text-primary fw-bold">Property Information</span>
+                            <span class="text-primary fw-bold">Property Information</span>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -366,8 +375,8 @@
                                             <option value="3">General Owner</option>
                                             <option value="4">အမွေဆက်ခံ</option>
                                             <option value="5">ဂရံဂတုံး</option>
-                                            <option value="7">အဆက်ဆက်စာချုပ်</option>
                                             <option value="6">Other</option>
+                                            <option value="7">အဆက်ဆက်စာချုပ်</option>
 
                                         </select>
                                     </div>
@@ -598,7 +607,7 @@
 
                     <div class="card mx-auto mt-3 shadow-sm">
                         <div class="card-header">
-                             <span class="text-primary fw-bold">Facilities</span>
+                            <span class="text-primary fw-bold">Facilities</span>
                         </div>
                         <div class="card-body">
                             <div class="row">
@@ -623,7 +632,7 @@
 
                     <div class="card mx-auto mt-3 shadow">
                         <div class="card-header">
-                             <span class="text-primary fw-bold">Owner Information</span>
+                            <span class="text-primary fw-bold">Owner Information</span>
                         </div>
                         <div class="card-body">
                             <div class="row">

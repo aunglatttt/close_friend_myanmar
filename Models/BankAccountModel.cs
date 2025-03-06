@@ -2,7 +2,7 @@
 
 namespace CloseFriendMyanamr.Models
 {
-    public class BankAccountModel
+    public class BankAccountModel : BaseDomain
     {
         [Key]
         public int Id { get; set; }
@@ -12,7 +12,5 @@ namespace CloseFriendMyanamr.Models
         [Required]
         public int OpeningAmount { get; set; }
         public string? Remark { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

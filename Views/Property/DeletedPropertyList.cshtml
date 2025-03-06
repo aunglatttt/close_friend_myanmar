@@ -58,7 +58,7 @@
                                     </td>
                                     <td>
                                         @item.LastCheckedDate <br />
-                                        <span class="text-primary" style="font-size:12px;">will update later</span>
+                                        <span class="text-primary" style="font-size:12px;">@item.LastCheckedBy</span>
                                     </td>
                                     <td>@item.Street</td>
                                     <td>@item.Comment</td>
@@ -84,6 +84,10 @@
             ordering: true,   // Enable sorting
             info: true,       // Show table information
             autoWidth: false, // Disable automatic column width calculation
+               lengthMenu: [      // Specify the length options
+            [25, 50, 100, -1],  // -1 means 'All'
+            [25, 50, 100, "All"] // Display labels for options
+        ],
             columnDefs: [
                 { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
                 { responsivePriority: 2, targets: -1 } // Make Action column high priority

@@ -1,10 +1,12 @@
 using System.Diagnostics;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
 using SimpleDataWebsite.Data;
 
 namespace CloseFriendMyanamr.Controllers
@@ -78,6 +80,55 @@ namespace CloseFriendMyanamr.Controllers
         public IActionResult Calculator()
         {
             return View();
+        }
+
+        public async Task<IActionResult> ShowCodeNumberDetail()
+        {
+            try
+            {
+                string pattern = @"([A-Za-z]+)(\d+)";
+
+                var codes = await _context.Property.AsNoTracking()
+                    .Select(x => x.Code)
+                    .ToListAsync();
+
+                var maxCodes = codes
+                   .Select(code =>
+                   {
+                       var match = Regex.Match(code, pattern);
+                       if (match.Success)
+                       {
+                           return new
+                           {
+                               Prefix = match.Groups[1].Value,   // Extract prefix (letters)
+                               Number = int.Parse(match.Groups[2].Value) // Extract number and parse it
+                           };
+                       }
+                       return null;
+                   })
+                   .Where(x => x != null) // Filter out invalid entries (if any)
+                   .GroupBy(x => x.Prefix) // Group by prefix
+                   .Select(group => new CodeListViewModel
+                   {
+                       Prefix = group.Key,
+                       MaxCode = group.Max(x => x.Number) // Find max number for each prefix
+                   })
+                   .ToList();
+
+                var propertyTypes = await _context.PropertyType.AsNoTracking().Select(x => new { x.TypeName, x.ShortCode }).ToListAsync();
+                foreach (var item in maxCodes)
+                {
+                    item.PropertyType = propertyTypes.Where(x => x.ShortCode == item.Prefix).Select(x => x.TypeName).FirstOrDefault()??"";
+                }
+
+                return View(maxCodes.OrderBy(x => x.PropertyType).ToList());
+            }
+            catch (Exception ex)
+            {
+                ViewBag.ErrorMessage = ex.Message;
+                return View();
+            }
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

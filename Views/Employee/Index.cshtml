@@ -40,7 +40,7 @@
                                             <td>@item.PhoneNumber</td>
                                             <td>@item.LoginName</td>
                                             <td>@item.EmployeeType?.Type</td>
-                                            <td>@item.CreatedAt.ToString("dd-MMM-yyyy")</td>
+                                            <td>@(item.CreatedAt != null? item.CreatedAt.Value.ToString("dd-MMM-yyyy") : "")</td>
                                             <td>@(item.Status ? "Active" : "Inactive")</td>
                                             <td>
                                                 <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("Create", "Employee", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
@@ -66,6 +66,10 @@
             ordering: true,   // Enable sorting
             info: true,       // Show table information
             autoWidth: false, // Disable automatic column width calculation
+               lengthMenu: [      // Specify the length options
+            [25, 50, 100, -1],  // -1 means 'All'
+            [25, 50, 100, "All"] // Display labels for options
+        ],
             columnDefs: [
                 { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
                 { responsivePriority: 2, targets: -1 } // Make Action column high priority

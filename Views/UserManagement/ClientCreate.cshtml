@@ -81,7 +81,7 @@
                                     <div class="d-flex flex-wrap">
 
                                         <a class="me-3" asp-controller="ClientRequest" asp-action="ClientRequirement" asp-route-clientId="@item.ClientId" asp-route-clrId="@item.Id" style="cursor:pointer; font-size:20px;">#@index: (@item.PropertyType @(item.Purpose == "1" ? "အဝယ်" : "အငှား"))</a>
-                                        <button type="button" class="btn action-btn btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                             @item.Status
                                         </button>
                                     </div>

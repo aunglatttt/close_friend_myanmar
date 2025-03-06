@@ -2,7 +2,7 @@
 
 namespace CloseFriendMyanamr.Models
 {
-    public class EmployeeType
+    public class EmployeeType : BaseDomain
     {
         [Key]
         public int Id { get; set; }
@@ -10,7 +10,5 @@ namespace CloseFriendMyanamr.Models
         [Required]
         public string Type { get; set; }
         public bool ReadOnly { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

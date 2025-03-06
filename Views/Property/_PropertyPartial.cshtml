@@ -5,10 +5,19 @@
     {
         <tr style="font-size: 14px;">
             <td class="text-center">
-                <i class="fa-solid fa-pen-to-square" onclick="window.location.href='@Url.Action("NewProperty", "Property", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i><br />
-                <i class="fa-solid fa-images" onclick="window.location.href='@Url.Action("Gallery", "Property", new { propertyId = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Galllery"></i><br>
-                <i class="fa-solid fa-circle-info" onclick="window.location.href='@Url.Action("PropertyInfo", "Property", new { propertyId = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail"></i>
+                <a href="@Url.Action("NewProperty", "Property", new { id = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a><br />
+
+                <a href="@Url.Action("Gallery", "Property", new { propertyId = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Gallery">
+                    <i class="fa-solid fa-images"></i>
+                </a><br>
+
+                <a href="@Url.Action("PropertyInfo", "Property", new { propertyId = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail">
+                    <i class="fa-solid fa-circle-info"></i>
+                </a>
             </td>
+
             <td>
                 @item.Code <br />
                 @if(item.Status == "Available"){

@@ -1,4 +1,4 @@
-﻿@model CloseFriendMyanamr.Models.UserManagement.AgentModel
+﻿@model CloseFriendMyanamr.Models.UserManagement.OwnerModel
 
 @{
     ViewData["Title"] = "Create Agent";
@@ -18,22 +18,21 @@
                         </div>
                         <div class="card-body">
                             <div class="form-group">
-                                <label asp-for="AgentName" class="required"></label>
-                                <input asp-for="AgentName" placeholder="Type here" class="form-control" />
-                                <span asp-validation-for="AgentName" class="text-danger"></span>
+                                @* <label asp-for="OwnerName" class="required"></label> *@
+                                <label>Agent အမည် <span class="text-danger">*</span></label>
+                                <input asp-for="OwnerName" placeholder="Type here" class="form-control" />
+                                <span asp-validation-for="OwnerName" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="AgentPhone" class="required"></label>
-                                <input asp-for="AgentPhone" placeholder="Type here" class="form-control" />
-                                <span asp-validation-for="AgentPhone" class="text-danger"></span>
+                                <label>ဖုန်း <span class="text-danger">*</span></label>
+                                @* <label asp-for="OwnerPhone" class="required"></label> *@
+                                <input asp-for="OwnerPhone" placeholder="Type here" class="form-control" required/>
+                                <span asp-validation-for="OwnerPhone" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="Address"></label>
+                                @* <label asp-for="Address">FB Page</label> *@
+                                <label>FB Page</label>
                                 <input asp-for="Address" placeholder="Type here" class="form-control" />
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="FBPage"></label>
-                                <input asp-for="FBPage" placeholder="Type here" class="form-control" />
                             </div>
                             <div class="form-group">
                                 <label asp-for="Remark"></label>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<CloseFriendMyanamr.Models.UserManagement.AgentModel>
+﻿@model IEnumerable<CloseFriendMyanamr.ViewModel.AOViewModel>
 
 @{
     ViewData["Title"] = "Agent List";
@@ -29,9 +29,9 @@
                                     <tr>
                                         <th>Name</th>
                                         <th>Phone Number</th>
-                                        <th>Address</th>
                                         <th>FB Page</th>
                                         <th>Remark</th>
+                                        <th>Type</th>
                                         <th>No of Property</th>
                                         <th>Action</th>
                                     </tr>
@@ -40,12 +40,12 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td>@item.AgentName</td>
-                                            <td>@item.AgentPhone</td>
+                                            <td>@item.OwnerName</td>
+                                            <td>@item.OwnerPhone</td>
                                             <td>@item.Address</td>
-                                            <td>@item.FBPage</td>
                                             <td>@item.Remark</td>
-                                            <td>@item.ShowProperty</td>
+                                            <td>Agent</td>
+                                            <td>@item.PropertyCount</td>
                                             <td>
                                                 <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("AgentCreate", "UserManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
                                                 <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
@@ -71,6 +71,10 @@
             ordering: true,   // Enable sorting
             info: true,       // Show table information
             autoWidth: false, // Disable automatic column width calculation
+               lengthMenu: [      // Specify the length options
+            [25, 50, 100, -1],  // -1 means 'All'
+            [25, 50, 100, "All"] // Display labels for options
+        ],
             columnDefs: [
                 { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
                 { responsivePriority: 2, targets: -1 } // Make Action column high priority
