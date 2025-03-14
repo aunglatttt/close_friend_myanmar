@@ -33,7 +33,7 @@ namespace CloseFriendMyanamr.Models.UserManagement
 
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
-        public virtual List<PropertyModel> Properties { get; set; }
+        public virtual List<PropertyModel>? Properties { get; set; }
 
     }
 }

@@ -13,7 +13,7 @@
         public int Price { get; set; }
         public string Owner { get; set; }
         public string? Remark { get; set; }
-        public string LastCheckedDate { get; set; }
+        public DateTime LastCheckedDate { get; set; }
         public string LastCheckedBy { get; set; }
     }
 }

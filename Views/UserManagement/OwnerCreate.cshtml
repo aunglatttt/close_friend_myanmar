@@ -8,43 +8,204 @@
 <div class="row my-3 mx-auto">
     <div class="col-sm-12">
         <h3 class="mb-3 text-center responsive-heading">@ViewBag.CreateOrUpdate Employee</h3>
-        <form asp-action="OwnerCreate" method="post" id="employeeForm">
-            <div class="row">
-                <!-- Left Column: Employee Details -->
-                <div class="col-md-12 col-sm-12">
-                    <div class="card mx-auto w-80 shadow">
-                        <div class="card-header">
-                            <span class="text-primary fw-bold"> Owner Information </span>
-                        </div>
-                        <div class="card-body">
-                            <div class="form-group">
-                                <label asp-for="OwnerName" class="required"></label>
-                                <input asp-for="OwnerName" placeholder="Type here" class="form-control" />
-                                <span asp-validation-for="OwnerName" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="OwnerPhone"></label>
-                                <input asp-for="OwnerPhone" placeholder="Type here" class="form-control" />
-                                <span asp-validation-for="OwnerPhone" class="text-danger"></span>
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Address"></label>
-                                <input asp-for="Address" placeholder="Type here" class="form-control" />
-                            </div>
-                            <div class="form-group">
-                                <label asp-for="Remark"></label>
-                                <input asp-for="Remark" placeholder="Type here" class="form-control" />
+
+        <div class="row">
+            <div class="col-md-6 col-sm-12 mb-3">
+                <form asp-action="OwnerCreate" method="post" id="employeeForm">
+                    <div class="row">
+                        <!-- Left Column: Employee Details -->
+                        <div class="col-md-12 col-sm-12">
+                            <div class="card mx-auto w-80 shadow">
+                                <div class="card-header">
+                                    <span class="text-primary fw-bold"> Owner Information </span>
+                                </div>
+                                <div class="card-body">
+                                    <div class="form-group">
+                                        <label asp-for="OwnerName" class="required"></label>
+                                        <input asp-for="OwnerName" placeholder="Type here" class="form-control" />
+                                        <span asp-validation-for="OwnerName" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="OwnerPhone"></label>
+                                        <input asp-for="OwnerPhone" placeholder="Type here" class="form-control" />
+                                        <span asp-validation-for="OwnerPhone" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Address"></label>
+                                        <input asp-for="Address" placeholder="Type here" class="form-control" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label asp-for="Remark"></label>
+                                        <input asp-for="Remark" placeholder="Type here" class="form-control" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
+                        <a href="@Url.Action("OwnerList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
+
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-6 col-sm-12">
+                <div class="card mx-auto shadow">
+                    <div class="card-header">
+                        <div class="row">
+                            <span class="col-md-3 col-sm-12">
+                                <span class="text-primary fw-bold"> Requirement </span>
+                            </span>
+                            @if (ViewBag.CreateOrUpdate != null && ViewBag.CreateOrUpdate != "Create New")
+                            {
+
+                                <a href="@Url.Action("NewProperty", "Property", new { clientId = Model.Id })" class="btn btn-warning col-md-3 col-sm-12">New</a>
+                            }
+                            <div class="col"></div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @if (ViewBag.CreateOrUpdate != null && ViewBag.CreateOrUpdate == "Create New")
+                        {
+                            <div class="row my-2 text-center">
+                                <strong>Please add owner data first.</strong>
+                            </div>
+                        }
+                        else
+                        {
+                            @if (Model != null && Model.Properties != null && Model.Properties.Count() > 0)
+                            {
+                                int index = 1;
+                                foreach (var item in Model.Properties)
+                                {
+                                    <div class="d-flex flex-wrap">
+
+                                        <a class="me-3" asp-controller="Property" asp-action="PropertyInfo" asp-route-propertyId="@item.Id" style="cursor:pointer; font-size:20px;">#@index: (@item.Code @(item.Purpose == "Sale" ? "အရောင်း" : "အငှား"))</a>
+                                        <div class="">
+                                            @if (item.Status == "Available")
+                                            {
+                                                <a href="#" class="btn btn-info btn-icon-split btn-sm rounded">
+                                                    <span class="icon text-white-50 small"><i class="fas fa-flag"></i></span>
+                                                    <span class="text small">@item.Status</span>
+                                                </a>
+                                            }
+                                            else if (item.Status == "PowerOff")
+                                            {
+                                                <a href="#" class="btn btn-secondary btn-icon-split btn-sm rounded">
+                                                    <span class="icon text-white-50 small">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text small">PowerOff (ဖုန်းဆက်မရ)</span>
+                                                </a>
+                                            }
+                                            else if (item.Status == "NotAvailable")
+                                            {
+                                                <a href="#" class="btn btn-secondary btn-icon-split btn-sm rounded">
+                                                    <span class="icon text-white-50">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text">Not Available</span>
+                                                </a>
+                                            }
+                                            else if (item.Status == "Rented")
+                                            {
+                                                <a href="#" class="btn btn-warning btn-icon-split btn-sm rounded">
+                                                    <span class="icon text-white-50 small">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </span>
+                                                    <span class="text small">အငှားရှိ</span>
+                                                </a>
+                                            }
+                                            else if (item.Status == "Delete")
+                                            {
+                                                <a href="#" class="btn btn-danger btn-icon-split btn-sm rounded ">
+                                                    <span class="icon text-white-50 small">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text small">Cancel (Sold)</span>
+                                                </a>
+                                            }
+                                            else if (item.Status == "DuplicateDelete")
+                                            {
+                                                <a href="#" class="btn btn-danger btn-icon-split btn-sm rounded">
+                                                    <span class="icon text-white-50 small">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text small">Duplicate Delete</span>
+                                                </a>
+                                            }
+                                            else if (item.Status == "Cancel")
+                                            {
+                                                <a href="#" class="btn btn-secondary btn-icon-split btn-sm rounded">
+                                                    <span class="icon text-white-50 small">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text small">Cancel (မရောင်းတော့ပါ)</span>
+                                                </a>
+                                            }
+                                            else
+                                            {
+
+                                                <a href="#" class="btn btn-secondary btn-icon-split  btn-sm rounded">
+                                                    <span class="icon text-white-50 small">
+                                                        <i class="fas fa-trash"></i>
+                                                    </span>
+                                                    <span class="text small">@item.Status</span>
+                                                </a>
+                                            }
+
+
+                                            <a href="#" class="btn btn-success btn-icon-split btn-sm">
+                                                <span class="icon text-white-50 small">
+                                                    <i class="fas fa-check"></i>
+                                                </span>
+                                                <span id="lblPostStatus" class="text small">@item.PostStatus</span>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        @if (!string.IsNullOrEmpty(item.PropertyType))
+                                        {
+                                            <span class="col-12">Property Type >>> @item.PropertyType</span>
+                                        }
+
+                                        @if (!string.IsNullOrEmpty(item.Ownership))
+                                        {
+                                            <span class="col-12">Ownership >>> @item.Ownership</span>
+                                        }
+
+                                        <span>@item.Purpose Price (@(item.Purpose == "Sale" ? item.SalePrice : item.RentPrice)) &nbsp;&nbsp;&nbsp; >>>> &nbsp;&nbsp;&nbsp; @(item.Purpose == "Sale" ? item.SaleCommissionString : item.RentCommisionString)</span>
+
+
+
+                                        @if (!string.IsNullOrEmpty(item.SaleCommissionString))
+                                        {
+                                            <span class="col-12">Sale Commission >>> @item.SaleCommissionString</span>
+                                        }
+
+
+                                        <span class="col-12">Registration Date >>> @item.RegistrationDate.ToString("MMM dd, yyyy") </span>
+                                        <span class="col-12">Available Date >>> @item.AvailableDate.ToString("MMM dd, yyyy") </span>
+
+                                        <span>
+                                            Last Check Date >>> @item.LastCheckedDate.ToString("MMM dd, yyyy")
+                                            <span style="font-size:12px;">(By @(item.LastCheckedBy != null ? item.LastCheckedBy.EmployeeName : ""))</span>
+                                        </span>
+
+
+                                    </div>
+                                    index++;
+                                    <br />
+                                }
+                            }
+                        }
+                    </div>
                 </div>
             </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
-                <a href="@Url.Action("OwnerList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
 
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
@@ -52,4 +213,4 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-}uery.validate.unobtrusive.min.js"></script>
+}

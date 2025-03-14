@@ -47,7 +47,7 @@
                                             <span class="badge rounded-pill bg-info py-2 px-3">@item.Status</span> <br />
                                             <span class="text-warning fw-bold" style="font-size:12px;">@item.AvaliableDate</span>
                                         }
-                                        else if (item.Status == "Delete")
+                                        else if (item.Status == "Delete" || item.Status == "DuplicateDelete")
                                         {
                                             <span class="badge rounded-pill bg-danger py-2 px-3">@item.Status</span>
                                         }
@@ -57,7 +57,7 @@
                                         }
                                     </td>
                                     <td>
-                                        @item.LastCheckedDate <br />
+                                        @item.LastCheckedDate.ToString("MMM dd, yyyy") <br />
                                         <span class="text-primary" style="font-size:12px;">@item.LastCheckedBy</span>
                                     </td>
                                     <td>@item.Street</td>

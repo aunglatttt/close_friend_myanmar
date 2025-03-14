@@ -23,7 +23,20 @@ namespace CloseFriendMyanamr.Controllers
         #region client
         public async Task<IActionResult> ClientList()
         {
-            return View(await _context.Client.AsNoTracking().ToListAsync());
+            //var model = await _context.Client.AsNoTracking()
+            //    .Select(x => new
+            //    {
+            //        x.Id,
+            //        x.ClientName,
+            //        x.ClientPhone,
+            //        x.Address,
+            //        x.RegistrationDate,
+            //        x.Status,
+            //        x.ShownProperty = x.ClientRequirements.Count(),
+            //        x.Remark,
+            //    })
+                
+            return View(await _context.Client.AsNoTracking().Include(x => x.ClientRequirements).ToListAsync());
         }
 
         public async Task<IActionResult> ClientCreate(int? id)
@@ -139,7 +152,132 @@ namespace CloseFriendMyanamr.Controllers
 
             if (id != null && id > 0)
             {
-                return View(await _context.Owner.FindAsync(id));
+                var model = await _context.Owner.Include(x => x.Properties).ThenInclude(x => x.LastCheckedBy).AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+                if (model != null && model.Properties.Any())
+                {
+                    foreach(var item in model.Properties)
+                    {
+                        item.PropertyType = await _context.PropertyType.AsNoTracking().Where(x => x.ShortCode == item.PropertyType).Select(x => x.TypeName).FirstOrDefaultAsync()??item.PropertyType;
+
+                        if (item.BuildingType != null)
+                        {
+                            int buildingTypeId = int.TryParse(item.BuildingType, out int result) ? result : 0;
+                            item.BuildingType = await _context.BuildingType.AsNoTracking().Where(x => x.Id == buildingTypeId).Select(x => x.Name).FirstOrDefaultAsync()??item.BuildingType;
+                        }
+
+                        #region ownership
+
+                        switch (item.SalerOwnType)
+                        {
+                            case 1:
+                                item.SalerOwnTypeString = "အမည်ပေါက်";
+                                break;
+                            case 2:
+                                item.SalerOwnTypeString = "Special Power";
+                                break;
+                            case 3:
+                                item.SalerOwnTypeString = "General Owner";
+                                break;
+                            case 4:
+                                item.SalerOwnTypeString = "အမွေဆက်ခံ";
+                                break;
+                            case 5:
+                                item.SalerOwnTypeString = "ဂရံဂတုံး";
+                                break;
+                            case 6:
+                                item.SalerOwnTypeString = "Other";
+                                break;
+                            case 7:
+                                item.SalerOwnTypeString = "အဆက်ဆက်စာချုပ်";
+                                break;
+                            default:
+                                item.SalerOwnTypeString = item.SalerOwnType + "";
+                                break;
+                        }
+
+                        switch (item.Ownership)
+                        {
+                            case "Grant_Original":
+                                item.Ownership = "Grant (မူရင်း)";
+                                break;
+                            case "Grant_Copy":
+                                item.Ownership = "Grant (မိတ္တူ)";
+                                break;
+                            case "Permit_Original":
+                                item.Ownership = "Permit (မူရင်း)";
+                                break;
+                            case "Permit_Copy":
+                                item.Ownership = "Permit (မိတ္တူ)";
+                                break;
+                            case "FreeHoldLand":
+                                item.Ownership = "FreeHold Land";
+                                break;
+                            case "BCC":
+                                item.Ownership = "BCC";
+                                break;
+                            case "Contract":
+                                item.Ownership = "အစဉ်အဆက်စာချုပ်";
+                                break;
+                            case "Form_7":
+                                item.Ownership = "Form 7 (ပုံစံ ၇)";
+                                break;
+                            default:
+                                item.Ownership = item.Ownership;
+                                break;
+                        }
+
+
+                        #endregion
+
+                        #region commisssion
+                        switch (item.SaleCommission)
+                        {
+                            case 1:
+                                item.SaleCommissionString = "2% (အပြည့်အဝ)";
+                                break;
+                            case 2:
+                                item.SaleCommissionString = "1% (တစ်ဝက်)";
+                                break;
+                            case 3:
+                                item.SaleCommissionString = "1/3 (သုံးပုံတစ်ပုံ)";
+                                break;
+                            case 4:
+                                item.SaleCommissionString = "အကျိုးတူ (အညီမျှ)";
+                                break;
+                            case 5:
+                                item.SaleCommissionString = "အဆင်ပြေသလို ညှိယူရန်";
+                                break;
+                            default:
+                                item.SaleCommissionString = "";
+                                break;
+                        }
+
+                        switch (item.RentCommision)
+                        {
+                            case 1:
+                                item.RentCommisionString = "၁လစာ (အိမ်ရှင်+အိမ်ငှား)";
+                                break;
+                            case 2:
+                                item.RentCommisionString = "၁လစာ (တစ်ခြမ်း)";
+                                break;
+                            case 3:
+                                item.RentCommisionString = "1/3 (သုံးပုံတစ်ပုံ)";
+                                break;
+                            case 4:
+                                item.RentCommisionString = "အကျိုးတူ (အညီမျှ)";
+                                break;
+                            case 5:
+                                item.RentCommisionString = "အဆင်ပြေသလို ညှိယူရန်";
+                                break;
+                            default:
+                                item.RentCommisionString = "";
+                                break;
+                        }
+                        #endregion
+                    }
+
+                }
+                return View(model);
             }
 
             return View();
@@ -191,7 +329,7 @@ namespace CloseFriendMyanamr.Controllers
 
                 return RedirectToAction("SuccessOwner", new { message = returnMsg });
             }
-            return View();
+            return View(model);
         }
 
         [HttpPost]

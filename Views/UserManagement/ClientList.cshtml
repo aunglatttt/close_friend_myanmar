@@ -45,7 +45,7 @@
                                             <td>@item.Address</td>
                                             <td>@item.RegistrationDate.ToString("dd-MMM-yyyy")</td>
                                             <td>@item.Status</td>
-                                            <td>@item.ShownProperty</td>
+                                            <td>@(item.ClientRequirements != null? item.ClientRequirements.Count() : 0)</td>
                                             <td>@item.Remark</td>
                                             <td>
                                                 <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("ClientCreate", "UserManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>

@@ -12,11 +12,16 @@
                     <li><a href="@Url.Action("SearchProperty", "Property")">Search Property</a> <span class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
                     <li><a href="@Url.Action("NewProperty", "Property")">New Property</a> <span class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
                     <li class="active"><span id="lblCode">@Model.Code &nbsp; &nbsp; (@Model.Township)</span></li>&nbsp; &nbsp; 
-                    @if(!string.IsNullOrEmpty(Model.Map)){
-                        <span>| &nbsp; &nbsp;
-                            <img alt="File:Google Maps icon (2015-2020).svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/512px-Google_Maps_icon_%282015-2020%29.svg.png" decoding="async" width="20" height="20" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/768px-Google_Maps_icon_%282015-2020%29.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/1024px-Google_Maps_icon_%282015-2020%29.svg.png 2x" data-file-width="20" data-file-height="20">
-                        </span>
+                    @if (!string.IsNullOrEmpty(Model.Map))
+                    {
+                        @Model.Map
+       <span>| &nbsp; &nbsp;
+           <a href="@Model.Map" target="_blank">
+               <img alt="File:Google Maps icon (2015-2020).svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/512px-Google_Maps_icon_%282015-2020%29.svg.png" decoding="async" width="20" height="20" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/768px-Google_Maps_icon_%282015-2020%29.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/1024px-Google_Maps_icon_%282015-2020%29.svg.png 2x" data-file-width="20" data-file-height="20">
+           </a>
+       </span>
                     }
+
                 </ul>
             </div>
         </div>
@@ -124,7 +129,7 @@
                                     <span class="icon text-white-50">
                                         <i class="fas fa-trash"></i>
                                     </span>
-                                    <span class="text">NotAvailable</span>
+                                    <span class="text">Not Available</span>
                                 </a>
                             }
                             else if (Model.Status == "Rented")
@@ -145,6 +150,15 @@
                                     <span class="text">Cancel (Sold)</span>
                                 </a>
                             }
+                            else if (Model.Status == "DuplicateDelete")
+                            {
+                                <a href="#" class="btn btn-danger btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                    <span class="text">Duplicate Delete</span>
+                                </a>
+                            }
                             else if (Model.Status == "Cancel")
                             {
                                 <a href="#" class="btn btn-secondary btn-icon-split">
@@ -152,6 +166,14 @@
                                         <i class="fas fa-trash"></i>
                                     </span>
                                     <span class="text">Cancel (မရောင်းတော့ပါ)</span>
+                                </a>
+                            }else{
+
+                                <a href="#" class="btn btn-secondary btn-icon-split">
+                                    <span class="icon text-white-50">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                    <span class="text">@Model.Status</span>
                                 </a>
                             }
                            
@@ -163,6 +185,7 @@
                                 <span id="lblPostStatus" class="text">@Model.PostStatus</span>
                             </a>
                         </div>
+                      
                         @* </div> *@
 
 
@@ -222,7 +245,7 @@
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-100">Last Check Date:</td>
-                                    <td class="bg-gray-100">@Model.LastCheckedDate.ToString("MMM dd, yyyy") <span style="font-size:12px;">(By @(Model.Owner != null? Model.Owner.OwnerName : ""))</span></td>
+                                    <td class="bg-gray-100">@Model.LastCheckedDate.ToString("MMM dd, yyyy") <span style="font-size:12px;">(By @(Model.LastCheckedBy != null? Model.LastCheckedBy.EmployeeName: ""))</span></td>
                                 </tr>
                             </tbody>
                         </table>
