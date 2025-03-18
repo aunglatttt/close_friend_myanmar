@@ -435,7 +435,7 @@
 
                         <div class="row">
                             <div class="text-center">
-                                <button type="submit" class="btn btn-secondary mt-3 text-center">Submit</button>
+                                <button type="button" id="submitbtn" class="btn btn-secondary mt-3 text-center">Submit</button>
                                 <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Reset</a>
                                 <!-- Add Delete Button -->
                                 <a href="@Url.Action("PropertyList", "Property")" class="btn btn-info mt-3">Back To List</a>
@@ -542,7 +542,7 @@
     });
 
     // Submit button click event
-    $('button[type="submit"]').click(function (e) {
+        $('#submitbtn').click(function (e) {
         e.preventDefault(); // Prevent default form submission
         fetchData(1, $('#pageSize').val()); // Fetch data with filters
     });

@@ -143,302 +143,309 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> NewProperty(PropertyModel model, List<string> selectedFacilities)
         {
-            bool isCodeOk = true;
-            if (!string.IsNullOrEmpty(model.Code) && model.Id <= 0)
+            try
             {
-                bool isFound = await _context.Property.AsNoTracking().AnyAsync(x => x.Code == model.Code);
-                isCodeOk = isFound == true ? false : true;
-            }
-
-            // Check for duplicate HouseNo, Street, CondoName, Floor, RoomNo (for both create and update)
-            bool isDuplicate = await _context.Property.AsNoTracking()
-                .AnyAsync(x => 
-                            //(x.Ward == model.Ward) &&
-                            (x.Street == model.Street) &&
-                            (x.CondoName == model.CondoName) &&
-                            (x.Floor == model.Floor) &&
-                            (x.Room == model.Room) &&
-                            (x.Owner.OwnerName == model.OwnerName) &&
-                            (x.Owner.OwnerPhone == model.OwnerPhone) &&
-                            (x.PropertyType == model.PropertyType) &&
-                             x.Id != model.Id);
-
-
-            if (ModelState.IsValid && isCodeOk && !isDuplicate)
-            {
-                // Check if the user selected "အသစ်ထည့်ရန်" (Add New Owner)
-                if (model.OwnerId == 0)
+                bool isCodeOk = true;
+                if (!string.IsNullOrEmpty(model.Code) && model.Id <= 0)
                 {
+                    bool isFound = await _context.Property.AsNoTracking().AnyAsync(x => x.Code == model.Code);
+                    isCodeOk = isFound == true ? false : true;
+                }
 
-                    if (string.IsNullOrEmpty(model.OwnerName) || string.IsNullOrEmpty(model.OwnerPhone) || string.IsNullOrEmpty(model.OwnerTypeSelect))
+                // Check for duplicate HouseNo, Street, CondoName, Floor, RoomNo (for both create and update)
+                bool isDuplicate = await _context.Property.AsNoTracking()
+                    .AnyAsync(x => 
+                                //(x.Ward == model.Ward) &&
+                                (x.Street == model.Street) &&
+                                (x.CondoName == model.CondoName) &&
+                                (x.Floor == model.Floor) &&
+                                (x.Room == model.Room) &&
+                                (x.Owner.OwnerName == model.OwnerName) &&
+                                (x.Owner.OwnerPhone == model.OwnerPhone) &&
+                                (x.PropertyType == model.PropertyType) &&
+                                 x.Id != model.Id);
+
+
+                if (ModelState.IsValid && isCodeOk && !isDuplicate)
+                {
+                    // Check if the user selected "အသစ်ထည့်ရန်" (Add New Owner)
+                    if (model.OwnerId == 0)
                     {
-                        #region for select value
 
-                        #region owner
-                        var owners = await _context.Owner.AsNoTracking()
-                            .Select(x => new { x.Id, x.OwnerName })
-                            .OrderBy(x => x.OwnerName)
-                            .ToListAsync();
-
-                        if (owners == null || !owners.Any())
+                        if (string.IsNullOrEmpty(model.OwnerName) || string.IsNullOrEmpty(model.OwnerPhone) || string.IsNullOrEmpty(model.OwnerTypeSelect))
                         {
-                            ViewData["OwnerList"] = new SelectList(new List<object>(), "Id", "OwnerName");
+                            #region for select value
+
+                            #region owner
+                            var owners = await _context.Owner.AsNoTracking()
+                                .Select(x => new { x.Id, x.OwnerName })
+                                .OrderBy(x => x.OwnerName)
+                                .ToListAsync();
+
+                            if (owners == null || !owners.Any())
+                            {
+                                ViewData["OwnerList"] = new SelectList(new List<object>(), "Id", "OwnerName");
+                            }
+                            else
+                            {
+                                ViewData["OwnerList"] = new SelectList(owners, "Id", "OwnerName");
+                            }
+                            #endregion
+
+                            #region property type
+                            var propertyTypes = await _context.PropertyType.AsNoTracking()
+                                .Select(x => new { x.ShortCode, x.TypeName })
+                                .ToListAsync();
+
+                            if (propertyTypes == null || !propertyTypes.Any())
+                            {
+                                ViewData["PropertyTypeList"] = new SelectList(new List<object>(), "ShortCode", "TypeName");
+                            }
+                            else
+                            {
+                                ViewData["PropertyTypeList"] = new SelectList(propertyTypes, "ShortCode", "TypeName");
+                            }
+                            #endregion
+
+                            #region building type
+                            var buildingTypes = await _context.BuildingType.AsNoTracking()
+                                .Select(x => new { x.Id, x.Name })
+                                .ToListAsync();
+
+                            if (buildingTypes == null || !buildingTypes.Any())
+                            {
+                                ViewData["BuildingTypeList"] = new SelectList(new List<object>(), "Id", "Name");
+                            }
+                            else
+                            {
+                                ViewData["BuildingTypeList"] = new SelectList(buildingTypes, "Id", "Name");
+                            }
+                            #endregion
+
+                            #region townships
+                            var townships = await _context.Township.AsNoTracking()
+                                .Select(x => new { x.Township, x.TownshipMM })
+                                .OrderBy(x => x.TownshipMM)
+                                .ToListAsync();
+
+                            if (townships == null || !townships.Any())
+                            {
+                                ViewData["TownshipList"] = new SelectList(new List<object>(), "Township", "TownshipMM");
+                            }
+                            else
+                            {
+                                ViewData["TownshipList"] = new SelectList(townships, "Township", "TownshipMM");
+                            }
+                            #endregion
+
+
+                            #region facilities
+                            var facilities = await _context.Facilities.AsNoTracking()
+                                .Select(x => x.Name)
+                                .ToListAsync();
+
+                            if (facilities == null || !facilities.Any())
+                            {
+                                ViewData["Facilities"] = new List<string>();
+                            }
+                            else
+                            {
+                                ViewData["Facilities"] = facilities;
+                            }
+                            #endregion
+
+                            #endregion
+
+
+                            ViewBag.Error = "Owner information is required when adding a new owner.";
+                            return View(model);
                         }
-                        else
+
+                        model.Owner = new OwnerModel
                         {
-                            ViewData["OwnerList"] = new SelectList(owners, "Id", "OwnerName");
-                        }
-                        #endregion
-
-                        #region property type
-                        var propertyTypes = await _context.PropertyType.AsNoTracking()
-                            .Select(x => new { x.ShortCode, x.TypeName })
-                            .ToListAsync();
-
-                        if (propertyTypes == null || !propertyTypes.Any())
+                            OwnerName = model.OwnerName,
+                            OwnerPhone = model.OwnerPhone,
+                            Type = model.OwnerTypeSelect,
+                            Address = model.OwnerAddress,
+                            CreatedAt = DateTime.Now
+                        };
+                    }
+                    else
+                    {
+                        var ownerFound = await _context.Owner.FindAsync(model.OwnerId);
+                        if(ownerFound != null)
                         {
-                            ViewData["PropertyTypeList"] = new SelectList(new List<object>(), "ShortCode", "TypeName");
+                            ownerFound.OwnerName = !string.IsNullOrEmpty(model.OwnerName)? model.OwnerName : ownerFound.OwnerName;
+                            ownerFound.OwnerPhone = !string.IsNullOrEmpty(model.OwnerPhone)? model.OwnerPhone : ownerFound.OwnerPhone;
+                            ownerFound.Type = !string.IsNullOrEmpty(model.OwnerTypeSelect)? model.OwnerTypeSelect : ownerFound.Type;
+                            ownerFound.Address = !string.IsNullOrEmpty(model.OwnerAddress)? model.OwnerAddress : ownerFound.Address;
+
+                             _context.Owner.Update(ownerFound);
                         }
-                        else
-                        {
-                            ViewData["PropertyTypeList"] = new SelectList(propertyTypes, "ShortCode", "TypeName");
-                        }
-                        #endregion
-
-                        #region building type
-                        var buildingTypes = await _context.BuildingType.AsNoTracking()
-                            .Select(x => new { x.Id, x.Name })
-                            .ToListAsync();
-
-                        if (buildingTypes == null || !buildingTypes.Any())
-                        {
-                            ViewData["BuildingTypeList"] = new SelectList(new List<object>(), "Id", "Name");
-                        }
-                        else
-                        {
-                            ViewData["BuildingTypeList"] = new SelectList(buildingTypes, "Id", "Name");
-                        }
-                        #endregion
-
-                        #region townships
-                        var townships = await _context.Township.AsNoTracking()
-                            .Select(x => new { x.Township, x.TownshipMM })
-                            .OrderBy(x => x.TownshipMM)
-                            .ToListAsync();
-
-                        if (townships == null || !townships.Any())
-                        {
-                            ViewData["TownshipList"] = new SelectList(new List<object>(), "Township", "TownshipMM");
-                        }
-                        else
-                        {
-                            ViewData["TownshipList"] = new SelectList(townships, "Township", "TownshipMM");
-                        }
-                        #endregion
-
-
-                        #region facilities
-                        var facilities = await _context.Facilities.AsNoTracking()
-                            .Select(x => x.Name)
-                            .ToListAsync();
-
-                        if (facilities == null || !facilities.Any())
-                        {
-                            ViewData["Facilities"] = new List<string>();
-                        }
-                        else
-                        {
-                            ViewData["Facilities"] = facilities;
-                        }
-                        #endregion
-
-                        #endregion
-
-
-                        ViewBag.Error = "Owner information is required when adding a new owner.";
-                        return View(model);
                     }
 
-                    model.Owner = new OwnerModel
-                    {
-                        OwnerName = model.OwnerName,
-                        OwnerPhone = model.OwnerPhone,
-                        Type = model.OwnerTypeSelect,
-                        Address = model.OwnerAddress,
-                        CreatedAt = DateTime.Now
-                    };
-                }
-                else
-                {
-                    var ownerFound = await _context.Owner.FindAsync(model.OwnerId);
-                    if(ownerFound != null)
-                    {
-                        ownerFound.OwnerName = !string.IsNullOrEmpty(model.OwnerName)? model.OwnerName : ownerFound.OwnerName;
-                        ownerFound.OwnerPhone = !string.IsNullOrEmpty(model.OwnerPhone)? model.OwnerPhone : ownerFound.OwnerPhone;
-                        ownerFound.Type = !string.IsNullOrEmpty(model.OwnerTypeSelect)? model.OwnerTypeSelect : ownerFound.Type;
-                        ownerFound.Address = !string.IsNullOrEmpty(model.OwnerAddress)? model.OwnerAddress : ownerFound.Address;
+                    //model.Facilities = string.Join(",", selectedFacilities ?? new List<string>());
+                    var facilites = new List<PropertyFacilityModel>();
 
-                         _context.Owner.Update(ownerFound);
-                    }
-                }
-
-                //model.Facilities = string.Join(",", selectedFacilities ?? new List<string>());
-                var facilites = new List<PropertyFacilityModel>();
-
-                if(selectedFacilities != null && selectedFacilities.Any())
-                {
-                    foreach(var item in selectedFacilities)
+                    if(selectedFacilities != null && selectedFacilities.Any())
                     {
-                        facilites.Add(new PropertyFacilityModel
+                        foreach(var item in selectedFacilities)
                         {
-                            Facility = item
-                        });
+                            facilites.Add(new PropertyFacilityModel
+                            {
+                                Facility = item
+                            });
+                        }
                     }
-                }
-                model.Purpose = model.PurposeSale == true ? "Sale" : "Rent";
+                    model.Purpose = model.PurposeSale == true ? "Sale" : "Rent";
 
-                var log = new LogModel();
-                var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
-                string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
+                    var log = new LogModel();
+                    var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                    string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
 
-                model.LastCheckedById = int.Parse(userId??"0");
-                model.LastCheckedDate = DateTime.Now;
+                    model.LastCheckedById = int.Parse(userId??"0");
+                    model.LastCheckedDate = DateTime.Now;
 
-                if (string.IsNullOrEmpty(model.Code))
-                {
-                    //Random random = new Random();
-                    //model.Code = model.PropertyType + random.Next(100000, 999999).ToString();
-                    int maxNumber = await GetMaxCodeNumberAsync(model.PropertyType); // Get the maximum number for the prefix
+                    if (string.IsNullOrEmpty(model.Code))
+                    {
+                        //Random random = new Random();
+                        //model.Code = model.PropertyType + random.Next(100000, 999999).ToString();
+                        int maxNumber = await GetMaxCodeNumberAsync(model.PropertyType); // Get the maximum number for the prefix
 
-                    model.Code = $"{model.PropertyType}{maxNumber + 1}"; // Generate the new Code
-                }
+                        model.Code = $"{model.PropertyType}{maxNumber + 1}"; // Generate the new Code
+                    }
 
-                if (model.Id == 0)
-                {
+                    if (model.Id == 0)
+                    {
 
-                    model.PropertyFacilities = facilites;
+                        model.PropertyFacilities = facilites;
 
-                    _context.Property.Add(model);
+                        _context.Property.Add(model);
 
-                    log.Logs = $"{loginUserName} Add new Property {model.Code} @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                        log.Logs = $"{loginUserName} Add new Property {model.Code} @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                    }
+                    else
+                    {
+                        var oldfacilites = await _context.PropertyFacilities.Where(x => x.PropertyId == model.Id).ToListAsync();
+                        _context.PropertyFacilities.RemoveRange(oldfacilites);
+
+                        model.PropertyFacilities = facilites;
+
+                        _context.Property.Update(model);
+                        log.Logs = $"{loginUserName} Modify Property {model.Code} @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                    }
+
+                    #region log area
+                    log.EmployeeId = int.Parse(userId ?? "0");
+                    log.LogsDate = DateTime.Now;
+                    log.Type = "PropertyRelated";
+
+                    _context.Log.Add(log);
+                    #endregion
+
+                    await _context.SaveChangesAsync();
+
+                    return RedirectToAction("PropertyList");
                 }
                 else
                 {
-                    var oldfacilites = await _context.PropertyFacilities.Where(x => x.PropertyId == model.Id).ToListAsync();
-                    _context.PropertyFacilities.RemoveRange(oldfacilites);
+                    #region for select value
 
-                    model.PropertyFacilities = facilites;
+                    #region owner
+                    var owners = await _context.Owner.AsNoTracking()
+                        .Select(x => new { x.Id, x.OwnerName })
+                        .OrderBy(x => x.OwnerName)
+                        .ToListAsync();
 
-                    _context.Property.Update(model);
-                    log.Logs = $"{loginUserName} Modify Property {model.Code} @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                    if (owners == null || !owners.Any())
+                    {
+                        ViewData["OwnerList"] = new SelectList(new List<object>(), "Id", "OwnerName");
+                    }
+                    else
+                    {
+                        ViewData["OwnerList"] = new SelectList(owners, "Id", "OwnerName");
+                    }
+                    #endregion
+
+                    #region property type
+                    var propertyTypes = await _context.PropertyType.AsNoTracking()
+                        .Select(x => new { x.ShortCode, x.TypeName })
+                        .ToListAsync();
+
+                    if (propertyTypes == null || !propertyTypes.Any())
+                    {
+                        ViewData["PropertyTypeList"] = new SelectList(new List<object>(), "ShortCode", "TypeName");
+                    }
+                    else
+                    {
+                        ViewData["PropertyTypeList"] = new SelectList(propertyTypes, "ShortCode", "TypeName");
+                    }
+                    #endregion
+
+                    #region building type
+                    var buildingTypes = await _context.BuildingType.AsNoTracking()
+                        .Select(x => new { x.Id, x.Name })
+                        .ToListAsync();
+
+                    if (buildingTypes == null || !buildingTypes.Any())
+                    {
+                        ViewData["BuildingTypeList"] = new SelectList(new List<object>(), "Id", "Name");
+                    }
+                    else
+                    {
+                        ViewData["BuildingTypeList"] = new SelectList(buildingTypes, "Id", "Name");
+                    }
+                    #endregion
+
+                    #region townships
+                    var townships = await _context.Township.AsNoTracking()
+                        .Select(x => new { x.Township, x.TownshipMM })
+                        .OrderBy(x => x.TownshipMM)
+                        .ToListAsync();
+
+                    if (townships == null || !townships.Any())
+                    {
+                        ViewData["TownshipList"] = new SelectList(new List<object>(), "Township", "TownshipMM");
+                    }
+                    else
+                    {
+                        ViewData["TownshipList"] = new SelectList(townships, "Township", "TownshipMM");
+                    }
+                    #endregion
+
+
+                    #region facilities
+                    var facilities = await _context.Facilities.AsNoTracking()
+                        .Select(x => x.Name)
+                        .ToListAsync();
+
+                    if (facilities == null || !facilities.Any())
+                    {
+                        ViewData["Facilities"] = new List<string>();
+                    }
+                    else
+                    {
+                        ViewData["Facilities"] = facilities;
+                    }
+                    #endregion
+
+                    if (!isCodeOk)
+                    {
+                        ViewBag.Error = $"Code ({model.Code}) is already exist.";
+                    }
+
+                    if (isDuplicate)
+                    {
+                        ViewBag.Error = "property already exists.";
+                    }
+
+                    #endregion
+
+                    return View(model);
                 }
-
-                #region log area
-                log.EmployeeId = int.Parse(userId ?? "0");
-                log.LogsDate = DateTime.Now;
-                log.Type = "PropertyRelated";
-
-                _context.Log.Add(log);
-                #endregion
-
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("PropertyList");
-            }
-            else
+            }catch(Exception ex)
             {
-                #region for select value
-
-                #region owner
-                var owners = await _context.Owner.AsNoTracking()
-                    .Select(x => new { x.Id, x.OwnerName })
-                    .OrderBy(x => x.OwnerName)
-                    .ToListAsync();
-
-                if (owners == null || !owners.Any())
-                {
-                    ViewData["OwnerList"] = new SelectList(new List<object>(), "Id", "OwnerName");
-                }
-                else
-                {
-                    ViewData["OwnerList"] = new SelectList(owners, "Id", "OwnerName");
-                }
-                #endregion
-
-                #region property type
-                var propertyTypes = await _context.PropertyType.AsNoTracking()
-                    .Select(x => new { x.ShortCode, x.TypeName })
-                    .ToListAsync();
-
-                if (propertyTypes == null || !propertyTypes.Any())
-                {
-                    ViewData["PropertyTypeList"] = new SelectList(new List<object>(), "ShortCode", "TypeName");
-                }
-                else
-                {
-                    ViewData["PropertyTypeList"] = new SelectList(propertyTypes, "ShortCode", "TypeName");
-                }
-                #endregion
-
-                #region building type
-                var buildingTypes = await _context.BuildingType.AsNoTracking()
-                    .Select(x => new { x.Id, x.Name })
-                    .ToListAsync();
-
-                if (buildingTypes == null || !buildingTypes.Any())
-                {
-                    ViewData["BuildingTypeList"] = new SelectList(new List<object>(), "Id", "Name");
-                }
-                else
-                {
-                    ViewData["BuildingTypeList"] = new SelectList(buildingTypes, "Id", "Name");
-                }
-                #endregion
-
-                #region townships
-                var townships = await _context.Township.AsNoTracking()
-                    .Select(x => new { x.Township, x.TownshipMM })
-                    .OrderBy(x => x.TownshipMM)
-                    .ToListAsync();
-
-                if (townships == null || !townships.Any())
-                {
-                    ViewData["TownshipList"] = new SelectList(new List<object>(), "Township", "TownshipMM");
-                }
-                else
-                {
-                    ViewData["TownshipList"] = new SelectList(townships, "Township", "TownshipMM");
-                }
-                #endregion
-
-
-                #region facilities
-                var facilities = await _context.Facilities.AsNoTracking()
-                    .Select(x => x.Name)
-                    .ToListAsync();
-
-                if (facilities == null || !facilities.Any())
-                {
-                    ViewData["Facilities"] = new List<string>();
-                }
-                else
-                {
-                    ViewData["Facilities"] = facilities;
-                }
-                #endregion
-
-                if (!isCodeOk)
-                {
-                    ViewBag.Error = $"Code ({model.Code}) is already exist.";
-                }
-
-                if (isDuplicate)
-                {
-                    ViewBag.Error = "property already exists.";
-                }
-
-                #endregion
-
+                ViewBag.Error = ex.Message;
                 return View(model);
             }
 

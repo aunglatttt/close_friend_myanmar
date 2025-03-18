@@ -56,8 +56,8 @@ namespace CloseFriendMyanamr.Models.Property
         public int MasterBed { get; set; } = 0;
         public int SingleBed { get; set; } = 0;
         public string? Comment { get; set; }
-        public int SalePrice { get; set; } = 0;
-        public int RentPrice { get; set; } = 0;
+        public decimal SalePrice { get; set; } = 0.0m;
+        public decimal RentPrice { get; set; } = 0.0m;
         public int SaleCommission { get; set; } = 0;
         [NotMapped]
         public string? SaleCommissionString { get; set; }
@@ -79,6 +79,9 @@ namespace CloseFriendMyanamr.Models.Property
         public string? OwnerPhone { get; set; }
         [NotMapped]
         public string? OwnerAddress { get; set; }
+
+        public string? FBLink { get; set; } 
+
         [NotMapped]
         public string OwnerTypeSelect { get; set; }
         public virtual List<PhotoModel>? Photos { get; set; }
