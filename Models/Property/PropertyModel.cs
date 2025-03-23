@@ -57,7 +57,9 @@ namespace CloseFriendMyanamr.Models.Property
         public int SingleBed { get; set; } = 0;
         public string? Comment { get; set; }
         public decimal SalePrice { get; set; } = 0.0m;
+        public string? SaleCurrencyType { get; set; }
         public decimal RentPrice { get; set; } = 0.0m;
+        public string? RentCurrencyType { get; set; }
         public int SaleCommission { get; set; } = 0;
         [NotMapped]
         public string? SaleCommissionString { get; set; }

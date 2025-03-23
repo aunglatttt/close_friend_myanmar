@@ -561,14 +561,23 @@
                                         <label class="form-check-label fw-bold" for="PurposeSale">အရောင်း</label>
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-12 col-12 mb-3">
+                                <div class="col-md-3 col-sm-12 col-12 mb-3">
                                     <div class="form-group">
                                         <label>ရောင်းဈေး (သိန်း)</label>
                                         <input placeholder="?" asp-for="SalePrice" name="SalePrice" id="SalePrice" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
-                                <div class="col-md-5 col-sm-12">
+                                <div class="col-md-2 col-sm-12 px-0">
+                                    <div class="form-group">
+                                        <label class="required">ငွေကြေး</label>
+                                        <select class="form-select mb-1" id="SaleCurrencyType" asp-for="SaleCurrencyType" name="SaleCurrencyType" data-val="true" data-val-required="SaleCurrencyType is required.">
+                                            <option selected value="သိန်း">သိန်း</option>
+                                            <option value="USD">USD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
                                     <div class="form-group">
                                         <label class="required">အကျိုးဆောင်ခ</label>
                                         <select class="form-select mb-1" id="SaleCommission" asp-for="SaleCommission" name="SaleCommission" data-val="true" data-val-required="Purpose is required.">
@@ -589,14 +598,23 @@
                                         <label class="form-check-label fw-bold" for="PurposeRent">အငှား</label>
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-12 col-12 mb-3">
+                                <div class="col-md-3 col-sm-12 col-12 mb-3">
                                     <div class="form-group">
                                         <label>ငှားဈေး (သိန်း)</label>
                                         <input placeholder="?" asp-for="RentPrice" id="RentPrice" name="RentPrice" class="form-control" />
                                         <span class="text-danger"></span>
                                     </div>
                                 </div>
-                                <div class="col-md-5 col-sm-12">
+                                <div class="col-md-2 col-sm-12 px-0">
+                                    <div class="form-group">
+                                        <label class="required">ငွေကြေး</label>
+                                        <select class="form-select mb-1" id="RentCurrencyType" asp-for="RentCurrencyType" name="RentCurrencyType" data-val="true" data-val-required="SaleCurrencyType is required.">
+                                            <option selected value="သိန်း">သိန်း</option>
+                                            <option value="USD">USD</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-sm-12">
                                     <div class="form-group">
                                         <label class="required">အကျိုးဆောင်ခ</label>
                                         <select class="form-select mb-1" id="RentCommision" asp-for="RentCommision" name="RentCommision" data-val="true" data-val-required="Purpose is required.">
@@ -686,8 +704,36 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css" />
+
+    <script>
+        $(document).ready(function () {
+            $("#CondoName").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Property/GetOwnerSuggestions",
+                        type: "GET",
+                        data: { term: request.term },
+                        success: function (data) {
+                            console.log("Response:", data); // Log the response
+                            response(data);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error:", error); // Log any errors
+                        }
+                    });
+                },
+                minLength: 2
+            });
+        });
+    </script>
 }
 <script>
+
+
      document.getElementById("selectedFacility").addEventListener("change", function() {
         const inputAutoGenerate = document.getElementById("inputAutoGenerate");
         const inputRegular = document.getElementById("Code");

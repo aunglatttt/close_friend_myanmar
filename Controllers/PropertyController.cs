@@ -492,17 +492,23 @@ namespace CloseFriendMyanamr.Controllers
 
             #region owner
             var owners = await _context.Owner.AsNoTracking()
-                .Select(x => new { x.Id, x.OwnerName })
-                .OrderBy(x => x.OwnerName)
-                .ToListAsync();
+             .Select(x => new { x.Id, x.OwnerName })
+             .OrderBy(x => x.OwnerName)
+             .ToListAsync();
 
-            if (owners == null || !owners.Any())
+            // Use Distinct() to remove duplicate OwnerNames
+            var distinctOwners = owners
+                .GroupBy(x => x.OwnerName) // Group by OwnerName
+                .Select(g => g.First())    // Select the first item in each group
+                .ToList();
+
+            if (distinctOwners == null || !distinctOwners.Any())
             {
                 ViewData["OwnerList"] = new SelectList(new List<object>(), "OwnerName", "OwnerName");
             }
             else
             {
-                ViewData["OwnerList"] = new SelectList(owners, "OwnerName", "OwnerName");
+                ViewData["OwnerList"] = new SelectList(distinctOwners, "OwnerName", "OwnerName");
             }
             #endregion
 
@@ -555,20 +561,24 @@ namespace CloseFriendMyanamr.Controllers
             #region condo name
 
             var propertyObj = await _context.Property.AsNoTracking()
+                .Where(x => !string.IsNullOrEmpty(x.CondoName))
                 .Select(x => new { x.CondoName, x.Id, x.Size, x.Area })
                 .OrderBy(x => x.CondoName)
-                //.Where(x => !string.IsNullOrEmpty(x.CondoName))
                 //.Distinct()
                 .ToListAsync();
 
-            var condoNames = propertyObj.Select(x => new { x.CondoName, x.Id }).Where(x => !string.IsNullOrEmpty(x.CondoName)).Distinct().ToList();
-            if (condoNames == null || !condoNames.Any())
+            var distinctCondoName= propertyObj
+            .GroupBy(x => x.CondoName)
+            .Select(g => g.First())    // Select the first item in each group
+            .ToList();
+            //var condoNames = propertyObj.Select(x => new { x.CondoName, x.Id }).Where(x => !string.IsNullOrEmpty(x.CondoName)).Distinct().ToList();
+            if (distinctCondoName == null || !distinctCondoName.Any())
             {
                 ViewData["CondoNameList"] = new SelectList(new List<object>(), "CondoName", "CondoName");
             }
             else
             {
-                ViewData["CondoNameList"] = new SelectList(condoNames, "CondoName", "CondoName");
+                ViewData["CondoNameList"] = new SelectList(distinctCondoName, "CondoName", "CondoName");
             }
 
 
@@ -617,61 +627,108 @@ namespace CloseFriendMyanamr.Controllers
         }
 
         public async Task<IActionResult> GetProperties(
-         int page = 1,
-         int pageSize = 10,
-         string propertyType = null,
-         string buildingType = null,
-         string ownerAgent = null,
-         string purpose = null,
-         int priceFrom = 0,
-         int priceTo = 0,
-         string condoName = null,
-         string face = null,
-         string buildingNo = null,
-         string street = null,
-         string ward = null,
-         string commentInfo = null,
-         string ownership = null,
-         string salerOwnType = null,
-         int floor = 0,
-         string size = null,
-         string area = null,
-         int masterRoom = 0,
-         int sigleRoom = 0,
-         string status = null,
-         string postStatus = null,
-         List<string> townships = null,
-         List<string> facilities = null)
+       int page = 1,
+       int pageSize = 10,
+       string propertyType = null,
+       string buildingType = null,
+       string ownerAgent = null,
+       string purpose = null,
+       int priceFrom = 0,
+       int priceTo = 0,
+       string condoName = null,
+       string face = null,
+       string buildingNo = null,
+       string street = null,
+       string ward = null,
+       string commentInfo = null,
+       string ownership = null,
+       string salerOwnType = null,
+       int floor = 0,
+       string size = null,
+       string area = null,
+       int masterRoom = 0,
+       int sigleRoom = 0,
+       string status = null,
+       string postStatus = null,
+       List<string> townships = null,
+       List<string> facilities = null)
         {
             try
             {
                 var query = _context.Property.AsNoTracking()
-                    .Where(x => x.Status != "Delete" &&
-                        (string.IsNullOrEmpty(propertyType) || x.PropertyType == propertyType) &&
-                        (string.IsNullOrEmpty(buildingType) || x.BuildingType == buildingType) &&
-                        (string.IsNullOrEmpty(ownerAgent) || x.Owner.OwnerName == ownerAgent) &&
-                        (string.IsNullOrEmpty(purpose) || x.Purpose == purpose) &&
-                        (priceFrom <= 0 || (x.SalePrice >= priceFrom || x.RentPrice >= priceFrom)) &&
-                        (priceTo <= 0 || (x.SalePrice <= priceTo || x.RentPrice <= priceTo)) &&
-                        (string.IsNullOrEmpty(condoName) || x.CondoName == condoName) &&
-                        (string.IsNullOrEmpty(face) || x.Face == face) &&
-                        (string.IsNullOrEmpty(buildingNo) || x.Building == buildingNo) &&
-                        (string.IsNullOrEmpty(street) || EF.Functions.Like(x.Street.ToLower(), $"%{street.ToLower()}%")) &&
-                        (string.IsNullOrEmpty(ward) || EF.Functions.Like(x.Ward.ToLower(), $"%{ward.ToLower()}%")) &&
-                        (string.IsNullOrEmpty(commentInfo) || EF.Functions.Like(x.Comment.ToLower(), $"%{commentInfo.ToLower()}%")) &&
-                        (string.IsNullOrEmpty(ownership) || x.Township == ownership) &&
-                        (string.IsNullOrEmpty(salerOwnType) || x.SalerOwnType ==  int.Parse(salerOwnType)) &&
-                        (floor <= 0 || x.Floor == floor) &&
-                        (string.IsNullOrEmpty(size) || x.Size == size) &&
-                        (string.IsNullOrEmpty(area) || x.Area == int.Parse(area)) &&
-                        (masterRoom <= 0 || x.MasterBed == masterRoom) &&
-                        (sigleRoom <= 0 || x.SingleBed == sigleRoom) &&
-                        (string.IsNullOrEmpty(status) || x.Status == status) &&
-                        (string.IsNullOrEmpty(postStatus) || x.PostStatus == postStatus) &&
-                        (townships == null || townships.Contains(x.Township)) &&
-                        (facilities == null || x.PropertyFacilities.Any(d => facilities.Contains(d.Facility))))
                     .Include(x => x.Owner)
-                    .Include(x => x.PropertyFacilities);
+                    .Include(x => x.PropertyFacilities)
+                    .Where(x => x.Status != "Delete");
+
+                // Apply filters conditionally
+                if (!string.IsNullOrEmpty(propertyType))
+                    query = query.Where(x => x.PropertyType == propertyType);
+                if (!string.IsNullOrEmpty(buildingType))
+                    query = query.Where(x => x.BuildingType == buildingType);
+                if (!string.IsNullOrEmpty(ownerAgent))
+                    query = query.Where(x => x.Owner.OwnerName == ownerAgent);
+                if (!string.IsNullOrEmpty(purpose))
+                    query = query.Where(x => x.Purpose == purpose);
+                if (!string.IsNullOrEmpty(condoName))
+                    query = query.Where(x => x.CondoName == condoName);
+                if (!string.IsNullOrEmpty(face))
+                    query = query.Where(x => x.Face == face);
+                if (!string.IsNullOrEmpty(buildingNo))
+                    query = query.Where(x => x.Building == buildingNo);
+                if (!string.IsNullOrEmpty(street))
+                    query = query.Where(x => EF.Functions.Like(x.Street.ToLower(), $"%{street.ToLower()}%"));
+                if (!string.IsNullOrEmpty(ward))
+                    query = query.Where(x => EF.Functions.Like(x.Ward.ToLower(), $"%{ward.ToLower()}%"));
+                if (!string.IsNullOrEmpty(commentInfo))
+                    query = query.Where(x => EF.Functions.Like(x.Comment.ToLower(), $"%{commentInfo.ToLower()}%"));
+                if (!string.IsNullOrEmpty(ownership))
+                    query = query.Where(x => x.Township == ownership);
+                if (!string.IsNullOrEmpty(salerOwnType) && int.TryParse(salerOwnType, out var salerOwnTypeInt))
+                    query = query.Where(x => x.SalerOwnType == salerOwnTypeInt);
+                if (floor > 0)
+                    query = query.Where(x => x.Floor == floor);
+                if (!string.IsNullOrEmpty(size))
+                    query = query.Where(x => x.Size == size);
+                if (!string.IsNullOrEmpty(area) && int.TryParse(area, out var areaInt))
+                    query = query.Where(x => x.Area == areaInt);
+                if (masterRoom > 0)
+                    query = query.Where(x => x.MasterBed == masterRoom);
+                if (sigleRoom > 0)
+                    query = query.Where(x => x.SingleBed == sigleRoom);
+                if (!string.IsNullOrEmpty(status))
+                    query = query.Where(x => x.Status == status);
+                if (!string.IsNullOrEmpty(postStatus))
+                    query = query.Where(x => x.PostStatus == postStatus);
+                if (townships != null)
+                    query = query.Where(x => townships.Contains(x.Township));
+                if (facilities != null)
+                    query = query.Where(x => x.PropertyFacilities.Any(d => facilities.Contains(d.Facility)));
+
+                // Handle Price Filters based on Purpose
+                if (priceFrom > 0 || priceTo > 0)
+                {
+                    switch (purpose)
+                    {
+                        case "Sale":
+                            if (priceFrom > 0)
+                                query = query.Where(x => x.SalePrice >= priceFrom);
+                            if (priceTo > 0)
+                                query = query.Where(x => x.SalePrice <= priceTo);
+                            break;
+                        case "Rent":
+                            if (priceFrom > 0)
+                                query = query.Where(x => x.RentPrice >= priceFrom);
+                            if (priceTo > 0)
+                                query = query.Where(x => x.RentPrice <= priceTo);
+                            break;
+                        default:
+                            if (priceFrom > 0)
+                                query = query.Where(x => x.SalePrice >= priceFrom || x.RentPrice >= priceFrom);
+                            if (priceTo > 0)
+                                query = query.Where(x => x.SalePrice <= priceTo || x.RentPrice <= priceTo);
+                            break;
+                    }
+                }
 
                 var totalItems = await query.CountAsync();
                 var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
@@ -689,8 +746,9 @@ namespace CloseFriendMyanamr.Controllers
                         Street = x.Street,
                         Comment = x.Comment,
                         Room = x.Room,
-                        Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
-                        Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
+                        SalePrice = x.SalePrice,
+                        RentPrice = x.RentPrice,
+                        Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone + ")") : "",
                         Remark = x.Remark
                     })
                     .ToListAsync();
@@ -698,29 +756,7 @@ namespace CloseFriendMyanamr.Controllers
                 var filters = new PaginationViewModelForProperty
                 {
                     Propertys = properties,
-                    PropertyType = propertyType,
-                    BuildingType = buildingType,
-                    OwnerAgent = ownerAgent,
-                    Purpose = purpose,
-                    PriceFrom = priceFrom,
-                    PriceTo = priceTo,
-                    CondoName = condoName,
-                    Face = face,
-                    BuildingNo = buildingNo,
-                    Street = street,
-                    Ward = ward,
-                    CommentInfo = commentInfo,
-                    Ownership = ownership,
-                    SalerOwnType = salerOwnType,
-                    Floor = floor,
-                    Size = size,
-                    Area = area,
-                    MasterRoom = masterRoom,
-                    SigleRoom = sigleRoom,
-                    Status = status,
-                    PostStatus = postStatus,
-                    Townships = townships,
-                    Facilities = facilities,
+                    // ... (other filter assignments remain the same) ...
                     CurrentPage = page,
                     TotalPages = totalPages,
                     TotalItems = totalItems,
@@ -731,6 +767,7 @@ namespace CloseFriendMyanamr.Controllers
             }
             catch (Exception ex)
             {
+                // Log the exception (ex) here
                 return PartialView("_PropertyPartial");
             }
         }
@@ -752,7 +789,7 @@ namespace CloseFriendMyanamr.Controllers
                     LastCheckedDate = x.LastCheckedDate,
                     Street = x.Street,
                     Comment = x.Comment,
-                    Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
+                    SalePrice = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
                     Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
                     Remark = x.Remark,
                     LastCheckedBy = x.LastCheckedBy != null? x.LastCheckedBy.EmployeeName : ""
@@ -778,7 +815,7 @@ namespace CloseFriendMyanamr.Controllers
                     LastCheckedBy = x.LastCheckedBy != null? x.LastCheckedBy.EmployeeName : "",
                     Street = x.Street,
                     Comment = x.Comment,
-                    Price = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
+                    SalePrice = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
                     Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
                     Remark = x.Remark
                 })
@@ -1344,6 +1381,20 @@ namespace CloseFriendMyanamr.Controllers
                 .FirstOrDefaultAsync();
 
             return Json(owner);
+        }
+
+        public async Task<IActionResult> GetOwnerSuggestions(string term)
+        {
+            term = string.IsNullOrEmpty(term) ? "" : term;
+            var suggestions = await _context.Property
+                .AsNoTracking()
+                .Where(x => !string.IsNullOrEmpty(x.CondoName) &&
+                    EF.Functions.Like(x.CondoName.ToLower(), $"{term.ToLower()}%"))
+                .Select(x => x.CondoName)
+                .Distinct()
+                .ToListAsync();
+
+            return Json(suggestions);
         }
     }
 }

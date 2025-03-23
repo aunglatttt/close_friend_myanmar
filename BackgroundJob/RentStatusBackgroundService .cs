@@ -22,7 +22,7 @@ namespace CloseFriendMyanamr.BackgroundJob
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
                     var property = await context.Property
-                        .Where(h => h.Status == "rent" && h.AvailableDate.Date <= DateTime.Now.Date)
+                        .Where(h => h.Status == "Rented" && h.AvailableDate.Date <= DateTime.Now.Date)
                         .ToListAsync(stoppingToken);
 
                     foreach (var item in property)

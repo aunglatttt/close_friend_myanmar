@@ -10,7 +10,8 @@
         public string? Street { get; set; }
         public string? Comment { get; set; }
         public string? Room { get; set; }
-        public decimal Price { get; set; }
+        public decimal SalePrice { get; set; }
+        public decimal RentPrice { get; set; }
         public string Owner { get; set; }
         public string? Remark { get; set; }
         public DateTime LastCheckedDate { get; set; }
