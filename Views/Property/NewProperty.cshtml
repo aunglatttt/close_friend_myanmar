@@ -28,7 +28,7 @@
                                         </div>
 
                                         <div class="col-12" id="autoFields">
-                                            <input class="form-control  @(Model.Id <= 0 ? "d-block" : "d-none")" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" />
+                                            <input class="form-control  @(Model.Id <= 0 ? "d-block" : "d-none")" type="text" placeholder="Auto Generate" disabled id="inputAutoGenerate" name="inputAutoGenerate" />
 
                                             <input class="form-control" type="text" asp-for="Code" placeholder="" id="Code" name="Code" style="@(Model.Code != null? "" :"display: none")" />
                                         </div>
@@ -737,12 +737,14 @@
      document.getElementById("selectedFacility").addEventListener("change", function() {
         const inputAutoGenerate = document.getElementById("inputAutoGenerate");
         const inputRegular = document.getElementById("Code");
-
         if (this.checked) {
+        console.log('check', this.checked);
             inputAutoGenerate.style.display = "block";  // Show the "Auto Generate" field
             inputRegular.style.display = "none";        // Hide the regular input field
             inputRegular.value = "";
         } else {
+        console.log('check else', this.checked);
+
             inputAutoGenerate.style.display = "none";   // Hide the "Auto Generate" field
             inputRegular.style.display = "block";       // Show the regular input field
         }

@@ -12,6 +12,7 @@ using OfficeOpenXml.Style;
 using SimpleDataWebsite.Data;
 using System.Drawing;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace CloseFriendMyanamr.Controllers
 {
@@ -308,11 +309,14 @@ namespace CloseFriendMyanamr.Controllers
 
                     if (string.IsNullOrEmpty(model.Code))
                     {
-                        //Random random = new Random();
-                        //model.Code = model.PropertyType + random.Next(100000, 999999).ToString();
-                        int maxNumber = await GetMaxCodeNumberAsync(model.PropertyType); // Get the maximum number for the prefix
+                        string currentYearTwoDigits = DateTime.Now.ToString("yy");
+                        string currentMonthTwoDigits = DateTime.Now.ToString("MM");
+                        string prefix = $"{model.PropertyType}{currentYearTwoDigits}{currentMonthTwoDigits}";
 
-                        model.Code = $"{model.PropertyType}{maxNumber + 1}"; // Generate the new Code
+                        //int maxNumber = await GetMaxCodeNumberAsync(model.PropertyType);
+
+                        //model.Code = $"{model.PropertyType}{maxNumber + 1}";
+                        model.Code  = await GetMaxCodeNumberAsync(prefix);
                     }
 
                     if (model.Id == 0)
@@ -452,35 +456,55 @@ namespace CloseFriendMyanamr.Controllers
         }
         #endregion
 
-        private async Task<int> GetMaxCodeNumberAsync(string prefix)
+        private async Task<string> GetMaxCodeNumberAsync(string prefix)
         {
-            var maxCode = await _context.Property
-                .Where(x => x.Code.StartsWith(prefix))
-                .Select(x => x.Code)
-                .ToListAsync(); // Load the data into memory
+            #region not used
+            //var maxCode = await _context.Property
+            //    .Where(x => x.Code.StartsWith(prefix))
+            //    .Select(x => x.Code)
+            //    .ToListAsync(); // Load the data into memory
 
-            // Extract the numeric part after the prefix and sort the codes
-            var maxCodeWithNumbers = maxCode
-                .Select(code =>
-                {
-                    var numericPart = code.Substring(prefix.Length);
-                    return new
-                    {
-                        Code = code,
-                        Number = int.TryParse(numericPart, out int num) ? num : 0
-                    };
-                })
-                .OrderByDescending(x => x.Number)  // Sort by numeric part in descending order
-                .ThenByDescending(x => x.Code)    // Fallback to sort by full code if needed
-                .FirstOrDefault();                // Get the first result
+            //// Extract the numeric part after the prefix and sort the codes
+            //var maxCodeWithNumbers = maxCode
+            //    .Select(code =>
+            //    {
+            //        var numericPart = code.Substring(prefix.Length);
+            //        return new
+            //        {
+            //            Code = code,
+            //            Number = int.TryParse(numericPart, out int num) ? num : 0
+            //        };
+            //    })
+            //    .OrderByDescending(x => x.Number)  // Sort by numeric part in descending order
+            //    .ThenByDescending(x => x.Code)    // Fallback to sort by full code if needed
+            //    .FirstOrDefault();                // Get the first result
 
-            if (maxCodeWithNumbers == null)
+            //if (maxCodeWithNumbers == null)
+            //{
+            //    return 0; // No existing code with this prefix, start from 1
+            //}
+
+            //// Return the numeric part of the found code (which will be the highest)
+            //return maxCodeWithNumbers.Number;
+            #endregion
+
+            var latestCodeEntity = await _context.Property
+                   .Where(e => e.Code != null && e.Code.StartsWith(prefix))
+                   .OrderByDescending(e => e.Code)
+                   .FirstOrDefaultAsync();
+
+            if (latestCodeEntity != null && latestCodeEntity.Code != null && Regex.IsMatch(latestCodeEntity.Code, $"^{Regex.Escape(prefix)}\\d{{3}}$"))
             {
-                return 0; // No existing code with this prefix, start from 1
+                // If the latest code matches the desired format
+                string lastThreeDigits = latestCodeEntity.Code.Substring(prefix.Length);
+                if (int.TryParse(lastThreeDigits, out int lastNumber))
+                {
+                    string nextNumberPadded = (lastNumber + 1).ToString("D3");
+                    return ($"{prefix}{nextNumberPadded}");
+                }
             }
 
-            // Return the numeric part of the found code (which will be the highest)
-            return maxCodeWithNumbers.Number;
+            return ($"{prefix}001");
         }
 
 
@@ -1212,6 +1236,7 @@ namespace CloseFriendMyanamr.Controllers
                 { "FreeHoldLand", "FreeHold Land" },
                 { "BCC", "BCC" },
                 { "Contract", "အစဉ်အဆက်စာချုပ်" },
+                { "Form_7", "Form 7 (ပုံစံ ၇)" }
             };
             #endregion
 

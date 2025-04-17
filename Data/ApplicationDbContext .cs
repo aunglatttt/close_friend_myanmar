@@ -1,4 +1,5 @@
 ﻿using CloseFriendMyanamr.Models;
+using CloseFriendMyanamr.Models.Appointment;
 using CloseFriendMyanamr.Models.CashManagement;
 using CloseFriendMyanamr.Models.ClientManagement;
 using CloseFriendMyanamr.Models.Property;
@@ -52,5 +53,7 @@ namespace SimpleDataWebsite.Data
         public DbSet<PropertyFacilityModel> PropertyFacilities {  get; set; }
 
         public DbSet<AlertModel> Alert { get; set; }
+
+        public DbSet<AppointmentDomain> BookAppointment {  get; set; }
     }
 }
