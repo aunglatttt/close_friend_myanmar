@@ -219,7 +219,8 @@
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-100">Area: </td>
-                                    <td class="bg-gray-100">@Model.Area</td>
+                                    
+                                    <td class="bg-gray-100">@((Model.Area <= 0 || Model.Area == null) ? Model.Size??"-" : Model.Area + "")</td>
                                 </tr>
                                  <tr>
                                     <td class="bg-gray-100">Room Type:</td>

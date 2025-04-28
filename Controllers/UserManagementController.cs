@@ -350,7 +350,6 @@ namespace CloseFriendMyanamr.Controllers
         }
         #endregion
 
-
         #region Agent
 
         public async Task<IActionResult> AgentList()
@@ -462,5 +461,15 @@ namespace CloseFriendMyanamr.Controllers
             return View();
         }
         #endregion
+
+        public async Task<IActionResult> WebSiteVisitors()
+        {
+            var visitors = await _context.VisitorTracking
+                .AsNoTracking()
+                .OrderByDescending(x => x.VisitDate)
+                .ToListAsync();
+
+            return View(visitors);
+        }
     }
 }

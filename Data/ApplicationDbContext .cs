@@ -55,5 +55,7 @@ namespace SimpleDataWebsite.Data
         public DbSet<AlertModel> Alert { get; set; }
 
         public DbSet<AppointmentDomain> BookAppointment {  get; set; }
+
+        public DbSet<VisitorTracking> VisitorTracking {  get; set; }
     }
 }

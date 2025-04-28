@@ -77,6 +77,7 @@ namespace CloseFriendMyanamr.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Time = table.Column<TimeSpan>(type: "time", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -249,6 +250,31 @@ namespace CloseFriendMyanamr.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Township", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "VisitorTracking",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Referrer = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserAgent = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IpAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeviceType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OperatingSystem = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Browser = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ScreenWidth = table.Column<int>(type: "int", nullable: false),
+                    ScreenHeight = table.Column<int>(type: "int", nullable: false),
+                    Timezone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VisitDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VisitorTracking", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -581,6 +607,9 @@ namespace CloseFriendMyanamr.Migrations
 
             migrationBuilder.DropTable(
                 name: "Township");
+
+            migrationBuilder.DropTable(
+                name: "VisitorTracking");
 
             migrationBuilder.DropTable(
                 name: "Client");

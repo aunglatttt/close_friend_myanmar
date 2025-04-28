@@ -852,7 +852,13 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> PropertyInfo(int propertyId)
         {
-            var model = await _context.Property.AsNoTracking().Include(x => x.Photos).Include(x => x.PropertyFacilities).Include(x => x.LastCheckedBy).Where(x => x.Id == propertyId).FirstOrDefaultAsync();
+            var model = await _context.Property.AsNoTracking()
+                    .Include(x => x.Photos)
+                    .Include(x => x.PropertyFacilities)
+                    .Include(x => x.LastCheckedBy)
+                    .Include(x => x.Owner)
+                    .Where(x => x.Id == propertyId)
+                    .FirstOrDefaultAsync();
 
             if(model != null)
             {

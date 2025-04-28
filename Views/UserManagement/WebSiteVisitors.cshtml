@@ -1,0 +1,68 @@
+﻿@model IEnumerable<CloseFriendMyanamr.Models.Appointment.VisitorTracking>
+
+@{
+    ViewData["Title"] = "Website Visitors";
+}
+<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+
+<div class="row">
+    <!-- Left Card: DataTable -->
+    <div class="col-md-12 mb-4">
+        <div class="card border-2 shadow">
+            <div class="card-header">
+                Website Visitor List
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="employeeTable" class="table table-hover table-bordered" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Visit Date</th>
+                                <th>Page</th>
+                                <th>Referrer</th>
+                                <th>IP Address</th>
+                                <th>Device/Browser</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var visitor in Model)
+                            {
+                                <tr>
+                                    @* <td>visitor.VisitDate.ToString("g")</td> *@
+                                        <td>@visitor.VisitDate.ToString("MM/dd/yyyy")</td>
+
+                                    <td>@visitor.PageUrl</td>
+                                    <td>@(string.IsNullOrEmpty(visitor.Referrer) ? "Direct" : visitor.Referrer)</td>
+                                    <td>@visitor.IpAddress</td>
+                                    <td>@visitor.UserAgent</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+       $('#employeeTable').DataTable({
+        responsive: true,
+        paging: true,
+        searching: true,
+        ordering: true,
+        info: true,
+        autoWidth: false,
+        lengthMenu: [
+            [25, 50, 100, -1],
+            [25, 50, 100, "All"]
+        ],
+        order: [[0, 'desc']], // 👈 Add this line to sort Visit Date descending by default
+        columnDefs: [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 2, targets: -1 }
+        ]
+    });
+
+ </script>

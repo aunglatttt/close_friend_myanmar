@@ -50,5 +50,26 @@ namespace CloseFriendMyanamr.Controllers
 
             return Ok(new { success = true });
         }
+
+        [HttpPost("track")]
+        public async Task<IActionResult> TrackVisitor([FromBody] VisitorTrackingViewModel visitorDto)
+        {
+            var visitor = new VisitorTracking
+            {
+                PageUrl = visitorDto.PageUrl,
+                Referrer = visitorDto.Referrer,
+                UserAgent = visitorDto.UserAgent,
+                ScreenHeight = visitorDto.ScreenHeight,
+                ScreenWidth = visitorDto.ScreenWidth,
+                Timezone = visitorDto.Timezone,
+                IpAddress = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                VisitDate = DateTime.Now
+            };
+
+            _context.VisitorTracking.Add(visitor);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
