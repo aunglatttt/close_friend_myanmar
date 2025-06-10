@@ -16,7 +16,7 @@ builder.Services.AddAuthentication("CookieAuth")
         {
             options.LoginPath = "/Account/Login"; // Set the login path
             options.LogoutPath = "/Account/Logout";
-            options.ExpireTimeSpan = TimeSpan.FromMinutes(15); // Set the cookie expiration time
+            options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set the cookie expiration time
         });
 
 

@@ -12,7 +12,7 @@ using SimpleDataWebsite.Data;
 namespace CloseFriendMyanamr.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250428151355_initial")]
+    [Migration("20250430044339_initial")]
     partial class initial
     {
         /// <inheritdoc />
