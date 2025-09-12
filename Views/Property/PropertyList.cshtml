@@ -1,7 +1,5 @@
-﻿@model List<CloseFriendMyanamr.ViewModel.PropertyViewModel>
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@* The model declaration is no longer needed as the view is now just a template *@
+@model List<CloseFriendMyanamr.ViewModel.PropertyViewModel> 
 @{
     ViewData["Title"] = "Property List";
 }
@@ -19,65 +17,25 @@
             <div class="card-header px-0">
                 <div class="col-12 ms-2">
                     <span class="text-primary fw-bold">Property List</span>
-
                 </div>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table id="employeeTable" class="table table-bordered table-hover">
+                    <table id="propertyTable" class="table table-bordered table-hover w-100">
                         <thead>
                             <tr>
                                 <th></th>
-                                <th>Code</th>
-                                <th>Last Checked</th>
-                                <th>လိပ်စာ</th>
-                                <th>Info</th>
-                                <th>Price(L)</th>
-                                <th>Owner</th>
-                                <th>Remark</th>
+                                <th data-name="Code">Code</th>
+                                <th data-name="LastCheckedDate">Last Checked</th>
+                                <th data-name="Street">လိပ်စာ</th>
+                                <th data-name="Comment">Info</th>
+                                <th data-name="SalePrice">Price(L)</th>
+                                <th data-name="Owner">Owner</th>
+                                <th data-name="Remark">Remark</th>
                             </tr>
                         </thead>
-                        <tbody id="property-container">
-                            @foreach (var item in Model)
-                            {
-                                <tr style="font-size: 14px;">
-                                    <td>
-                                        <a href="@Url.Action("PropertyInfo", "Property", new { propertyId = item.Id })" class="text-primary fw-bold" style="cursor:pointer;">Info</a>
-                                     </td>
-                                    <td>
-                                        @item.Code <br />
-                                        @if (item.Status == "Available")
-                                        {
-                                            <span class="badge rounded-pill bg-primary py-2 px-3">@item.Status</span>
-                                        }
-                                        else if (item.Status == "Rented")
-                                        {
-                                            <span class="badge rounded-pill bg-info py-2 px-3">@item.Status</span> <br />
-                                            <span class="text-warning fw-bold" style="font-size:12px;">@item.AvaliableDate</span>
-                                        }else if(item.Status == "Delete") {
-                                            <span class="badge rounded-pill bg-danger py-2 px-3">@item.Status</span>
-                                        }
-                                        else if (item.Status == "PowerOff") {
-                                            <span class="badge rounded-pill bg-secondary py-2 px-3">@item.Status</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge rounded-pill bg-warning py-2 px-3">@item.Status</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        @item.LastCheckedDate.ToString("MMM dd, yyyy") <br />
-                                        <span class="text-primary" style="font-size:12px;">@item.LastCheckedBy</span>
-                                    </td>
-                                    <td>@item.Street</td>
-                                    <td>@item.Comment</td>
-                                    @* <td>@item.SalePrice.ToString("0.##")</td> *@
-                                    <td>@item.SalePrice</td>
-                                    <td>@item.Owner</td>
-                                    <td>@item.Remark</td>
-                                </tr>
-                            }
-                        </tbody>
+                        @* The table body is now empty. DataTables will populate it. *@
+                        <tbody></tbody>
                     </table>
                 </div>
             </div>
@@ -85,24 +43,82 @@
     </div>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('#employeeTable').DataTable({
-            responsive: true, // Enable responsive feature
-            paging: true,     // Enable pagination
-            searching: true,  // Enable search
-            ordering: true,   // Enable sorting
-            info: true,       // Show table information
-            autoWidth: false, // Disable automatic column width calculation
-              lengthMenu: [      // Specify the length options
-            [25, 50, 100, -1],  // -1 means 'All'
-            [25, 50, 100, "All"] // Display labels for options
-        ],
-            columnDefs: [
-                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
-                { responsivePriority: 2, targets: -1 } // Make Action column high priority
-            ]
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#propertyTable').DataTable({
+                "processing": true, // Show processing indicator
+                "serverSide": true, // Enable server-side processing
+                "filter": true,     // Enable filtering
+                "responsive": true,
+                "paging": true,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "lengthMenu": [
+                    [25, 50, 100, -1],
+                    [25, 50, 100, "All"]
+                ],
+                "ajax": {
+                    "url": "@Url.Action("GetProperties", "Property")",
+                    "type": "POST",
+                    "datatype": "json"
+                },
+                "columnDefs": [
+                    { "orderable": false, "targets": [0, 3, 4, 6, 7] }, // Disable sorting on specific columns
+                    { "searchable": false, "targets": [0] },
+                    { responsivePriority: 1, targets: 1 },
+                    { responsivePriority: 2, targets: 2 }
+                ],
+                "columns": [
+                    {
+                        "data": "id", "render": function (data, type, row) {
+                            // Create the 'Info' link for the first column
+                            return `<a href="/Property/PropertyInfo?propertyId=${data}" class="text-primary fw-bold" style="cursor:pointer;">Info</a>`;
+                        },
+                        "name": "InfoLink", "autoWidth": true
+                    },
+                    {
+                        "data": "code", "name": "Code", "autoWidth": true, "render": function (data, type, row) {
+                            // Custom rendering for the 'Code' and 'Status' badge
+                            let statusBadge = '';
+                            let availableDate = '';
+                            switch (row.status) {
+                                case "Available":
+                                    statusBadge = `<span class="badge rounded-pill bg-primary py-2 px-3">${row.status}</span>`;
+                                    break;
+                                case "Rented":
+                                    statusBadge = `<span class="badge rounded-pill bg-info py-2 px-3">${row.status}</span>`;
+                                    if (row.avaliableDate) {
+                                        availableDate = `<br/><span class="text-warning fw-bold" style="font-size:12px;">${row.avaliableDate}</span>`;
+                                    }
+                                    break;
+                                case "Delete":
+                                    statusBadge = `<span class="badge rounded-pill bg-danger py-2 px-3">${row.status}</span>`;
+                                    break;
+                                case "PowerOff":
+                                    statusBadge = `<span class="badge rounded-pill bg-secondary py-2 px-3">${row.status}</span>`;
+                                    break;
+                                default:
+                                    statusBadge = `<span class="badge rounded-pill bg-warning py-2 px-3">${row.status}</span>`;
+                                    break;
+                            }
+                            return `${data}<br/>${statusBadge}${availableDate}`;
+                        }
+                    },
+                    {
+                        "data": "lastCheckedDateString", "name": "LastCheckedDate", "autoWidth": true, "render": function (data, type, row) {
+                            // Custom rendering for the 'Last Checked' date and user
+                            return `${data}<br/><span class="text-primary" style="font-size:12px;">${row.lastCheckedBy}</span>`;
+                        }
+                    },
+                    { "data": "street", "name": "Street", "autoWidth": true },
+                    { "data": "comment", "name": "Comment", "autoWidth": true },
+                    { "data": "salePrice", "name": "SalePrice", "autoWidth": true },
+                    { "data": "owner", "name": "Owner", "autoWidth": true },
+                    { "data": "remark", "name": "Remark", "autoWidth": true }
+                ]
+            });
         });
-    });
-
-</script>
+    </script>
+}

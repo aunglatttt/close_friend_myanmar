@@ -13,6 +13,7 @@ using SimpleDataWebsite.Data;
 using System.Drawing;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
+using System.Linq.Dynamic.Core;
 
 namespace CloseFriendMyanamr.Controllers
 {
@@ -798,32 +799,130 @@ namespace CloseFriendMyanamr.Controllers
 
         #endregion
 
-        public async Task<IActionResult> PropertyList()
+        #region updated the datatables for property list
+        public IActionResult PropertyList()
         {
-            var model = await _context.Property.AsNoTracking()
-                //.Include(x => x.Owner)
-                //.Include(x => x.LastCheckedBy)
-                .Select(x => new PropertyViewModel
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetProperties()
+        {
+            try
+            {
+                // These are the parameters sent by DataTables on each AJAX call
+                var draw = Request.Form["draw"].FirstOrDefault();
+                var start = Request.Form["start"].FirstOrDefault();
+                var length = Request.Form["length"].FirstOrDefault();
+                var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
+                var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
+                var searchValue = Request.Form["search[value]"].FirstOrDefault();
+
+                //Paging Size (10, 20, 50, 100)
+                int pageSize = length != null ? Convert.ToInt32(length) : 0;
+                int skip = start != null ? Convert.ToInt32(start) : 0;
+                int recordsTotal = 0;
+
+                // Start with the base query.
+                // We are using IQueryable which allows us to build the query dynamically before executing it.
+                var propertyQuery = _context.Property
+                    .Where(x => x.Status != "Delete" && x.Status != "DuplicateDelete")
+                    .AsNoTracking();
+
+                // --- SEARCHING ---
+                // Apply a global search filter if a search value is provided.
+                if (!string.IsNullOrEmpty(searchValue))
+                {
+                    propertyQuery = propertyQuery.Where(m =>
+                        m.Code.Contains(searchValue) ||
+                        m.Street.Contains(searchValue) ||
+                        m.Comment.Contains(searchValue) ||
+                        m.Remark.Contains(searchValue) ||
+                        (m.Owner != null && m.Owner.OwnerName.Contains(searchValue)) ||
+                        (m.Owner != null && m.Owner.OwnerPhone.Contains(searchValue))
+                    );
+                }
+
+                // --- SORTING ---
+                var validSortColumns = new List<string> { "Code", "LastCheckedDate", "Street", "Comment", "SalePrice", "Owner", "Remark" };
+
+                if (!string.IsNullOrEmpty(sortColumn) && validSortColumns.Contains(sortColumn))
+                {
+                    // Apply sorting using the validated column name.
+                    propertyQuery = propertyQuery.OrderBy(sortColumn + " " + sortColumnDirection);
+                }
+                else
+                {
+                    // Default sorting if none is specified
+                    propertyQuery = propertyQuery.OrderByDescending(d => d.LastCheckedDate).ThenByDescending(d => d.Id);
+                }
+
+
+                // Total number of records before paging
+                recordsTotal = await propertyQuery.CountAsync();
+
+                // --- PAGING ---
+                // Apply pagination to the query
+                var pagedData = await propertyQuery.Skip(skip).Take(pageSize)
+                    .Include(x => x.Owner).ToListAsync();
+
+                // --- MAPPING ---
+                // Project the paged data to your ViewModel. This happens in-memory after fetching the data.
+                var data = pagedData.Select(x => new PropertyViewModel
                 {
                     Id = x.Id,
                     Code = x.Code,
-                    Status = x.Status??"",
-                    AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
-                    //LastCheckedDate = x.LastCheckedDate.ToString("MMM dd, yyyy"),
-                    LastCheckedDate = x.LastCheckedDate,
+                    Status = x.Status ?? "",
+                    AvaliableDate = x.Status == "Rented" ? x.AvailableDate.ToString("MMM dd, yyyy") : "",
+                    LastCheckedDateString = x.LastCheckedDate.ToString("MMM dd, yyyy"), // Use a new string property for display
                     Street = x.Street,
                     Comment = x.Comment,
                     SalePrice = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
-                    Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
+                    Owner = x.Owner != null ? (x.Owner.OwnerName + " (" + x.Owner.OwnerPhone + ")") : "",
                     Remark = x.Remark,
-                    LastCheckedBy = x.LastCheckedBy != null? x.LastCheckedBy.EmployeeName : ""
-                })
-                .Where(x => x.Status != "Delete" && x.Status != "DuplicateDelete")
-                .OrderByDescending(d => d.LastCheckedDate)
-                .ThenByDescending(d => d.Id)
-                .ToListAsync();
-            return View(model);
+                    LastCheckedBy = x.LastCheckedBy != null ? x.LastCheckedBy.EmployeeName : ""
+                }).ToList();
+
+
+                // Create the final JSON response in the format DataTables expects
+                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
+
+                return Ok(jsonData);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return BadRequest();
+            }
         }
+
+        #endregion
+        //public async Task<IActionResult> PropertyList()
+        //{
+        //    var model = await _context.Property.AsNoTracking()
+        //        //.Include(x => x.Owner)
+        //        //.Include(x => x.LastCheckedBy)
+        //        .Select(x => new PropertyViewModel
+        //        {
+        //            Id = x.Id,
+        //            Code = x.Code,
+        //            Status = x.Status??"",
+        //            AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
+        //            //LastCheckedDate = x.LastCheckedDate.ToString("MMM dd, yyyy"),
+        //            LastCheckedDate = x.LastCheckedDate,
+        //            Street = x.Street,
+        //            Comment = x.Comment,
+        //            SalePrice = x.Purpose == "Sale" ? x.SalePrice : x.RentPrice,
+        //            Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
+        //            Remark = x.Remark,
+        //            LastCheckedBy = x.LastCheckedBy != null ? x.LastCheckedBy.EmployeeName : ""
+        //        })
+        //        .Where(x => x.Status != "Delete" && x.Status != "DuplicateDelete")
+        //        .OrderByDescending(d => d.LastCheckedDate)
+        //        .ThenByDescending(d => d.Id)
+        //        .ToListAsync();
+        //    return View(model);
+        //}
 
         public async Task<IActionResult> DeletedPropertyList()
         {
