@@ -655,6 +655,7 @@ namespace CloseFriendMyanamr.Controllers
        int page = 1,
        int pageSize = 10,
        string propertyType = null,
+       string buildingCondition = null,
        string buildingType = null,
        string ownerAgent = null,
        string purpose = null,
@@ -688,6 +689,8 @@ namespace CloseFriendMyanamr.Controllers
                 // Apply filters conditionally
                 if (!string.IsNullOrEmpty(propertyType))
                     query = query.Where(x => x.PropertyType == propertyType);
+                if (!string.IsNullOrEmpty(buildingCondition))
+                    query = query.Where(x => x.BuildingCondition == buildingCondition);
                 if (!string.IsNullOrEmpty(buildingType))
                     query = query.Where(x => x.BuildingType == buildingType);
                 if (!string.IsNullOrEmpty(ownerAgent))

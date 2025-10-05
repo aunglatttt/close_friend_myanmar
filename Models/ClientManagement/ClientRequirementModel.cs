@@ -20,6 +20,9 @@ namespace CloseFriendMyanamr.Models.ClientManagement
         [DisplayName("Property Type")]
         public string? PropertyType { get; set; }
 
+        [DisplayName("Building Condition")]
+        public string? BuildingCondition { get; set; }
+
         //[Required(ErrorMessage = "Building Type is required.")]
         [DisplayName("Building Type")]
         public string? BuildingType { get; set; }

@@ -42,6 +42,18 @@
                                 </div>
                                 <div class="col-md-3 col-sm-12">
                                     <div class="form-group">
+                                        <label asp-for="BuildingCondition"></label>
+                                        <select class="form-select mb-1" asp-for="BuildingCondition" id="BuildingCondition" name="BuildingCondition">
+                                            <option value="">{{ရွေးပါ}}</option>
+                                            <option value="တိုက်သစ်">တိုက်သစ်</option>
+                                            <option value="တိုက်လတ်">တိုက်လတ်</option>
+                                            <option value="တိုက်ဟောင်း">တိုက်ဟောင်း</option>
+                                        </select>
+                                        <span class="text-danger" asp-validation-for="BuildingCondition"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-12">
+                                    <div class="form-group">
                                         <label asp-for="BuildingType"></label>
                                         <select class="form-select mb-1" asp-for="BuildingType" asp-items="ViewBag.BuildingType" id="BuildingType" name="BuildingType">
                                             <option value="" selected>{{Select}}</option>

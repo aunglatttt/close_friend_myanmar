@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-lg-8">
                         <div class="row">
-                            <div class="col-md-4 col-sm-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label class="form-label" for="PropertyType">Property Type </label>
                                     <select class="form-select mb-1" id="PropertyType" asp-items="@ViewBag.PropertyTypeList" asp-for="PropertyType" name="PropertyType">
@@ -21,15 +21,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4 col-sm-12">
-                                <div class="form-group">
-                                    <label class="form-label" for="BuildingType">Building Type</label>
-                                    <select class="form-select mb-1" id="BuildingType" asp-items="@ViewBag.BuildingTypeList" name="BuildingType" asp-for="BuildingType">
-                                        <option value="">{{All}}</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4 col-sm-12">
+                            <div class="col-md-6 col-sm-12">
                                 <div class="form-group">
                                     <label class="form-label" for="OwnerAgent">Owner / Agent </label>
                                     <select class="form-select mb-1" id="OwnerAgent" asp-items="@ViewBag.OwnerList" asp-for="OwnerAgent" name="OwnerAgent">
@@ -37,6 +29,28 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="required">Building Condition</label>
+                                    <select class="form-select mb-1" id="BuildingCondition" name="BuildingCondition" asp-for="BuildingCondition">
+                                        <option value="">{{ရွေးပါ}}</option>
+                                        <option value="တိုက်သစ်">တိုက်သစ်</option>
+                                        <option value="တိုက်လတ်">တိုက်လတ်</option>
+                                        <option value="တိုက်ဟောင်း">တိုက်ဟောင်း</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12">
+                                <div class="form-group">
+                                    <label class="form-label" for="BuildingType">Building Type</label>
+                                    <select class="form-select mb-1" id="BuildingType" asp-items="@ViewBag.BuildingTypeList" name="BuildingType" asp-for="BuildingType">
+                                        <option value="">{{All}}</option>
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
 
                         <div class="row">
@@ -478,7 +492,7 @@
 </div>
 
 <script>
-         $(document).ready(function () {
+    $(document).ready(function () {
         $('#Townships').select2({
             placeholder: "Select categories",
             allowClear: true,
@@ -491,41 +505,42 @@
         });
 
 
-                    $('#resetbtn').click(function (){
-                        console.log('ere reset');
-               // Clear Select2 dropdowns
-                        $('#PropertyType').val('').trigger('change');
-                        $('#BuildingType').val('').trigger('change');
-                        $('#OwnerAgent').val('').trigger('change');
-                        $('#Purpose').val('').trigger('change');
-                        $('#PriceFrom').val('');
-                        $('#PriceTo').val('');
-                        $('#CondoName').val('').trigger('change');
-                        $('#Face').val('').trigger('change');
-                        $('#BuildingNo').val('');
-                        $('#Street').val('');
-                        $('#Ward').val('');
-                        $('#CommentInfo').val('');
-                        $('#Ownership').val('').trigger('change');
-                        $('#SalerOwnType').val('').trigger('change');
-                        $('#Floor').val('').trigger('change');
-                        $('#Size').val('').trigger('change');
-                        $('#Area').val('').trigger('change');
-                        $('#MasterRoom').val('').trigger('change');
-                        $('#SigleRoom').val('').trigger('change');
-                        $('#Status').val('').trigger('change');
-                        $('#PostStatus').val('').trigger('change');
-                        $('#Townships').val('').trigger('change');
+        $('#resetbtn').click(function () {
+            console.log('ere reset');
+            // Clear Select2 dropdowns
+            $('#PropertyType').val('').trigger('change');
+            $('#BuildingType').val('').trigger('change');
+            $('#BuildingCondition').val('').trigger('change');
+            $('#OwnerAgent').val('').trigger('change');
+            $('#Purpose').val('').trigger('change');
+            $('#PriceFrom').val('');
+            $('#PriceTo').val('');
+            $('#CondoName').val('').trigger('change');
+            $('#Face').val('').trigger('change');
+            $('#BuildingNo').val('');
+            $('#Street').val('');
+            $('#Ward').val('');
+            $('#CommentInfo').val('');
+            $('#Ownership').val('').trigger('change');
+            $('#SalerOwnType').val('').trigger('change');
+            $('#Floor').val('').trigger('change');
+            $('#Size').val('').trigger('change');
+            $('#Area').val('').trigger('change');
+            $('#MasterRoom').val('').trigger('change');
+            $('#SigleRoom').val('').trigger('change');
+            $('#Status').val('').trigger('change');
+            $('#PostStatus').val('').trigger('change');
+            $('#Townships').val('').trigger('change');
 
-                        // Uncheck all facility checkboxes
-                        $('input[name="selectedFacilities"]').prop('checked', false);
+            // Uncheck all facility checkboxes
+            $('input[name="selectedFacilities"]').prop('checked', false);
 
-                        // Optionally, fetch data with empty filters
-                        fetchData(1, $('#pageSize').val());
-                    });
+            // Optionally, fetch data with empty filters
+            fetchData(1, $('#pageSize').val());
+        });
 
         // Submit button click event
-            $('#submitbtn').click(function (e) {
+        $('#submitbtn').click(function (e) {
             e.preventDefault(); // Prevent default form submission
             fetchData(1, $('#pageSize').val()); // Fetch data with filters
 
@@ -547,6 +562,7 @@
         const filters = {
             PropertyType: $('#PropertyType').val(),
             BuildingType: $('#BuildingType').val(),
+            BuildingCondition: $('#BuildingCondition').val(),
             OwnerAgent: $('#OwnerAgent').val(),
             Purpose: $('#Purpose').val(),
             PriceFrom: $('#PriceFrom').val(),
@@ -584,6 +600,7 @@
                 pageSize: pageSize,
                 propertyType: filters.PropertyType,
                 buildingType: filters.BuildingType,
+                buildingCondition: filters.BuildingCondition,
                 ownerAgent: filters.OwnerAgent,
                 purpose: filters.Purpose,
                 priceFrom: filters.PriceFrom,

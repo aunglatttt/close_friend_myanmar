@@ -11,6 +11,8 @@
 
         // Filter parameters
         public string? PropertyType { get; set; }
+        public string? BuildingCondition { get; set; }
+
         public string? BuildingType { get; set; }
         public string? OwnerAgent { get; set; }
         public string? Purpose { get; set; }

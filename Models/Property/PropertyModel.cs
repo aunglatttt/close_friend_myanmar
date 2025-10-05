@@ -13,7 +13,7 @@ namespace CloseFriendMyanamr.Models.Property
         public string? Code { get; set; }
 
         [Required(ErrorMessage = "Owner is required.")]
-        public int OwnerId { get; set; }
+        public int? OwnerId { get; set; }
 
         [Required(ErrorMessage = "Property Type is required.")]
         [DisplayName("Property Type")]
@@ -22,6 +22,8 @@ namespace CloseFriendMyanamr.Models.Property
         [Required(ErrorMessage = "Building Type is required.")]
         [DisplayName("Building Type")]
         public string BuildingType { get; set; }
+        [DisplayName("Building Condition")]
+        public string? BuildingCondition { get; set; }
         public string? Building { get; set; }
         public string? Purpose { get; set; }
         [NotMapped]

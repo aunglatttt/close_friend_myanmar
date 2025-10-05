@@ -149,7 +149,7 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-4 col-sm-12">
+                                <div class="col-md-6 col-sm-12">
                                     <div class="form-group">
                                         <label class="required">Owner </label>
                                         <select class="form-select mb-1" id="OwnerId" asp-for="OwnerId" asp-items="@ViewBag.OwnerList" name="OwnerId" data-val="true" data-val-required="Purpose is required.">
@@ -157,14 +157,28 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4 col-sm-12">
+                                <div class="col-md-6 col-sm-12">
                                     <div class="form-group">
                                         <label class="required">Property Type</label>
                                         <select class="form-select mb-1" asp-for="PropertyType" id="PropertyType" asp-items="@ViewBag.PropertyTypeList" name="PropertyType" data-val="true" data-val-required="Purpose is required.">
                                         </select>
                                     </div>
+                                </div>                                
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label class="required">Building Condition</label>
+                                            <select class="form-select mb-1" id="BuildingCondition" name="BuildingCondition" asp-for="BuildingCondition">
+                                                <option value="">{{ရွေးပါ}}</option>
+                                                <option value="တိုက်သစ်">တိုက်သစ်</option>
+                                                <option value="တိုက်လတ်">တိုက်လတ်</option>
+                                                <option value="တိုက်ဟောင်း">တိုက်ဟောင်း</option>
+                                            </select>
+                                    </div>
                                 </div>
-                                <div class="col-md-4 col-sm-12">
+                                <div class="col-md-6 col-sm-12">
                                     <div class="form-group">
                                         <label class="required">Building Type</label>
                                         <select class="form-select mb-1" id="BuildingType" asp-for="BuildingType" name="BuildingType" asp-items="@ViewBag.BuildingTypeList" data-val="true" data-val-required="Purpose is required.">
