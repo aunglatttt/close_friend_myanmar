@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using OfficeOpenXml.Style;
 using SimpleDataWebsite.Data;
 using System;
 using System.Security.Claims;
@@ -28,7 +29,20 @@ namespace CloseFriendMyanamr.Controllers
         {
             ViewBag.CreateOrUpdate = (id == null || id <= 0) ? "Create New" : "Update";
 
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var incomeTitle = await _context.IncomeTitle.AsNoTracking()
+            .Where(x => x.CPI == cpi)
            .Select(x => new { x.Id, x.Name })
            .ToListAsync();
 
@@ -50,6 +64,17 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> CompanyIncome(CompanyIncomeModel model)
         {
+                #region get cpi
+                var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+                if (cpiClaim == null)
+                    return RedirectToAction("Login", "Account");
+
+                if (!int.TryParse(cpiClaim.Value, out int cpi))
+                {
+                    ViewBag.Error = "Invalid CPI value";
+                    return View("Error");
+                }
+                #endregion
             if (ModelState.IsValid)
             {
                 string title = "Company Income Created";
@@ -60,6 +85,7 @@ namespace CloseFriendMyanamr.Controllers
                 var log = new LogModel();
                 var userId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
                 string loginUserName = await _context.Employee.AsNoTracking().Where(x => x.Id == int.Parse(userId??"0")).Select(x => x.EmployeeName).FirstOrDefaultAsync()??"";
+
 
                 if (model.Id > 0)
                 {
@@ -73,6 +99,7 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.IncomeType = model.IncomeType;
                         existingModel.Remark = model.Remark;
                         existingModel.UpdatedAt = DateTime.Now;
+                        existingModel.CPI = cpi;
 
                         title = "Company Income Updated";
                         log.Logs = $"{loginUserName} Update Income ({existingModel.Amount} to Cash) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
@@ -82,6 +109,7 @@ namespace CloseFriendMyanamr.Controllers
                 {
                     model.IncomeTitleName = incomeTileName;
                     model.CreatedAt = DateTime.Now;
+                    model.CPI = cpi;
                     _context.Income.Add(model);
 
                     #region for cash book transaction
@@ -93,6 +121,7 @@ namespace CloseFriendMyanamr.Controllers
                         Description = $"Income To: Cash, Remark: {model.Remark}",
                         Account = "Cash",
                         CreatedAt = DateTime.Now,
+                        CPI = cpi
                     };
                     _context.CashBookTransaction.Add(newCashBookTransaction);
                     #endregion
@@ -101,6 +130,7 @@ namespace CloseFriendMyanamr.Controllers
                 }
 
                 #region log area
+                log.CPI = cpi;
                 log.EmployeeId = int.Parse(userId ?? "0");
                 log.LogsDate = DateTime.Now;
                 log.Type = "AccountRelated";
@@ -113,6 +143,7 @@ namespace CloseFriendMyanamr.Controllers
                 return RedirectToAction("SuccessComponent", "Home", new { Title = title, Message = "Your company income data has been saved.", ActionName = "CompanyIncome", ActionName2 = "IncomeList", BtnName = "New Income", ControllerName = "CashManagement" });
             }
             var incomeTitle = await _context.IncomeTitle.AsNoTracking()
+                .Where(x => x.CPI == cpi)
            .Select(x => new { x.Id, x.Name })
            .ToListAsync();
 
@@ -130,7 +161,20 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> IncomeList(DateTime? fromdate, DateTime? todate, string? incomeTitle)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var incomeTitleObj = await _context.IncomeTitle.AsNoTracking()
+                .Where(x => x.CPI == cpi)
                 .Select(x => new { x.Id, x.Name })
                 .ToListAsync();
 
@@ -150,11 +194,11 @@ namespace CloseFriendMyanamr.Controllers
 
             if (fromdate == null && todate == null && incomeTitle == null)
             {
-                return View(await _context.Income.AsNoTracking().ToListAsync());
+                return View(await _context.Income.AsNoTracking().Where(x => x.CPI == cpi).ToListAsync());
             }
             else
             {
-                var incomes = _context.Income.AsNoTracking().AsQueryable();
+                var incomes = _context.Income.AsNoTracking().Where(x => x.CPI == cpi).AsQueryable();
 
                 if (fromdate.HasValue)
                 {
@@ -182,7 +226,20 @@ namespace CloseFriendMyanamr.Controllers
         {
             ViewBag.CreateOrUpdate = (id == null || id <= 0) ? "Create New" : "Update";
 
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var selectOptions = await _context.ExpenseTitle.AsNoTracking()
+                .Where(x => x.CPI == cpi)
            .Select(x => new { x.Id, x.Name })
            .ToListAsync();
 
@@ -204,6 +261,18 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> CompanyExpense(CompanyExpenseModel model)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
                 string title = "Company Expense Created";
@@ -227,6 +296,7 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.ExpenseType = model.ExpenseType;
                         existingModel.Description = model.Description;
                         existingModel.UpdatedAt = DateTime.Now;
+                        existingModel.CPI = cpi;
 
                         title = "Company Expense Updated";
 
@@ -237,6 +307,8 @@ namespace CloseFriendMyanamr.Controllers
                 {
                     model.ExpenseTitleName = expenseTileName;
                     model.CreatedAt = DateTime.Now;
+                    model.CPI = cpi;
+
                     _context.Expense.Add(model);
 
                     #region for cash book transaction
@@ -248,6 +320,7 @@ namespace CloseFriendMyanamr.Controllers
                         Description = $"Expense From: Cash, Remark: {model.Description}",
                         Account = "Cash",
                         CreatedAt = DateTime.Now,
+                        CPI = cpi
                     };
                     _context.CashBookTransaction.Add(newCashBookTransaction);
                     #endregion
@@ -258,6 +331,7 @@ namespace CloseFriendMyanamr.Controllers
                 log.EmployeeId = int.Parse(userId ?? "0");
                 log.LogsDate = DateTime.Now;
                 log.Type = "AccountRelated";
+                log.CPI = cpi;
 
                 _context.Log.Add(log);
                 #endregion
@@ -266,6 +340,7 @@ namespace CloseFriendMyanamr.Controllers
                 return RedirectToAction("SuccessComponent", "Home", new { Title = title, Message = "Your company expense data has been saved.", ActionName = "CompanyExpense", ActionName2 = "ExpenseList", BtnName = "New Expense", ControllerName = "CashManagement" });
             }
             var incomeTitle = await _context.ExpenseTitle.AsNoTracking()
+                .Where(x => x.CPI ==cpi)
            .Select(x => new { x.Id, x.Name })
            .ToListAsync();
 
@@ -283,7 +358,20 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> ExpenseList(DateTime? fromdate, DateTime? todate, int? expenseTitle)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var expenseTitleObj = await _context.ExpenseTitle.AsNoTracking()
+                .Where(x => x.CPI == cpi)
                 .Select(x => new { x.Id, x.Name })
                 .ToListAsync();
 
@@ -303,11 +391,11 @@ namespace CloseFriendMyanamr.Controllers
 
             if (fromdate == null && todate == null && expenseTitle == null)
             {
-                return View(await _context.Expense.AsNoTracking().ToListAsync());
+                return View(await _context.Expense.AsNoTracking().Where(x => x.CPI == cpi).ToListAsync());
             }
             else
             {
-                var expense = _context.Expense.AsNoTracking().AsQueryable();
+                var expense = _context.Expense.AsNoTracking().Where(x => x.CPI == cpi).AsQueryable();
 
                 if (fromdate.HasValue)
                 {
@@ -337,6 +425,18 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> AccountTransfer(CashBookTransaction model)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
                 string fromtitle = "";
@@ -346,6 +446,8 @@ namespace CloseFriendMyanamr.Controllers
                 model.Account = model.TransactionType == "Debit" ? "APM AYA Bank" : "Cash";
                 fromtitle = model.TransactionType == "Debit" ? "Cash" : "APM AYA Bank";
                 model.CreatedAt = DateTime.Now;
+                model.CPI = cpi;
+
                 _context.CashBookTransaction.Add(model);
 
                 #region log area
@@ -356,6 +458,7 @@ namespace CloseFriendMyanamr.Controllers
                 log.EmployeeId = int.Parse(userId ?? "0");
                 log.LogsDate = DateTime.Now;
                 log.Type = "AccountRelated";
+                log.CPI = cpi;
 
                 _context.Log.Add(log);
                 #endregion
@@ -369,6 +472,18 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> CashBookList(DateTime? fromDate, DateTime? toDate)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             // Default to today if no date range is provided
             fromDate = fromDate ?? DateTime.Today;
             toDate = toDate ?? DateTime.Today;
@@ -376,7 +491,7 @@ namespace CloseFriendMyanamr.Controllers
             // Fetch transactions within the date range
             var transactions = await _context.CashBookTransaction
                 .AsNoTracking()
-                .Where(t => t.TransactionDate >= fromDate && t.TransactionDate <= toDate)
+                .Where(t => t.TransactionDate >= fromDate && t.TransactionDate <= toDate && t.CPI == cpi)
                 .OrderBy(t => t.TransactionDate)
                 .ToListAsync();
 

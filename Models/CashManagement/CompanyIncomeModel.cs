@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models.CashManagement
 {
@@ -30,5 +32,10 @@ namespace CloseFriendMyanamr.Models.CashManagement
         public string? Remark { get; set; }
 
         public IncomeTitleModel? IncomeTitle { get; set; }
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel? CompanyInfo { get; set; }
+
     }
 }
