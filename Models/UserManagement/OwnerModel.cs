@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
 using CloseFriendMyanamr.Models.Property;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models.UserManagement
@@ -34,6 +35,11 @@ namespace CloseFriendMyanamr.Models.UserManagement
         public DateTime? CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public virtual List<PropertyModel>? Properties { get; set; }
+
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel? CompanyInfo { get; set; }
 
     }
 }

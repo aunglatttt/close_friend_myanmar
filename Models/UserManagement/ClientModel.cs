@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloseFriendMyanamr.Models.ClientManagement;
+using CloseFriendMyanamr.Models.CompanyInformation;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using CloseFriendMyanamr.Models.ClientManagement;
 
 namespace CloseFriendMyanamr.Models.UserManagement
 {
@@ -39,6 +40,11 @@ namespace CloseFriendMyanamr.Models.UserManagement
         public string? Remark { get; set; }
 
         public virtual List<ClientRequirementModel>? ClientRequirements { get; set; }
+
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel? CompanyInfo { get; set; }
 
     }
 }

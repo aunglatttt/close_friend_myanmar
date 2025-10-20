@@ -14,12 +14,29 @@ namespace CloseFriendMyanamr.Controllers
 
         public ClientRequestController(ApplicationDbContext context)
         {
-            _context=context;
+            _context = context;
         }
 
         public async Task<IActionResult> ClicentRequestList()
         {
-            return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
+            var model = await _context.ClientRequirement.AsNoTracking()
+                    .Where(x => x.CPI == cpi)
+                    .Include(x => x.Client)
+                    .ToListAsync();
+
+                return View(model);
         }
 
         public async Task<IActionResult> ClientRequirement(int clientId, int? clrId)
@@ -83,7 +100,7 @@ namespace CloseFriendMyanamr.Controllers
             #region client info
 
             var clientInfoObj = await _context.Client.AsNoTracking().Select(x => new { x.ClientName, x.ClientPhone, x.Id }).FirstOrDefaultAsync(x => x.Id == clientId);
-            ViewBag.ClientInfo = clientInfoObj != null? (clientInfoObj.ClientName + " [" + clientInfoObj.ClientPhone + "]") : "";
+            ViewBag.ClientInfo = clientInfoObj != null ? (clientInfoObj.ClientName + " [" + clientInfoObj.ClientPhone + "]") : "";
             ViewBag.ClientId = clientId;
 
             #endregion
@@ -119,10 +136,23 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> ClientRequirementCreate(ClientRequirementModel model, List<string> selectedTownships, List<string> selectedFacilities)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
                 model.Township = string.Join(",", selectedTownships ?? new List<string>());
                 model.Facilities = string.Join(",", selectedFacilities ?? new List<string>());
+                model.CPI = cpi;
 
                 if (model.Id == 0) // Check if it's a new record or update
                 {

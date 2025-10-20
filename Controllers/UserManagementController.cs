@@ -23,20 +23,19 @@ namespace CloseFriendMyanamr.Controllers
         #region client
         public async Task<IActionResult> ClientList()
         {
-            //var model = await _context.Client.AsNoTracking()
-            //    .Select(x => new
-            //    {
-            //        x.Id,
-            //        x.ClientName,
-            //        x.ClientPhone,
-            //        x.Address,
-            //        x.RegistrationDate,
-            //        x.Status,
-            //        x.ShownProperty = x.ClientRequirements.Count(),
-            //        x.Remark,
-            //    })
-                
-            return View(await _context.Client.AsNoTracking().Include(x => x.ClientRequirements).ToListAsync());
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
+            return View(await _context.Client.AsNoTracking().Where(x => x.CPI == cpi).Include(x => x.ClientRequirements).ToListAsync());
         }
 
         public async Task<IActionResult> ClientCreate(int? id)
@@ -64,6 +63,18 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> ClientCreate(ClientModel model)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
                 string returnMsg = "Created";
@@ -82,6 +93,7 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.Remark = model.Remark;
                         existingModel.UpdatedAt = DateTime.Now;
                         existingModel.Status = model.Status;
+                        existingModel.CPI = cpi;
 
                         returnMsg = "Updated";
                         log.Logs = $"{loginUserName} Modify Client ({existingModel.ClientName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
@@ -90,6 +102,7 @@ namespace CloseFriendMyanamr.Controllers
                 else
                 {
                     model.CreatedAt = DateTime.Now;
+                    model.CPI = cpi;
                     _context.Client.Add(model);
 
                     returnMsg = "Created";
@@ -100,6 +113,7 @@ namespace CloseFriendMyanamr.Controllers
                 log.EmployeeId = int.Parse(userId ?? "0");
                 log.LogsDate = DateTime.Now;
                 log.Type = "ClientRelated";
+                log.CPI = cpi;
 
                 _context.Log.Add(log);
                 #endregion
@@ -133,8 +147,20 @@ namespace CloseFriendMyanamr.Controllers
         #region Owner
         public async Task<IActionResult> OwnerList()
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var model = await _context.Owner.AsNoTracking()
-                .Where(x => x.Type == "1")
+                .Where(x => x.Type == "1" && x.CPI == cpi)
                 .Select(x => new AOViewModel
                 {
                     Id = x.Id,
@@ -149,6 +175,18 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> OwnerCreate(int? id)
         {
             ViewBag.CreateOrUpdate = (id == null || id <= 0) ? "Create New" : "Update";
+
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
 
             if (id != null && id > 0)
             {
@@ -286,6 +324,18 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> OwnerCreate(OwnerModel model)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
                 string returnMsg = "Created";
@@ -301,7 +351,8 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.OwnerPhone = model.OwnerPhone;
                         existingModel.Address =  model.Address;
                         existingModel.Remark = model.Remark;
-                        model.UpdatedAt = DateTime.Now;
+                        existingModel.UpdatedAt = DateTime.Now;
+                        existingModel.CPI = cpi;
 
                         returnMsg = "Updated";
                         log.Logs = $"{loginUserName} Modify Partner ({existingModel.OwnerName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
@@ -311,6 +362,8 @@ namespace CloseFriendMyanamr.Controllers
                 {
                     model.Type = "1";
                     model.CreatedAt = DateTime.Now;
+                    model.CPI = cpi;
+
                     _context.Owner.Add(model);
 
                     returnMsg = "Created";
@@ -321,6 +374,7 @@ namespace CloseFriendMyanamr.Controllers
                 log.EmployeeId = int.Parse(userId ?? "0");
                 log.LogsDate = DateTime.Now;
                 log.Type = "OwnerRelated";
+                log.CPI = cpi;
 
                 _context.Log.Add(log);
                 #endregion
@@ -354,22 +408,19 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> AgentList()
         {
-            //var ls = await _context.Owner.Where(x => x.Type == "2")
-            //    .Select(x => new AgentModel
-            //    {
-            //        AgentName = x.OwnerName,
-            //        AgentPhone = x.OwnerPhone,
-            //        Address = x.Address,
-            //        Remark = x.Remark,
-            //        CreatedAt = x.CreatedAt,
-            //    }).ToListAsync();
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
 
-            //await _context.Agent.AddRangeAsync(ls);
-            //await _context.SaveChangesAsync();
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
 
-            //return View(await _context.Agent.AsNoTracking().ToListAsync());
-
-            var model = await _context.Owner.AsNoTracking().Where(x => x.Type == "2")
+            var model = await _context.Owner.AsNoTracking().Where(x => x.Type == "2" && x.CPI == cpi)
                 .Select(x => new AOViewModel
                 {
                     Id = x.Id,
@@ -398,6 +449,18 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> AgentCreate(OwnerModel model)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
                 string returnMsg = "Created";
@@ -413,7 +476,8 @@ namespace CloseFriendMyanamr.Controllers
                         existingModel.OwnerName = model.OwnerName;
                         existingModel.Address =  model.Address;
                         existingModel.Remark = model.Remark;
-                        model.UpdatedAt = DateTime.Now;
+                        existingModel.UpdatedAt = DateTime.Now;
+                        existingModel.CPI = cpi;
 
                         returnMsg = "Updated";
                         log.Logs = $"{loginUserName} Modify Partner ({existingModel.OwnerName}) @ {DateTime.Now.ToString("MMM dd, yyyy")}";
@@ -423,6 +487,7 @@ namespace CloseFriendMyanamr.Controllers
                 {
                     model.Type = "2";
                     model.CreatedAt = DateTime.Now;
+                    model.CPI = cpi;
                     _context.Owner.Add(model);
 
                     returnMsg = "Created";
@@ -433,6 +498,7 @@ namespace CloseFriendMyanamr.Controllers
                 log.EmployeeId = int.Parse(userId ?? "0");
                 log.LogsDate = DateTime.Now;
                 log.Type = "AgentRelated";
+                log.CPI = cpi;
 
                 _context.Log.Add(log);
                 #endregion
@@ -464,8 +530,21 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> WebSiteVisitors()
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var visitors = await _context.VisitorTracking
                 .AsNoTracking()
+                .Where(x => x.CPI == cpi)
                 .OrderByDescending(x => x.VisitDate)
                 .ToListAsync();
 

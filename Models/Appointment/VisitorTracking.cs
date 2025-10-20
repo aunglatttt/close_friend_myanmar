@@ -1,4 +1,7 @@
-﻿namespace CloseFriendMyanamr.Models.Appointment
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace CloseFriendMyanamr.Models.Appointment
 {
     public class VisitorTracking
     {
@@ -16,5 +19,9 @@
         public int ScreenHeight { get; set; }
         public string Timezone { get; set; }
         public DateTime VisitDate { get; set; } = DateTime.Now;
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel CompanyInfo { get; set; }
     }
 }

@@ -1,6 +1,8 @@
-﻿using CloseFriendMyanamr.Models.UserManagement;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+using CloseFriendMyanamr.Models.UserManagement;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models.ClientManagement
 {
@@ -65,5 +67,10 @@ namespace CloseFriendMyanamr.Models.ClientManagement
         public string Status { get; set; } = "New";
         public DateTime? RequestDate { get; set; }
         public virtual ClientModel? Client { get; set; }
+
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel? CompanyInfo { get; set; }
     }
 }
