@@ -45,6 +45,8 @@
                     <h4 class="edittiele responsive-heading" id="edit" name="edit">@ViewData["FormTitle"]</h4>
                     <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
                         <input type="hidden" id="Id" name="Id" />
+                        <input type="hidden" id="cpi" name="cpi" />
+                        <input type="hidden" id="CreatedAt" name="CreatedAt" />
                         <input type="text" id="BankAccount" name="BankAccount" placeholder="Enter Bank Name" required class="form-control mb-3" />
                         <input type="text" id="OpeningAmount" name="OpeningAmount" placeholder="Enter Openging Amount" required class="form-control mb-3" />
                         <input type="text" id="Remark" name="Remark" placeholder="Enter Remark" class="form-control mb-3" />

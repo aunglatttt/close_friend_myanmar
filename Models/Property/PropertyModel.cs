@@ -1,4 +1,5 @@
-﻿using CloseFriendMyanamr.Models.UserManagement;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+using CloseFriendMyanamr.Models.UserManagement;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -91,5 +92,9 @@ namespace CloseFriendMyanamr.Models.Property
         public virtual List<PhotoModel>? Photos { get; set; }
         public virtual List<PropertyFacilityModel>? PropertyFacilities { get; set; }
         public virtual EmployeeModel? LastCheckedBy { get; set; }
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel CompanyInfo { get; set; }
     }
 }

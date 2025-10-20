@@ -14,20 +14,44 @@ namespace CloseFriendMyanamr.Controllers
 
         public EmployeeController(ApplicationDbContext context)
         {
-            _context=context;
+            _context = context;
         }
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Employee.AsNoTracking().Include(d => d.EmployeeType).ToListAsync());
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
+            return View(await _context.Employee.AsNoTracking().Include(d => d.EmployeeType).Where(x => x.CPI == cpi).ToListAsync());
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(int? id)
         {
-            // Fetch employee types from the database
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var empTypes = await _context.EmployeeType.AsNoTracking()
-                .Select(x => new { x.Id, x.Type }) // Ensure x.Type is used
+                .Where(x => x.CPI == cpi && !x.IsDeleted)
+                .Select(x => new { x.Id, x.Type })
                 .ToListAsync();
 
             if (empTypes == null || !empTypes.Any())
@@ -42,7 +66,7 @@ namespace CloseFriendMyanamr.Controllers
 
             ViewData["Title"] = "Create Employee";
 
-            if(id != null && id > 0)
+            if (id != null && id > 0)
             {
                 return View(await _context.Employee.FindAsync(id));
             }
@@ -54,17 +78,31 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync(EmployeeModel model)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             if (ModelState.IsValid)
             {
+
                 string returnMsg = "Created";
                 if (model.Id > 0)
                 {
                     var existingModel = await _context.Employee.FindAsync(model.Id);
                     if (existingModel != null)
                     {
+                        existingModel.CPI = cpi;
                         existingModel.EmployeeName = model.EmployeeName;
                         existingModel.PhoneNumber = model.PhoneNumber;
-                        existingModel.EmployeeTypeId =  model.EmployeeTypeId;
+                        existingModel.EmployeeTypeId = model.EmployeeTypeId;
                         existingModel.LoginName = model.LoginName;
                         existingModel.Password = model.Password;
                         existingModel.Status = model.Status;
@@ -75,6 +113,7 @@ namespace CloseFriendMyanamr.Controllers
                 }
                 else
                 {
+                    model.CPI = cpi;
                     model.CreatedAt = DateTime.Now;
                     _context.Employee.Add(model);
 
@@ -86,6 +125,8 @@ namespace CloseFriendMyanamr.Controllers
             }
 
             var empTypes = await _context.EmployeeType.AsNoTracking()
+                                .Where(x => x.CPI == cpi && !x.IsDeleted)
+
                 .Select(x => new { x.Id, x.Type }) // Ensure x.Type is used
                 .ToListAsync();
 
@@ -110,20 +151,51 @@ namespace CloseFriendMyanamr.Controllers
         #region employee type 
         public async Task<IActionResult> EmployeeTypeList()
         {
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+
             ViewData["FormTitle"] = "Add Employee Type";
-            return View(await _context.EmployeeType.ToListAsync());
+            return View(await _context.EmployeeType.AsNoTracking().Where(x => x.CPI == cpi && !x.IsDeleted).ToListAsync());
         }
 
         public async Task<IActionResult> DetailEmployeeType(int id)
         {
-            var epmtype = await _context.EmployeeType.FindAsync(id);
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+
+            var epmtype = await _context.EmployeeType.Where(x => x.CPI == cpi && x.Id == id).FirstOrDefaultAsync();
             return Json(epmtype);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddEmployeeType(EmployeeType expense)
         {
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+
             expense.CreatedAt = DateTime.Now;
+            expense.CPI = cpi;
             _context.EmployeeType.Add(expense);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(EmployeeTypeList));
@@ -144,7 +216,9 @@ namespace CloseFriendMyanamr.Controllers
             var expense = await _context.EmployeeType.FindAsync(id);
             if (expense != null)
             {
-                _context.EmployeeType.Remove(expense);
+                //_context.EmployeeType.Remove(expense);
+                expense.IsDeleted = true;
+                _context.EmployeeType.Update(expense);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction(nameof(EmployeeTypeList));

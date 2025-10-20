@@ -86,9 +86,20 @@ namespace CloseFriendMyanamr.Controllers
         {
             try
             {
+                var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+                if (cpiClaim == null)
+                    return RedirectToAction("Login", "Account");
+
+                if (!int.TryParse(cpiClaim.Value, out int cpi))
+                {
+                    ViewBag.Error = "Invalid CPI value";
+                    return View("Error");
+                }
+
                 string pattern = @"([A-Za-z]+)(\d+)";
 
                 var codes = await _context.Property.AsNoTracking()
+                    .Where(x => x.CPI == cpi)
                     .Select(x => x.Code)
                     .ToListAsync();
 
@@ -100,18 +111,18 @@ namespace CloseFriendMyanamr.Controllers
                        {
                            return new
                            {
-                               Prefix = match.Groups[1].Value,   // Extract prefix (letters)
-                               Number = int.Parse(match.Groups[2].Value) // Extract number and parse it
+                               Prefix = match.Groups[1].Value, 
+                               Number = int.Parse(match.Groups[2].Value)
                            };
                        }
                        return null;
                    })
-                   .Where(x => x != null) // Filter out invalid entries (if any)
-                   .GroupBy(x => x.Prefix) // Group by prefix
+                   .Where(x => x != null) 
+                   .GroupBy(x => x.Prefix)
                    .Select(group => new CodeListViewModel
                    {
                        Prefix = group.Key,
-                       MaxCode = group.Max(x => x.Number) // Find max number for each prefix
+                       MaxCode = group.Max(x => x.Number)
                    })
                    .ToList();
 

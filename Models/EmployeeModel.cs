@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -40,5 +41,10 @@ namespace CloseFriendMyanamr.Models
 
         public bool Status { get; set; }
         public virtual EmployeeType? EmployeeType { get; set; }
+
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel? CompanyInfo { get; set; }
     }
 }

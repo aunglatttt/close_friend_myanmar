@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models
 {
@@ -9,6 +11,10 @@ namespace CloseFriendMyanamr.Models
 
         [Required]
         public string Type { get; set; }
-        public bool ReadOnly { get; set; }
+        public bool IsDeleted { get; set; }
+
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel CompanyInfo { get; set; }
     }
 }

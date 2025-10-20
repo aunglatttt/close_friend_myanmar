@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CloseFriendMyanamr.Models
 {
@@ -13,5 +15,9 @@ namespace CloseFriendMyanamr.Models
         public DateTime LogsDate { get; set; }
         public string Type { get; set; }
         public virtual EmployeeModel Employee { get; set; }
+        [ForeignKey("CompanyInfo")]
+        public int CPI { get; set; }
+        public virtual CompanyInfoModel CompanyInfo { get; set; }
+
     }
 }

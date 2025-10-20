@@ -43,6 +43,8 @@
                     <h4 class="edittiele responsive-heading" id="edit" name="edit">@ViewData["FormTitle"]</h4>
                     <form id="incomeTitleForm" method="post" action="/IncomeTitle/Add">
                         <input type="hidden" id="Id" name="Id" />
+                        <input type="hidden" id="cpi" name="cpi" />
+                        <input type="hidden" id="CreatedAt" name="CreatedAt" />
                         <input type="text" id="Name" name="Name" placeholder="Enter expense title" required class="form-control mb-3" />
                         <input type="text" id="Remark" name="Remark" placeholder="မှတ်ချက်" class="form-control mb-3" />
                         <button type="submit" id="submitButton" class="btn btn-primary">Add</button>

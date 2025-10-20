@@ -1,7 +1,9 @@
-﻿using CloseFriendMyanamr.Models;
+﻿using CloseFriendMyanamr.Controllers;
+using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.Models.Appointment;
 using CloseFriendMyanamr.Models.CashManagement;
 using CloseFriendMyanamr.Models.ClientManagement;
+using CloseFriendMyanamr.Models.CompanyInformation;
 using CloseFriendMyanamr.Models.Property;
 using CloseFriendMyanamr.Models.UserManagement;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,7 @@ namespace SimpleDataWebsite.Data
         public DbSet<BuildingTypeModel> BuildingType { get; set; }
         public DbSet<BankAccountModel> BankAccount { get; set; }
         public DbSet<LogModel> Log { get; set; }
+        public DbSet<CompanyInfoModel> CompanyInformation { get; set; }
         #endregion
 
         #region user management

@@ -39,7 +39,9 @@
                 <div class="form-container">
                     <h4 class="responsive-heading edittiele" id="edit" name="edit">@ViewData["FormTitle"]</h4>
                     <form id="expenseForm" asp-action="Add" method="post">
+                        <input type="hidden" id="cpi" name="cpi" />
                         <input type="hidden" id="Id" name="Id" />
+                        <input type="hidden" id="CreatedAt" name="CreatedAt" />
                         <input type="text" id="Type" name="Type" placeholder="Enter Employee Type" required />
                         <button type="submit" id="submitButton">Add</button>
                     </form>
@@ -56,6 +58,8 @@
             .then(data => {
                 document.getElementById('Id').value = data.id;
                 document.getElementById('Type').value = data.type;
+                document.getElementById('cpi').value = data.cpi;
+                document.getElementById('CreatedAt').value = data.createdAt;
                 document.getElementById('submitButton').innerText = 'Update';
                  document.getElementById('edit').innerText = "Edit Employee Type";
             });

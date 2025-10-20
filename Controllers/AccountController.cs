@@ -28,7 +28,12 @@ namespace CloseFriendMyanamr.Controllers
             // Validate the username and password (this is just a simple example)
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
-                var user = await _context.Employee.AsNoTracking().Where(x => x.LoginName == username && x.Password == password).FirstOrDefaultAsync();
+                var user = await _context.Employee.AsNoTracking()
+                    .Include(x => x.CompanyInfo)
+                    .Where(x => x.LoginName == username && 
+                                x.Password == password)
+                    .FirstOrDefaultAsync();
+
                 if (user == null) {
                     ViewBag.LoginError = "Invalid Login Information!";
                     return View();
@@ -38,18 +43,24 @@ namespace CloseFriendMyanamr.Controllers
                     ViewBag.LoginError = "Your Account status is inactive.!";
                     return View();
                 }
+                else if (!user.CompanyInfo.Status)
+                {
+                    ViewBag.LoginError = $"Compnay ({user.CompanyInfo.CompanyName}) status is inactive.!";
+                    return View();
+                }
 
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.EmployeeName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id + ""),
+                    new Claim("CPI", user.CPI.ToString())
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
 
                 var authProperties = new AuthenticationProperties
                 {
-                    IsPersistent = rememberMe // Set the "Remember Me" option
+                    IsPersistent = rememberMe
                 };
 
                 await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
