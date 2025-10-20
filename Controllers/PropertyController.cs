@@ -31,10 +31,23 @@ namespace CloseFriendMyanamr.Controllers
         #region save property
         public async Task<IActionResult> NewProperty(int? id)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             #region for select value
 
             #region owner
             var owners = await _context.Owner.AsNoTracking()
+                .Where(x => x.CPI == cpi)
                 .Select(x => new { x.Id, x.OwnerName })
                 .OrderBy(x => x.OwnerName)
                 .ToListAsync();
@@ -115,7 +128,10 @@ namespace CloseFriendMyanamr.Controllers
 
             if (id > 0)
             {
-                var model = await _context.Property.AsNoTracking().Include(x => x.PropertyFacilities).Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == id);
+                var model = await _context.Property.AsNoTracking()
+                    .Include(x => x.PropertyFacilities)
+                    .Include(x => x.Owner)
+                    .FirstOrDefaultAsync(x => x.Id == id);
                 if (model != null)
                 {
                     //if (model.Facilities != null)
@@ -147,10 +163,22 @@ namespace CloseFriendMyanamr.Controllers
         {
             try
             {
+                #region get cpi
+                var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+                if (cpiClaim == null)
+                    return RedirectToAction("Login", "Account");
+
+                if (!int.TryParse(cpiClaim.Value, out int cpi))
+                {
+                    ViewBag.Error = "Invalid CPI value";
+                    return View("Error");
+                }
+                #endregion
+
                 bool isCodeOk = true;
                 if (!string.IsNullOrEmpty(model.Code) && model.Id <= 0)
                 {
-                    bool isFound = await _context.Property.AsNoTracking().AnyAsync(x => x.Code == model.Code);
+                    bool isFound = await _context.Property.AsNoTracking().AnyAsync(x => x.Code == model.Code && x.CPI == cpi);
                     isCodeOk = isFound == true ? false : true;
                 }
 
@@ -158,6 +186,7 @@ namespace CloseFriendMyanamr.Controllers
                 bool isDuplicate = await _context.Property.AsNoTracking()
                     .AnyAsync(x => 
                                 //(x.Ward == model.Ward) &&
+                                x.CPI == cpi &&
                                 (x.Street == model.Street) &&
                                 (x.CondoName == model.CondoName) &&
                                 (x.Floor == model.Floor) &&
@@ -180,6 +209,7 @@ namespace CloseFriendMyanamr.Controllers
 
                             #region owner
                             var owners = await _context.Owner.AsNoTracking()
+                                .Where(x => x.CPI == cpi)
                                 .Select(x => new { x.Id, x.OwnerName })
                                 .OrderBy(x => x.OwnerName)
                                 .ToListAsync();
@@ -269,7 +299,8 @@ namespace CloseFriendMyanamr.Controllers
                             OwnerPhone = model.OwnerPhone,
                             Type = model.OwnerTypeSelect,
                             Address = model.OwnerAddress,
-                            CreatedAt = DateTime.Now
+                            CreatedAt = DateTime.Now,
+                            CPI = cpi
                         };
                     }
                     else
@@ -307,6 +338,7 @@ namespace CloseFriendMyanamr.Controllers
 
                     model.LastCheckedById = int.Parse(userId??"0");
                     model.LastCheckedDate = DateTime.Now;
+                    model.CPI = cpi;
 
                     if (string.IsNullOrEmpty(model.Code))
                     {
@@ -317,7 +349,7 @@ namespace CloseFriendMyanamr.Controllers
                         //int maxNumber = await GetMaxCodeNumberAsync(model.PropertyType);
 
                         //model.Code = $"{model.PropertyType}{maxNumber + 1}";
-                        model.Code  = await GetMaxCodeNumberAsync(prefix);
+                        model.Code  = await GetMaxCodeNumberAsync(prefix, cpi);
                     }
 
                     if (model.Id == 0)
@@ -344,6 +376,7 @@ namespace CloseFriendMyanamr.Controllers
                     log.EmployeeId = int.Parse(userId ?? "0");
                     log.LogsDate = DateTime.Now;
                     log.Type = "PropertyRelated";
+                    log.CPI = cpi;
 
                     _context.Log.Add(log);
                     #endregion
@@ -358,6 +391,7 @@ namespace CloseFriendMyanamr.Controllers
 
                     #region owner
                     var owners = await _context.Owner.AsNoTracking()
+                        .Where(x => x.CPI == cpi)
                         .Select(x => new { x.Id, x.OwnerName })
                         .OrderBy(x => x.OwnerName)
                         .ToListAsync();
@@ -457,7 +491,7 @@ namespace CloseFriendMyanamr.Controllers
         }
         #endregion
 
-        private async Task<string> GetMaxCodeNumberAsync(string prefix)
+        private async Task<string> GetMaxCodeNumberAsync(string prefix, int cpi)
         {
             #region not used
             //var maxCode = await _context.Property
@@ -490,7 +524,7 @@ namespace CloseFriendMyanamr.Controllers
             #endregion
 
             var latestCodeEntity = await _context.Property
-                   .Where(e => e.Code != null && e.Code.StartsWith(prefix))
+                   .Where(e => e.Code != null && e.Code.StartsWith(prefix) && e.CPI == cpi)
                    .OrderByDescending(e => e.Code)
                    .FirstOrDefaultAsync();
 
@@ -513,10 +547,23 @@ namespace CloseFriendMyanamr.Controllers
         #region search property
         public async Task<IActionResult> SearchProperty(int startIndex = 1, int showCount = 10)
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             #region for select value
 
             #region owner
             var owners = await _context.Owner.AsNoTracking()
+                //.Where(x => x.CPI == cpi)
              .Select(x => new { x.Id, x.OwnerName })
              .OrderBy(x => x.OwnerName)
              .ToListAsync();
@@ -681,10 +728,24 @@ namespace CloseFriendMyanamr.Controllers
         {
             try
             {
+                #region get cpi
+                var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+                if (cpiClaim == null)
+                    return RedirectToAction("Login", "Account");
+
+                if (!int.TryParse(cpiClaim.Value, out int cpi))
+                {
+                    ViewBag.Error = "Invalid CPI value";
+                    return View("Error");
+                }
+                #endregion
+
                 var query = _context.Property.AsNoTracking()
                     .Include(x => x.Owner)
                     .Include(x => x.PropertyFacilities)
-                    .Where(x => x.Status != "Delete");
+                    .Include(x => x.LastCheckedBy)
+                    .Include(x => x.CompanyInfo)
+                    .Where(x => x.Status != "Delete" && x.Status != "DuplicateDelete");
 
                 // Apply filters conditionally
                 if (!string.IsNullOrEmpty(propertyType))
@@ -761,25 +822,67 @@ namespace CloseFriendMyanamr.Controllers
                 var totalItems = await query.CountAsync();
                 var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-                var properties = await query
-                    //.Skip((page - 1) * pageSize)
-                    //.Take(pageSize)
-                    .Select(x => new PropertyViewModel
+                // Step 1: Execute the query and materialize the results (ToListAsync)
+                var rawProperties = await query
+                    .Select(x => new
+                    {
+                        IsExternalUser = x.CPI != cpi,
+                        x.Id,
+                        x.Code,
+                        RawAvailableDate = x.AvailableDate,
+                        x.Status,
+                        x.Township,
+                        x.Street,
+                        x.Comment,
+                        x.Room,
+                        x.SalePrice,
+                        x.RentPrice,
+                        x.Remark,
+
+                        // CompanyInfo flags
+                        x.CompanyInfo.IsTownshipShow,
+                        x.CompanyInfo.IsAddressShow,
+                        IsInfoShow = x.CompanyInfo.IsInfoShow,
+                        x.CompanyInfo.IsSalePriceShow,
+                        x.CompanyInfo.IsRentPriceShow,
+                        x.CompanyInfo.IsRemarkShow,
+
+                        // Owner/Checker data
+                        OwnerName = x.Owner != null ? x.Owner.OwnerName : null,
+                        OwnerPhone = x.Owner != null ? x.Owner.OwnerPhone : null,
+                        CheckerName = x.LastCheckedBy != null ? x.LastCheckedBy.EmployeeName : x.CompanyInfo.CompanyName,
+                        CheckerPhone = x.LastCheckedBy != null ? $"({x.LastCheckedBy.PhoneNumber}) \n(Agent)" : $"({x.CompanyInfo.PhoneNo}) \n(Company)",
+                    })
+                    .ToListAsync();
+
+                var properties = rawProperties.Select(x =>
+                {
+                    var ownerString = x.IsExternalUser
+                        ? (x.CheckerName != null ? $"{x.CheckerName} {x.CheckerPhone}" : "")
+                       : (x.OwnerName != null ? $"{x.OwnerName}({x.OwnerPhone})" : "");
+
+                    return new PropertyViewModel
                     {
                         Id = x.Id,
                         Code = x.Code,
-                        AvaliableDate = x.AvailableDate.ToString("MMM dd, yyyy"),
+                        // Format the date now that it's in memory
+                        AvaliableDate = x.RawAvailableDate.ToString("MMM dd, yyyy"), // Corrected spelling
                         Status = x.Status,
-                        Township = x.Township,
-                        Street = x.Street,
-                        Comment = x.Comment,
-                        Room = x.Room,
-                        SalePrice = x.SalePrice,
-                        RentPrice = x.RentPrice,
-                        Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone + ")") : "",
-                        Remark = x.Remark
-                    })
-                    .ToListAsync();
+
+                        // Simplified assignments using the IsExternalUser and flag
+                        Township = (x.IsExternalUser && x.IsTownshipShow) ? x.Township : "--",
+                        Street = (x.IsExternalUser && x.IsAddressShow) ? x.Street : "--",
+                        Comment = (x.IsExternalUser && x.IsInfoShow) ? x.Comment : "--",
+                        Room = (x.IsExternalUser && x.IsInfoShow) ? x.Room : "--",
+
+                        SalePrice = (x.IsExternalUser && x.IsSalePriceShow) ? x.SalePrice : 0.00m,
+                        RentPrice = (x.IsExternalUser && x.IsRentPriceShow) ? x.RentPrice : 0.00m,
+
+                        Owner = ownerString,
+                        Remark = (x.IsExternalUser && x.IsRemarkShow) ? x.Remark : "-",
+                        IsExternalUser = x.IsExternalUser
+                    };
+                }).ToList();
 
                 var filters = new PaginationViewModelForProperty
                 {
@@ -813,6 +916,18 @@ namespace CloseFriendMyanamr.Controllers
         {
             try
             {
+                #region get cpi
+                var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+                if (cpiClaim == null)
+                    return RedirectToAction("Login", "Account");
+
+                if (!int.TryParse(cpiClaim.Value, out int cpi))
+                {
+                    ViewBag.Error = "Invalid CPI value";
+                    return View("Error");
+                }
+                #endregion
+
                 // These are the parameters sent by DataTables on each AJAX call
                 var draw = Request.Form["draw"].FirstOrDefault();
                 var start = Request.Form["start"].FirstOrDefault();
@@ -829,7 +944,7 @@ namespace CloseFriendMyanamr.Controllers
                 // Start with the base query.
                 // We are using IQueryable which allows us to build the query dynamically before executing it.
                 var propertyQuery = _context.Property
-                    .Where(x => x.Status != "Delete" && x.Status != "DuplicateDelete")
+                    .Where(x => x.Status != "Delete" && x.Status != "DuplicateDelete" && x.CPI == cpi)
                     .AsNoTracking();
 
                 // --- SEARCHING ---
@@ -929,7 +1044,20 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> DeletedPropertyList()
         {
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
             var model = await _context.Property.AsNoTracking()
+                .Where(x => (x.Status == "Delete" || x.Status == "DuplicateDelete") && x.CPI == cpi)
                 .Select(x => new PropertyViewModel
                 {
                     Id = x.Id,
@@ -945,7 +1073,6 @@ namespace CloseFriendMyanamr.Controllers
                     Owner = x.Owner != null ? (x.Owner.OwnerName + "(" + x.Owner.OwnerPhone) + ")" : "",
                     Remark = x.Remark
                 })
-                .Where(x => x.Status == "Delete" || x.Status == "DuplicateDelete")
                  .OrderByDescending(d => d.LastCheckedDate)
                 .ThenByDescending(d => d.Id)
                 .ToListAsync();
@@ -1094,11 +1221,23 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> PropertySearchByCode(string code)
         {
-            if(!string.IsNullOrEmpty(code))
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
+            if (!string.IsNullOrEmpty(code))
             {
                 int propertyId = await _context.Property
                     .AsNoTracking()
-                    .Where(x => x.Code.ToLower() == code.ToLower().Trim()
+                    .Where(x => x.CPI == cpi && x.Code.ToLower() == code.ToLower().Trim()
                     //&& x.Status != "Delete"
                     )
                     .Select(x => x.Id)
@@ -1122,6 +1261,18 @@ namespace CloseFriendMyanamr.Controllers
                 TempData["ErrorMessage"] = "No files were uploaded.";
                 return RedirectToAction("Gallery", new { propertyId = propertyId });
             }
+
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
 
             int filecount = 0;
 
@@ -1158,6 +1309,7 @@ namespace CloseFriendMyanamr.Controllers
                             Location = uniqueFileName,
                             //purposeid = purposeId, // Save PurposeId to the database
                             //TempId = TempId // Save TempId to the database
+                            CPI = cpi
                         };
 
                         _context.Photo.Add(image);
@@ -1207,7 +1359,19 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> AlertCenter()
         {
-            var alert = await _context.Alert.AsNoTracking().ToListAsync();
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
+            var alert = await _context.Alert.AsNoTracking().Where(x => x.CPI == cpi).ToListAsync();
 
             var code = alert.Select(x => x.Code).ToList();
 

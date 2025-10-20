@@ -25,8 +25,20 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> Index()
         {
-            int count = await _context.Alert.AsNoTracking().Where(x => x.Status != "Read").CountAsync();
-            var alert = await _context.Alert.AsNoTracking().OrderByDescending(x => x.Id).Take(3).Where(x => x.Status != "Read").ToListAsync();
+            #region get cpi
+            var cpiClaim = User.Claims.FirstOrDefault(c => c.Type == "CPI");
+            if (cpiClaim == null)
+                return RedirectToAction("Login", "Account");
+
+            if (!int.TryParse(cpiClaim.Value, out int cpi))
+            {
+                ViewBag.Error = "Invalid CPI value";
+                return View("Error");
+            }
+            #endregion
+
+            int count = await _context.Alert.AsNoTracking().Where(x => x.Status != "Read" && x.CPI == cpi).CountAsync();
+            var alert = await _context.Alert.AsNoTracking().OrderByDescending(x => x.Id).Take(3).Where(x => x.Status != "Read" && x.CPI == cpi).ToListAsync();
 
             var code = alert.Select(x => x.Code).ToList();
 
@@ -58,7 +70,7 @@ namespace CloseFriendMyanamr.Controllers
             ViewBag.Notifications = alertModels;
             ViewBag.NotiCount = count;
 
-            return View(await _context.Client.Include(x => x.ClientRequirements).ToListAsync());
+            return View(await _context.Client.AsNoTracking().Where(x => x.CPI == cpi).Include(x => x.ClientRequirements).ToListAsync());
         }
 
         public IActionResult Privacy()

@@ -1,4 +1,6 @@
-﻿namespace CloseFriendMyanamr.ViewModel
+﻿using CloseFriendMyanamr.Models.CompanyInformation;
+
+namespace CloseFriendMyanamr.ViewModel
 {
     public class PropertyViewModel
     {
@@ -32,5 +34,7 @@
         public string Owner { get; set; }
         public string Remark { get; set; }
         public string LastCheckedBy { get; set; }
+        public bool IsExternalUser { get; set; }
+
     }
 }
