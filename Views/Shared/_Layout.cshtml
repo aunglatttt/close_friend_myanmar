@@ -1,6 +1,12 @@
 ﻿@using CloseFriendMyanamr.ViewModel
 <!DOCTYPE html>
 <html lang="en">
+@using System.Security.Claims
+
+@{
+    int userId = 0;
+    int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out userId);
+}
 
 <head>
 
@@ -145,24 +151,51 @@
                     </div>
                 </li>
 
-                <!-- Nav Item - Pages Collapse Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clentRequestPages"
-                        aria-expanded="true" aria-controls="clentRequestPages">
-                        <i class="fa-solid fa-magnifying-glass-dollar"></i>
-                        <span>Client Request</span>
-                    </a>
-                    <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages"
-                        data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Client Request:</h6>
-                            <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">Client
-                                Request List</a>
-                            <a class="collapse-item" asp-controller="UserManagement" asp-action="ClientCreate">Client
-                                Request Entry</a>
+                @if (!User.IsInRole("MobileUser"))
+                {
+                    <!-- Nav Item - Pages Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clentRequestPages"
+                            aria-expanded="true" aria-controls="clentRequestPages">
+                            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+                            <span>Client Request</span>
+                        </a>
+                        <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages"
+                            data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Client Request:</h6>
+                                <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">Client
+                                    Request List</a>
+                                <a class="collapse-item" asp-controller="UserManagement" asp-action="ClientCreate">Client
+                                    Request Entry</a>
+                            </div>
                         </div>
-                    </div>
-                </li>
+                    </li>
+                }
+                else
+                {
+                    <!-- Nav Item - Pages Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clentRequestPages"
+                            aria-expanded="true" aria-controls="clentRequestPages">
+                            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+                            <span>My Request</span>
+                        </a>
+                        <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages"
+                            data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">My Request:</h6>
+                                <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">My
+                                    Request List</a>
+                                <a class="btn btn-add" asp-controller="ClientRequest" asp-action="ClientRequirement"
+                                    asp-route-id="@userId">
+                                    New Entry
+                                </a>
+
+                            </div>
+                        </div>
+                    </li>
+                }
 
                 @if (User.IsInRole("Administrator"))
                 {

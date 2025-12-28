@@ -8,15 +8,16 @@
     <div class="col-sm-12">
         <!-- Header Row: Title and Add Button -->
         <div class="page-header">
-            <h2>Client Requirement List</h2>
 
             @if(!User.IsInRole("MobileUser")){
+            <h2>Client Requirement List</h2>
                 <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate">
                     <i class="fas fa-user-plus"></i> Add New Requirement
                 </a>
             }else{
-                 <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate"   asp-route-id="@userId">
-                    <i class="fas fa-user-plus"></i> Add New Requirement
+            <h2>My Requirement List</h2>
+                 <a class="btn btn-add" asp-controller="ClientRequest" asp-action="ClientRequirement"   asp-route-id="@userId">
+                    <i class="fa-solid fa-square-arrow-up-right"></i> New Requirement
                 </a>
             }
 

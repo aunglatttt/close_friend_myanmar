@@ -23,7 +23,7 @@ namespace CloseFriendMyanamr.Controllers
             _context = context;
         }
 
-        [Authorize(Roles = "Administrator")]
+        // [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             int count = await _context.Alert.AsNoTracking().Where(x => x.Status != "Read").CountAsync();
