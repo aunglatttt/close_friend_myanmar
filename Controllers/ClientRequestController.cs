@@ -1,4 +1,5 @@
-﻿using CloseFriendMyanamr.Models.ClientManagement;
+﻿using System.Security.Claims;
+using CloseFriendMyanamr.Models.ClientManagement;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -19,6 +20,12 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> ClicentRequestList()
         {
+            var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int userId = int.Parse(userIdObj);
+
+            if(userId > 0)
+                return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
+                           
             return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
         }
 

@@ -16,6 +16,9 @@ namespace CloseFriendMyanamr.ViewModel
     )]
         public string PhoneNumber { get; set; }
 
+        [Required(ErrorMessage = "Address is required")]
+        public string Address { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]

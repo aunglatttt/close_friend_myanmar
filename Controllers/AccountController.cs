@@ -1,4 +1,5 @@
 ﻿using CloseFriendMyanamr.Models;
+using CloseFriendMyanamr.Models.UserManagement;
 using CloseFriendMyanamr.ViewModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -31,45 +32,89 @@ namespace CloseFriendMyanamr.Controllers
             // Validate the username and password (this is just a simple example)
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
-                var user = await _context.Employee.AsNoTracking().Include(x => x.EmployeeType).Where(x => x.LoginName == username && x.Password == password).FirstOrDefaultAsync();
-                if (user == null)
+                string userAgent = Request.Headers["User-Agent"].ToString();
+                if (userAgent.Contains("MyCustomApp"))
                 {
-                    ViewBag.LoginError = "Invalid Login Information!";
-                    return View();
-                }
-                else if (user.Status == false)
-                {
-                    ViewBag.LoginError = "Your Account status is inactive.!";
-                    return View();
-                }
+                    var user = await _context.Client.AsNoTracking().Where(x => x.ClientPhone == username && x.Password == password).FirstOrDefaultAsync();
+                    if (user == null)
+                    {
+                        ViewBag.LoginError = "Invalid Login Information!";
+                        return View();
+                    }
+                    else if (user.Status == "Block")
+                    {
+                        ViewBag.LoginError = "Your Account status is inactive.!";
+                        return View();
+                    }
 
-                var claims = new List<Claim>
+                    var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.ClientName),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id + ""),
+                    new Claim(ClaimTypes.Role, "MobileUser")
+                };
+
+                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = rememberMe // Set the "Remember Me" option
+                    };
+
+                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Welcome", "Home");
+                    }
+                }
+                else
+                {
+                    var user = await _context.Employee.AsNoTracking().Include(x => x.EmployeeType).Where(x => x.LoginName == username && x.Password == password).FirstOrDefaultAsync();
+                    if (user == null)
+                    {
+                        ViewBag.LoginError = "Invalid Login Information!";
+                        return View();
+                    }
+                    else if (user.Status == false)
+                    {
+                        ViewBag.LoginError = "Your Account status is inactive.!";
+                        return View();
+                    }
+
+                    var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.EmployeeName),
                     new Claim(ClaimTypes.NameIdentifier, user.Id + ""),
                     new Claim(ClaimTypes.Role, user.EmployeeType?.Type?? "Admin")
                 };
 
-                var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
 
-                var authProperties = new AuthenticationProperties
-                {
-                    IsPersistent = rememberMe // Set the "Remember Me" option
-                };
+                    var authProperties = new AuthenticationProperties
+                    {
+                        IsPersistent = rememberMe // Set the "Remember Me" option
+                    };
 
-                await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                {
-                    return Redirect(returnUrl);
-                }
-                else
-                {
-                    if (user.EmployeeTypeId == 4)
-                        return RedirectToAction("Welcome", "Home");
+                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                    {
+                        return Redirect(returnUrl);
+                    }
                     else
-                        return RedirectToAction("Index", "Home");
+                    {
+                        if (user.EmployeeTypeId == 4)
+                            return RedirectToAction("Welcome", "Home");
+                        else
+                            return RedirectToAction("Index", "Home");
+                    }
                 }
+
             }
 
             ViewBag.LoginError = "Invalid Login Information!";
@@ -96,19 +141,37 @@ namespace CloseFriendMyanamr.Controllers
                 return View(model);
             }
 
-            var newEmploy = new EmployeeModel
+            #region new method
+            var newClient = new ClientModel
             {
-                EmployeeName = model.FullName,
-                PhoneNumber = NormalizeMyanmarPhone(model.PhoneNumber),
-                LoginName = NormalizeMyanmarPhone(model.PhoneNumber),
-                Password = model.Password,
-                EmployeeTypeId = 4,
-                Status = true,
-                CreatedAt = DateTime.Now
+                ClientName = model.FullName,
+                ClientPhone = NormalizeMyanmarPhone(model.PhoneNumber),
+                Address = model.Address,
+                RegistrationDate = DateTime.Now,
+                Status = "New",
+                Remark = "Mobile User",
+                Password = model.Password
             };
 
-            await _context.Employee.AddAsync(newEmploy);
+            await _context.Client.AddAsync(newClient);
             await _context.SaveChangesAsync();
+            #endregion
+
+            #region  old method
+            // var newEmploy = new EmployeeModel
+            // {
+            //     EmployeeName = model.FullName,
+            //     PhoneNumber = NormalizeMyanmarPhone(model.PhoneNumber),
+            //     LoginName = NormalizeMyanmarPhone(model.PhoneNumber),
+            //     Password = model.Password,
+            //     EmployeeTypeId = 4,
+            //     Status = true,
+            //     CreatedAt = DateTime.Now
+            // };
+
+            // await _context.Employee.AddAsync(newEmploy);
+            // await _context.SaveChangesAsync();
+            #endregion
 
             return RedirectToAction("Login");
         }
@@ -133,7 +196,7 @@ namespace CloseFriendMyanamr.Controllers
         public async Task<IActionResult> AccessDenied()
         {
             await HttpContext.SignOutAsync("CookieAuth");
-             return View();
+            return View();
         }
 
     }

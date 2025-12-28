@@ -5,13 +5,15 @@
     {
         <tr style="font-size: 14px;">
             <td class="text-center">
-                <a href="@Url.Action("NewProperty", "Property", new { id = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </a><br />
+                @if(!User.IsInRole("MobileUser")) {
+                    <a href="@Url.Action("NewProperty", "Property", new { id = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a><br />
 
-                <a href="@Url.Action("Gallery", "Property", new { propertyId = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Gallery">
-                    <i class="fa-solid fa-images"></i>
-                </a><br>
+                    <a href="@Url.Action("Gallery", "Property", new { propertyId = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Gallery">
+                        <i class="fa-solid fa-images"></i>
+                    </a><br>
+                }
 
                 <a href="@Url.Action("PropertyInfo", "Property", new { propertyId = item.Id })" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Detail">
                     <i class="fa-solid fa-circle-info"></i>
@@ -39,7 +41,23 @@
             <td>@item.RentPrice.ToString("0.##")</td> *@
             <td>@item.SalePrice</td>
             <td>@item.RentPrice</td>
+            @if(!User.IsInRole("MobileUser")) {
             <td>@item.Owner</td>
+
+            }else{
+                <div class="d-flex flex-column">
+                            <span>Admin</span>
+                            <div class="d-flex align-items-center">
+                                <a href="tel:${phone}" class="text-primary fw-bold" style="font-size:13px; text-decoration:none;">
+                                    09782229078
+                                </a>
+                                <button type="button" class="btn btn-sm btn-light ms-2 p-0 px-1" 
+                                        onclick="copyToClipboard('${phone}')" title="Copy Number">
+                                    <i class="far fa-copy text-muted" style="font-size:12px;"></i>
+                                </button>
+                            </div>
+                        </div>
+            }
             <td>@item.Remark</td>
         </tr>
     }
@@ -48,3 +66,15 @@
         <td colspan="9" style="text-align:center">No data found.</td>
     </tr>
 }
+
+@section Scripts {
+    <script>
+         function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function () {
+
+            }, function (err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+        </script>
+        }
