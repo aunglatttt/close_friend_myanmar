@@ -191,9 +191,8 @@
                 @if(!User.IsInRole("MobileUser")) {
                 <a href="@Url.Action("ClientList", "UserManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
 
-                }
-                <!-- Add Delete Button -->
                 <button type="button" class="btn btn-danger mt-3" onclick="confirmDelete()">Delete</button>
+                }
             </div>
         </form>
     </div>

@@ -1,4 +1,5 @@
 using System.Net.Quic;
+using CloseFriendMyanamr.Helper;
 using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.ViewModel.Mobile;
 using Microsoft.AspNetCore.Http;
@@ -13,20 +14,30 @@ namespace CloseFriendMyanamr.Controllers
     public class MobilePropertyController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly NotificationService _notificationService;
 
-        public MobilePropertyController(ApplicationDbContext context)
+        public MobilePropertyController(ApplicationDbContext context, NotificationService notificationService)
         {
             _context = context;
+            _notificationService = notificationService;
         }
-        
+
+        [HttpGet("send")]
+        public async Task<IActionResult> TriggerNotification()
+        {
+            await _notificationService.SendNotificationAsync("ExponentPushToken[ecezhhJv7sv5-hIGyGL6dp]", "Hello from .NET!", "This is a test notification.", "15359");
+            return Ok("Notification request sent to Expo.");
+        }
+
+
         [HttpPost("RegisterToken")]
         public async Task<IActionResult> RegisterToken([FromBody] PushTokenRequest request)
         {
             if (string.IsNullOrEmpty(request.Token)) return BadRequest();
 
             var tokenExist = await _context.TokenCredentail.AsNoTracking().FirstOrDefaultAsync(x => x.Token == request.Token);
-            if(tokenExist != null)
-                return Ok(new {message = "Already exist"});
+            if (tokenExist != null)
+                return Ok(new { message = "Already exist" });
 
             var newToken = new TokenCredentail
             {

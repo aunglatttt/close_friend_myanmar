@@ -1,6 +1,35 @@
-﻿@{
+﻿@model IEnumerable<CloseFriendMyanamr.Models.TokenCredentail>
+
+@{
     ViewData["Title"] = "Privacy Policy";
 }
 <h1>@ViewData["Title"]</h1>
 
 <p>Use this page to detail your site's privacy policy.</p>
+
+<div class="table-responsive">
+    <table id="employeeTable" class="table table-hover table-bordered" style="width:100%">
+        <thead>
+            <tr>
+                <th>Client</th>
+                <th>Purpose</th>
+                <th>Property Type</th>
+                <th>Budget</th>
+                <th>Township</th>
+                <th>Detail</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@(item.DeviceId)</td>
+                    <td>
+                        @item.Token
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

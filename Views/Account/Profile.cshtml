@@ -1,0 +1,119 @@
+﻿@model CloseFriendMyanamr.Models.UserManagement.ClientModel
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    .profile-wrapper {
+        max-width: 720px;
+        margin: auto;
+        padding: 40px 20px;
+    }
+
+    .profile-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .profile-header h2 {
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .profile-section {
+        background: #ffffff;
+        border-radius: 14px;
+        padding: 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+    }
+
+    .profile-row {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 18px;
+    }
+
+    .profile-row label {
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 6px;
+    }
+
+    .profile-value {
+        background: #f9fafb;
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 15px;
+        color: #111827;
+    }
+
+    .profile-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 30px;
+    }
+
+    .btn-soft {
+        border-radius: 999px;
+        padding: 10px 22px;
+        font-size: 14px;
+    }
+</style>
+
+<body class="bg-gray-100">
+
+    <div class="profile-wrapper">
+
+        <!-- Header -->
+        <div class="profile-header">
+            <h2>My Profile</h2>
+            <p class="text-muted small">Account information</p>
+        </div>
+
+        <!-- Info Section -->
+        <div class="profile-section">
+
+            <div class="profile-row">
+                <label>Full Name</label>
+                <div class="profile-value">@Model.ClientName</div>
+            </div>
+
+            <div class="profile-row">
+                <label>Phone Number</label>
+                <div class="profile-value">@Model.ClientPhone</div>
+            </div>
+
+            <div class="profile-row">
+                <label>Address</label>
+                <div class="profile-value">@Model.Address</div>
+            </div>
+
+            <div class="profile-row">
+                <label>Status</label>
+                <div class="profile-value">@Model.Status</div>
+            </div>
+
+            <div class="profile-row">
+                <label>Registered On</label>
+                <div class="profile-value">
+                    @Model.RegistrationDate.ToString("dd MMM yyyy")
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Actions -->
+        <div class="profile-actions">
+            <a asp-action="EditProfile" class="btn btn-primary btn-soft">
+                Edit Profile
+            </a>
+
+            <a asp-action="Logout" class="btn btn-outline-danger btn-soft">
+                Logout
+            </a>
+        </div>
+
+    </div>
+
+</body>

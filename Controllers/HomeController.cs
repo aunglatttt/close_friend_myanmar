@@ -62,9 +62,10 @@ namespace CloseFriendMyanamr.Controllers
             return View(await _context.Client.Include(x => x.ClientRequirements).ToListAsync());
         }
 
-        public IActionResult Privacy()
+        public async Task<IActionResult> Privacy()
         {
-            return View();
+            var resuslt = await _context.TokenCredentail.AsNoTracking().ToListAsync();
+            return View(resuslt);
         }
 
         public IActionResult Welcome()

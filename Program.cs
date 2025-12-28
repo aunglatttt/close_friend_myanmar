@@ -1,4 +1,5 @@
 using CloseFriendMyanamr.BackgroundJob;
+using CloseFriendMyanamr.Helper;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
@@ -30,6 +31,8 @@ builder.Services.AddAuthentication("CookieAuth")
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set the cookie expiration time
         });
 
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<NotificationService>();
 
 builder.Services.AddHostedService<RentStatusBackgroundService>();
 builder.Services.AddResponseCompression(options =>

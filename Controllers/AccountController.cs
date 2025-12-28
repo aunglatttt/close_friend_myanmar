@@ -2,6 +2,7 @@
 using CloseFriendMyanamr.Models.UserManagement;
 using CloseFriendMyanamr.ViewModel;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SimpleDataWebsite.Data;
@@ -63,9 +64,9 @@ namespace CloseFriendMyanamr.Controllers
 
                     await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
 
-                 
-                        return RedirectToAction("Welcome", "Home");
-             
+
+                    return RedirectToAction("Welcome", "Home");
+
                 }
                 else
                 {
@@ -136,6 +137,17 @@ namespace CloseFriendMyanamr.Controllers
                 return View(model);
             }
 
+            var existClient = await _context.Client.AsNoTracking()
+        .FirstOrDefaultAsync(x => x.ClientPhone == NormalizeMyanmarPhone(model.PhoneNumber));
+
+            if (existClient != null)
+            {
+                // attach error to PhoneNumber field
+                ModelState.AddModelError("PhoneNumber", "This phone number is already registered.");
+                return View(model);
+            }
+
+
             #region new method
             var newClient = new ClientModel
             {
@@ -150,22 +162,6 @@ namespace CloseFriendMyanamr.Controllers
 
             await _context.Client.AddAsync(newClient);
             await _context.SaveChangesAsync();
-            #endregion
-
-            #region  old method
-            // var newEmploy = new EmployeeModel
-            // {
-            //     EmployeeName = model.FullName,
-            //     PhoneNumber = NormalizeMyanmarPhone(model.PhoneNumber),
-            //     LoginName = NormalizeMyanmarPhone(model.PhoneNumber),
-            //     Password = model.Password,
-            //     EmployeeTypeId = 4,
-            //     Status = true,
-            //     CreatedAt = DateTime.Now
-            // };
-
-            // await _context.Employee.AddAsync(newEmploy);
-            // await _context.SaveChangesAsync();
             #endregion
 
             return RedirectToAction("Login");
@@ -192,6 +188,34 @@ namespace CloseFriendMyanamr.Controllers
         {
             await HttpContext.SignOutAsync("CookieAuth");
             return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            // Example: get phone from session
+            string userAgent = Request.Headers["User-Agent"].ToString();
+            int userId = 0;
+             var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int.TryParse(userIdObj, out userId);
+                
+            
+
+            if (userId <=0)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var client = await _context.Client
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (client == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            return View(client);
         }
 
     }
