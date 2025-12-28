@@ -15,27 +15,37 @@ namespace CloseFriendMyanamr.Controllers
 
         public ClientRequestController(ApplicationDbContext context)
         {
-            _context=context;
+            _context = context;
         }
 
         public async Task<IActionResult> ClicentRequestList()
         {
             string userAgent = Request.Headers["User-Agent"].ToString();
+            int userId = 0;
+
             if (userAgent.Contains("MyCustomApp"))
             {
                 var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int userId = int.Parse(userIdObj);
+                int.TryParse(userIdObj, out userId);
+
+                ViewBag.UserId = userId;
 
                 if (userId > 0)
-                    return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).Where(x => x.ClientId == userId).ToListAsync());
-                else
-                    return View();   
+                {
+                    return View(await _context.ClientRequirement
+                        .AsNoTracking()
+                        .Include(x => x.Client)
+                        .Where(x => x.ClientId == userId)
+                        .ToListAsync());
+                }
             }
-            else
-            {
-            return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
-                
-            }
+
+            ViewBag.UserId = userId;
+
+            return View(await _context.ClientRequirement
+                .AsNoTracking()
+                .Include(x => x.Client)
+                .ToListAsync());
         }
 
         public async Task<IActionResult> ClientRequirement(int clientId, int? clrId)
@@ -99,7 +109,7 @@ namespace CloseFriendMyanamr.Controllers
             #region client info
 
             var clientInfoObj = await _context.Client.AsNoTracking().Select(x => new { x.ClientName, x.ClientPhone, x.Id }).FirstOrDefaultAsync(x => x.Id == clientId);
-            ViewBag.ClientInfo = clientInfoObj != null? (clientInfoObj.ClientName + " [" + clientInfoObj.ClientPhone + "]") : "";
+            ViewBag.ClientInfo = clientInfoObj != null ? (clientInfoObj.ClientName + " [" + clientInfoObj.ClientPhone + "]") : "";
             ViewBag.ClientId = clientId;
 
             #endregion

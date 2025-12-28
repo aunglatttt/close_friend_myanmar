@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<CloseFriendMyanamr.Models.ClientManagement.ClientRequirementModel>
 @{
     ViewData["Title"] = "Client Requirement List";
+      var userId = ViewBag.UserId as int? ?? 0;
 }
 <link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
 <div class="row">
@@ -8,9 +9,18 @@
         <!-- Header Row: Title and Add Button -->
         <div class="page-header">
             <h2>Client Requirement List</h2>
-            <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate">
-                <i class="fas fa-user-plus"></i> Add New Requirement
-            </a>
+
+            @if(!User.IsInRole("MobileUser")){
+                <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate">
+                    <i class="fas fa-user-plus"></i> Add New Requirement
+                </a>
+            }else{
+                 <a class="btn btn-add" asp-controller="UserManagement" asp-action="ClientCreate"   asp-route-id="@userId">
+                    <i class="fas fa-user-plus"></i> Add New Requirement
+                </a>
+            }
+
+
         </div>
 
         <!-- Main Content Row -->

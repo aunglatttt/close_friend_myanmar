@@ -111,7 +111,7 @@
             <div class="col-md-8 col-sm-12">
                 <div class="row">
                     <div class="col-12 mb-3">
-                        @if (Model.Owner != null)
+                        @if (Model.Owner != null && !User.IsInRole("MobileUser"))
                         {
                             <h3>@Model.Owner.OwnerName (@Model.Owner.OwnerPhone)</h3>
                         }
@@ -130,8 +130,14 @@
                     <div class="col-12">
                         <hr class="border-soft-bottom ">
                         <span>@Model.Purpose Price (@(Model.Purpose == "Sale" ? Model.SalePrice : Model.RentPrice))
-                            &nbsp;&nbsp;&nbsp; >>>> &nbsp;&nbsp;&nbsp; @(Model.Purpose == "Sale" ?
-                                                        Model.SaleCommissionString : Model.RentCommisionString)</span>
+                            @if(!User.IsInRole("MobileUser")) {
+                                <span>
+                                    &nbsp;&nbsp;&nbsp; >>>> &nbsp;&nbsp;&nbsp; @(Model.Purpose == "Sale" ?
+                                                                Model.SaleCommissionString : Model.RentCommisionString)
+                                </span>
+
+                            }
+                                                        </span>
                         <hr class="border-soft-bottom mt-3">
                     </div>
 
