@@ -1,4 +1,5 @@
 using System.Net.Quic;
+using CloseFriendMyanamr.Models;
 using CloseFriendMyanamr.ViewModel.Mobile;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,27 @@ namespace CloseFriendMyanamr.Controllers
         {
             _context = context;
         }
+        
+        [HttpPost("RegisterToken")]
+        public async Task<IActionResult> RegisterToken([FromBody] PushTokenRequest request)
+        {
+            if (string.IsNullOrEmpty(request.Token)) return BadRequest();
+
+            var tokenExist = await _context.TokenCredentail.AsNoTracking().FirstOrDefaultAsync(x => x.Token == request.Token);
+            if(tokenExist != null)
+                return Ok(new {message = "Already exist"});
+
+            var newToken = new TokenCredentail
+            {
+                DeviceId = request.DeviceType ?? "N/A",
+                Token = request.Token ?? "N/A"
+            };
+
+            await _context.TokenCredentail.AddAsync(newToken);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Token registered successfully" });
+        }
 
         [HttpPost]
         [Route("list")]
@@ -25,7 +47,7 @@ namespace CloseFriendMyanamr.Controllers
             try
             {
                 var baseUrl = $"{Request.Scheme}://{Request.Host}";
-                
+
                 var query = await _context.Property.AsNoTracking()
                     .Where(x => x.Status != "Deleted")
                     // .Include(x => x.Photos)
@@ -33,13 +55,13 @@ namespace CloseFriendMyanamr.Controllers
                     .Select(x => new ProptertyDto
                     {
                         Id = x.Id,
-                        Code = x.Code?? "",
-                        Status = x.Status?? "N/A",
+                        Code = x.Code ?? "",
+                        Status = x.Status ?? "N/A",
                         RentPrice = x.RentPrice,
                         SalePrice = x.SalePrice,
                         Remark = x.Remark ?? "",
-                        Address = x.Street??"N/A",
-                        Comment = x.Comment??"N/A",
+                        Address = x.Street ?? "N/A",
+                        Comment = x.Comment ?? "N/A",
                         Township = x.Township,
 
                         // ImageUrls = x.Photos != null? x.Photos.Select(p => $"{baseUrl}/PropertyPhoto/{p.Location}").ToList():new List<string>(),
@@ -50,7 +72,7 @@ namespace CloseFriendMyanamr.Controllers
                         Role = "Managing Director",
                         // Facilities = x.PropertyFacilities != null? x.PropertyFacilities.Select(f => f.Facility).ToList() : new List<string>()
                     })
-                    .Skip((req.CurrentPageNumber -1) * req.PageSize)
+                    .Skip((req.CurrentPageNumber - 1) * req.PageSize)
                     .Take(req.PageSize)
                     .ToListAsync(cancellationToken);
 

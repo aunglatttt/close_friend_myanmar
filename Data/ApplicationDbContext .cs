@@ -57,5 +57,7 @@ namespace SimpleDataWebsite.Data
         public DbSet<AppointmentDomain> BookAppointment {  get; set; }
 
         public DbSet<VisitorTracking> VisitorTracking {  get; set; }
+        public DbSet<TokenCredentail> TokenCredentail {  get; set; }
+        
     }
 }
