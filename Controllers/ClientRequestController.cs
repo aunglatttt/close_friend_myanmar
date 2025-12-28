@@ -20,13 +20,22 @@ namespace CloseFriendMyanamr.Controllers
 
         public async Task<IActionResult> ClicentRequestList()
         {
-            var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            int userId = int.Parse(userIdObj);
+            string userAgent = Request.Headers["User-Agent"].ToString();
+            if (userAgent.Contains("MyCustomApp"))
+            {
+                var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                int userId = int.Parse(userIdObj);
 
-            if(userId > 0)
-                return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
-                           
+                if (userId > 0)
+                    return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).Where(x => x.ClientId == userId).ToListAsync());
+                else
+                    return View();   
+            }
+            else
+            {
             return View(await _context.ClientRequirement.AsNoTracking().Include(x => x.Client).ToListAsync());
+                
+            }
         }
 
         public async Task<IActionResult> ClientRequirement(int clientId, int? clrId)

@@ -35,7 +35,7 @@ namespace CloseFriendMyanamr.Models.UserManagement
         [DisplayName("Shown Property")]
         public int ShownProperty { get; set; }
 
-        public string Password { get; set; }
+        public string? Password { get; set; }
 
         public string? Remark { get; set; }
 
