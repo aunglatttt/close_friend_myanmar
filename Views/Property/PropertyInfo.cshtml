@@ -11,8 +11,10 @@
                 <ul class="breadcrumb">
                     <li><a href="@Url.Action("SearchProperty", "Property")">Search Property</a> <span
                             class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
+                    @if(!User.IsInRole("MobileUser")) {
                     <li><a href="@Url.Action("NewProperty", "Property")">New Property</a> <span class="divider">&nbsp;
                             &nbsp; | &nbsp; &nbsp;</span></li>
+                    }
                     <li class="active"><span id="lblCode">@Model.Code &nbsp; &nbsp; (@Model.Township)</span></li>&nbsp;
                     &nbsp;
                     @if (!string.IsNullOrEmpty(Model.Map))
