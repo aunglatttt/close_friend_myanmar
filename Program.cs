@@ -7,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -24,6 +25,7 @@ builder.Services.AddAuthentication("CookieAuth")
         .AddCookie("CookieAuth", options =>
         {
             options.LoginPath = "/Account/Login"; // Set the login path
+            options.AccessDeniedPath = "/Account/AccessDenied";
             options.LogoutPath = "/Account/Logout";
             options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set the cookie expiration time
         });

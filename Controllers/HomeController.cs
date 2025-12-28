@@ -20,9 +20,10 @@ namespace CloseFriendMyanamr.Controllers
         public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
         {
             _logger = logger;
-            _context=context;
+            _context = context;
         }
 
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
             int count = await _context.Alert.AsNoTracking().Where(x => x.Status != "Read").CountAsync();
@@ -37,7 +38,7 @@ namespace CloseFriendMyanamr.Controllers
                     x.Id,
                     x.AvailableDate
                 })
-                .Where(x => code.Contains(x.Code??""))
+                .Where(x => code.Contains(x.Code ?? ""))
                 .ToListAsync();
 
             var alertModels = new List<AlertViewModel>();
@@ -63,6 +64,16 @@ namespace CloseFriendMyanamr.Controllers
 
         public IActionResult Privacy()
         {
+            return View();
+        }
+
+        public IActionResult Welcome()
+        {
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value
+                           ?? User.Identity?.Name
+                           ?? "User";
+
+            ViewBag.UserName = userName;
             return View();
         }
 
@@ -118,7 +129,7 @@ namespace CloseFriendMyanamr.Controllers
                 var propertyTypes = await _context.PropertyType.AsNoTracking().Select(x => new { x.TypeName, x.ShortCode }).ToListAsync();
                 foreach (var item in maxCodes)
                 {
-                    item.PropertyType = propertyTypes.Where(x => x.ShortCode == item.Prefix).Select(x => x.TypeName).FirstOrDefault()??"";
+                    item.PropertyType = propertyTypes.Where(x => x.ShortCode == item.Prefix).Select(x => x.TypeName).FirstOrDefault() ?? "";
                 }
 
                 return View(maxCodes.OrderBy(x => x.PropertyType).ToList());

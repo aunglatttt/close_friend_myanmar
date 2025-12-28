@@ -1,0 +1,40 @@
+﻿@{
+    ViewData["Title"] = "Welcome";
+}
+
+@using System.Security.Claims
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var userName = HttpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.Name)?.Value ?? "User";
+
+    // Myanmar timezone offset UTC+6:30
+    var myanmarTime = TimeZoneInfo.ConvertTimeBySystemTimeZoneId(DateTime.UtcNow, "Asia/Yangon");
+    string greeting;
+    if (myanmarTime.Hour < 12)
+    {
+        greeting = "Good Morning";
+    }
+    else if (myanmarTime.Hour < 18)
+    {
+        greeting = "Good Afternoon";
+    }
+    else
+    {
+        greeting = "Good Evening";
+    }
+}
+<link rel="stylesheet" href="~/css/welcome.css" asp-append-version="true" />
+
+<div class="welcome-container">
+    <h1>@greeting, @userName!</h1>
+    <p class="subtitle">
+        We're glad to see you again.
+    </p>
+
+
+    <div class="actions">
+        <a asp-controller="Property" asp-action="PropertyList" class="btn-primary">
+            Go to Propert List
+        </a>
+    </div>
+</div>

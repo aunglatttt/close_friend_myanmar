@@ -6,7 +6,8 @@
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    @* <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> *@
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <title>@ViewData["Title"] - Close Friend Myanmar</title>
@@ -16,8 +17,6 @@
 
     <link rel="icon" href="@Url.Content("~/icon.ico")" type="image/x-icon" />
 
-    <!-- Icon Libraries -->
-    @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css"> *@
     <!-- Optional: Remove Font Awesome if not used -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
@@ -26,21 +25,20 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom Styles -->
     <link href="~/css/admin_site.css" rel="stylesheet">
 
-    <!-- jQuery and DataTables JS -->
-    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
-    @* <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script> *@
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.10.5/jquery.dataTables.min.js"></script>
 
     <!-- Select2 CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
-    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+
     <!-- Lightbox JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
 
@@ -55,22 +53,32 @@
             <!-- Sidebar -->
             <ul class="navbar-nav bg-gray-600 sidebar sidebar-dark accordion" id="accordionSidebar">
 
-                <!-- Sidebar - Brand -->
-                @*    <a class="sidebar-brand d-flex align-items-center justify-content-center p-0" style="background-color:black;" href="@Url.Action("Index", "Home")">
-                <div class="sidebar-brand-icon"> *@
-                <img class="logo_img" src="@Url.Content("~/images/Logo2.jpg")" onclick="window.location.href='@Url.Action("Index", "Home")'" style="cursor:pointer;">
-                @*    </div>
-            </a> *@
-                <div class="sidebar-brand-text logo_text text-center mb-3"><span style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Close Friend Myanamar</span></div>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <img class="logo_img" src="@Url.Content("~/images/Logo2.jpg")"
+                        onclick="window.location.href='@Url.Action("Index", "Home")'" style="cursor:pointer;">
+                }
+
+                @if (User.IsInRole("MobileUser"))
+                {
+                    <img class="logo_img" src="@Url.Content("~/images/Logo2.jpg")"
+                        onclick="window.location.href='@Url.Action("Welcome", "Home")'" style="cursor:pointer;">
+                }
+
+                <div class="sidebar-brand-text logo_text text-center mb-3"><span
+                        style="text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);">Close Friend Myanamar</span></div>
 
 
-                <!-- Nav Item - Dashboard -->
-                <li class="nav-item active">
-                    <a class="nav-link" asp-controller="Home" asp-action="Index">
-                        <i class="fas fa-fw fa-tachometer-alt"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <!-- Nav Item - Dashboard -->
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">
+                            <i class="fas fa-fw fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                }
 
 
                 <!-- Nav Item - Advantage search -->
@@ -82,13 +90,16 @@
                 </li>
 
 
-                <!-- Nav Item - To do list -->
-                <li class="nav-item active">
-                    <a class="nav-link" asp-controller="Property" asp-action="AlertCenter">
-                        <i class="fa-solid fa-phone menu-icon"></i>
-                        <span>To Do List (Alert Center)</span>
-                    </a>
-                </li>
+                @if (User.IsInRole("Administrator"))
+                {
+                    <!-- Nav Item - To do list -->
+                    <li class="nav-item active">
+                        <a class="nav-link" asp-controller="Property" asp-action="AlertCenter">
+                            <i class="fa-solid fa-phone menu-icon"></i>
+                            <span>To Do List (Alert Center)</span>
+                        </a>
+                    </li>
+                }
 
 
 
@@ -103,19 +114,33 @@
                 <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                       aria-expanded="true" aria-controls="collapsePages">
+                        aria-expanded="true" aria-controls="collapsePages">
                         <i class="fa-solid fa-house-chimney"></i>
                         <span>Property</span>
                     </a>
                     <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Property:</h6>
-                            <a class="collapse-item" asp-controller="Property" asp-action="NewProperty">Add New Property</a>
-                            <a class="collapse-item" asp-controller="Property" asp-action="SearchProperty">Property Search</a>
-                                <a class="collapse-item" asp-controller="Property" asp-action="PropertyList">Recent Update Data</a>
-                                    <a class="collapse-item" asp-controller="Property" asp-action="DeletedPropertyList">Deleted Property</a>
-                            @*     <a class="collapse-item" asp-controller="Property" asp-action="Gallery">Gallery</a>
-                        <a class="collapse-item" asp-controller="Property" asp-action="PropertyInfo">PropertyInfo</a> *@
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a class="collapse-item" asp-controller="Property" asp-action="NewProperty">Add New Property</a>
+                            }
+                            <a class="collapse-item" asp-controller="Property" asp-action="SearchProperty">Property
+                                Search</a>
+
+                            @if (User.IsInRole("MobileUser"))
+                            {
+                                <a class="collapse-item" asp-controller="Property" asp-action="PropertyList">Property List</a>
+                            }
+
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a class="collapse-item" asp-controller="Property" asp-action="PropertyList">Recent Update
+                                    Data</a>
+
+                                <a class="collapse-item" asp-controller="Property" asp-action="DeletedPropertyList">Deleted
+                                    Property</a>
+                            }
                         </div>
                     </div>
                 </li>
@@ -123,111 +148,126 @@
                 <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clentRequestPages"
-                       aria-expanded="true" aria-controls="clentRequestPages">
+                        aria-expanded="true" aria-controls="clentRequestPages">
                         <i class="fa-solid fa-magnifying-glass-dollar"></i>
                         <span>Client Request</span>
                     </a>
-                    <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages"
+                        data-parent="#accordionSidebar">
                         <div class="bg-white py-2 collapse-inner rounded">
                             <h6 class="collapse-header">Client Request:</h6>
-                            <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">Client Request List</a>
-                            <a class="collapse-item" asp-controller="UserManagement" asp-action="ClientCreate">Client Request Entry</a>
+                            <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">Client
+                                Request List</a>
+                            <a class="collapse-item" asp-controller="UserManagement" asp-action="ClientCreate">Client
+                                Request Entry</a>
                         </div>
                     </div>
                 </li>
 
-                <!-- Divider -->
-                <hr class="sidebar-divider">
+                @if (User.IsInRole("Administrator"))
+                {
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
 
-                <!-- Heading -->
-                <div class="sidebar-heading">
-                    Management section
-                </div>
-
-                <!-- Nav Item - Utilities Collapse Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#userManagementUtilities"
-                       aria-expanded="true" aria-controls="userManagementUtilities">
-                        <i class="fa-solid fa-user"></i>
-                        <span>User Management</span>
-                    </a>
-                    <div id="userManagementUtilities" class="collapse" aria-labelledby="headingUtilities"
-                         data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">User Management:</h6>
-                            <a class="collapse-item" asp-controller="UserManagement" asp-action="ClientList">Client</a>
-                            <a class="collapse-item" asp-controller="UserManagement" asp-action="OwnerList">Owner</a>
-                            <a class="collapse-item" asp-controller="UserManagement" asp-action="AgentList">Agent</a>
-                            <a class="collapse-item" asp-controller="UserManagement" asp-action="WebSiteVisitors">Website Visitor</a>
-                        </div>
+                    <!-- Heading -->
+                    <div class="sidebar-heading">
+                        Management section
                     </div>
-                </li>
 
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-                <!-- Heading -->
-                <div class="sidebar-heading">
-                    Account section
-                </div>
-
-                <!-- Nav Item - Utilities Collapse Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-                       aria-expanded="true" aria-controls="collapseUtilities">
-                        <i class="fa-solid fa-hand-holding-dollar"></i>
-                        <span>Cash Management</span>
-                    </a>
-                    <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
-                         data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Cash Management:</h6>
-                            <a class="collapse-item" asp-controller="CashManagement" asp-action="CompanyIncome">Company Income</a>
-                            <a class="collapse-item" asp-controller="CashManagement" asp-action="IncomeList">Income List</a>
-                            <a class="collapse-item" asp-controller="CashManagement" asp-action="CompanyExpense">Comapny Expense</a>
-                            <a class="collapse-item" asp-controller="CashManagement" asp-action="ExpenseList">Expense List</a>
-                            <a class="collapse-item" asp-controller="CashManagement" asp-action="AccountTransfer">Account Transfer</a>
-                            <a class="collapse-item" asp-controller="CashManagement" asp-action="CashBookList">Cash Book</a>
+                    <!-- Nav Item - Utilities Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#userManagementUtilities"
+                            aria-expanded="true" aria-controls="userManagementUtilities">
+                            <i class="fa-solid fa-user"></i>
+                            <span>User Management</span>
+                        </a>
+                        <div id="userManagementUtilities" class="collapse" aria-labelledby="headingUtilities"
+                            data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">User Management:</h6>
+                                <a class="collapse-item" asp-controller="UserManagement" asp-action="ClientList">Client</a>
+                                <a class="collapse-item" asp-controller="UserManagement" asp-action="OwnerList">Owner</a>
+                                <a class="collapse-item" asp-controller="UserManagement" asp-action="AgentList">Agent</a>
+                                <a class="collapse-item" asp-controller="UserManagement" asp-action="WebSiteVisitors">Website
+                                    Visitor</a>
+                            </div>
                         </div>
+                    </li>
+
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+
+                    <!-- Heading -->
+                    <div class="sidebar-heading">
+                        Account section
                     </div>
-                </li>
 
-
-                <!-- Divider -->
-                <hr class="sidebar-divider">
-
-                <!-- Heading -->
-                <div class="sidebar-heading">
-                    configuration section
-                </div>
-
-                <!-- Nav Item - configuration Menu -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                       aria-expanded="true" aria-controls="collapseTwo">
-                        <i class="fas fa-cog menu-icon"></i>
-                        <span>Configuration</span>
-                    </a>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Configuration:</h6>
-                            <a class="collapse-item" asp-controller="Appointment" asp-action="Index">Appointment</a>
-                            <a class="collapse-item" asp-controller="Home" asp-action="ShowCodeNumberDetail">Code Information</a>
-                            <a class="collapse-item" asp-controller="Employee" asp-action="EmployeeTypeList">Employee Type</a>
-                            <a class="collapse-item" asp-controller="Employee" asp-action="Index">Empoyee</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="Index">Income Title</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="ExpenseList">Expense Title</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="FacilityList">Facilities</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="PropertyTypeList">Property Type</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="BuildingTypeList">Building Type</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="BankAccountInfoList">Bank Accounts</a>
-                            <a class="collapse-item" asp-controller="IncomeTitle" asp-action="LogList">Logs</a>
+                    <!-- Nav Item - Utilities Collapse Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                            aria-expanded="true" aria-controls="collapseUtilities">
+                            <i class="fa-solid fa-hand-holding-dollar"></i>
+                            <span>Cash Management</span>
+                        </a>
+                        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities"
+                            data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Cash Management:</h6>
+                                <a class="collapse-item" asp-controller="CashManagement" asp-action="CompanyIncome">Company
+                                    Income</a>
+                                <a class="collapse-item" asp-controller="CashManagement" asp-action="IncomeList">Income List</a>
+                                <a class="collapse-item" asp-controller="CashManagement" asp-action="CompanyExpense">Comapny
+                                    Expense</a>
+                                <a class="collapse-item" asp-controller="CashManagement" asp-action="ExpenseList">Expense
+                                    List</a>
+                                <a class="collapse-item" asp-controller="CashManagement" asp-action="AccountTransfer">Account
+                                    Transfer</a>
+                                <a class="collapse-item" asp-controller="CashManagement" asp-action="CashBookList">Cash Book</a>
+                            </div>
                         </div>
+                    </li>
+
+
+                    <!-- Divider -->
+                    <hr class="sidebar-divider">
+
+                    <!-- Heading -->
+                    <div class="sidebar-heading">
+                        configuration section
                     </div>
-                </li>
 
+                    <!-- Nav Item - configuration Menu -->
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                            aria-expanded="true" aria-controls="collapseTwo">
+                            <i class="fas fa-cog menu-icon"></i>
+                            <span>Configuration</span>
+                        </a>
+                        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Configuration:</h6>
+                                <a class="collapse-item" asp-controller="Appointment" asp-action="Index">Appointment</a>
+                                <a class="collapse-item" asp-controller="Home" asp-action="ShowCodeNumberDetail">Code
+                                    Information</a>
+                                <a class="collapse-item" asp-controller="Employee" asp-action="EmployeeTypeList">Employee
+                                    Type</a>
+                                <a class="collapse-item" asp-controller="Employee" asp-action="Index">Empoyee</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="Index">Income Title</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="ExpenseList">Expense Title</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="FacilityList">Facilities</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="PropertyTypeList">Property
+                                    Type</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="BuildingTypeList">Building
+                                    Type</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="BankAccountInfoList">Bank
+                                    Accounts</a>
+                                <a class="collapse-item" asp-controller="IncomeTitle" asp-action="LogList">Logs</a>
+                            </div>
+                        </div>
+                    </li>
 
+                }
 
                 <!-- Divider -->
                 <hr class="sidebar-divider d-none d-md-block">
@@ -254,10 +294,11 @@
                         </button>
 
                         <!-- Topbar Search -->
-                        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" method="post" asp-controller="Property" asp-action="PropertySearchByCode">
+                        <form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
+                            method="post" asp-controller="Property" asp-action="PropertySearchByCode">
                             <div class="input-group">
-                                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." required
-                                       aria-label="Search" aria-describedby="basic-addon2" id="code" name="code">
+                                <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..."
+                                    required aria-label="Search" aria-describedby="basic-addon2" id="code" name="code">
                                 <div class="input-group-append">
                                     <button class="btn btn-secondary" type="submit">
                                         <i class="fas fa-search fa-sm"></i>
@@ -272,17 +313,18 @@
                             <!-- Nav Item - Search Dropdown (Visible Only XS) -->
                             <li class="nav-item dropdown no-arrow d-sm-none">
                                 <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-search fa-fw"></i>
                                 </a>
                                 <!-- Dropdown - Messages -->
                                 <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in"
-                                     aria-labelledby="searchDropdown">
-                                    <form class="form-inline mr-auto w-100 navbar-search" method="post" asp-controller="Property" asp-action="PropertySearchByCode">
+                                    aria-labelledby="searchDropdown">
+                                    <form class="form-inline mr-auto w-100 navbar-search" method="post"
+                                        asp-controller="Property" asp-action="PropertySearchByCode">
                                         <div class="input-group">
                                             <input type="text" class="form-control bg-light border-0 small" required
-                                                   placeholder="Search for..." aria-label="Search" id="code" name="code"
-                                                   aria-describedby="basic-addon2">
+                                                placeholder="Search for..." aria-label="Search" id="code" name="code"
+                                                aria-describedby="basic-addon2">
                                             <div class="input-group-append">
                                                 <button class="btn btn-secondary" type="submit">
                                                     <i class="fas fa-search fa-sm"></i>
@@ -296,18 +338,21 @@
                             <!-- Nav Item - Alerts -->
                             <li class="nav-item dropdown no-arrow mx-1">
                                 <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-bell fa-fw"></i>
                                     <!-- Counter - Alerts -->
-                                    @if(ViewBag.NotiCount != null) {
+                                    @if (ViewBag.NotiCount != null)
+                                    {
                                         <span class="badge badge-danger badge-counter">@ViewBag.NotiCount</span>
-                                    }else{
+                                    }
+                                    else
+                                    {
                                         <span class="badge badge-danger badge-counter"></span>
                                     }
                                 </a>
                                 <!-- Dropdown - Alerts -->
                                 <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                     aria-labelledby="alertsDropdown">
+                                    aria-labelledby="alertsDropdown">
                                     <h6 class="dropdown-header">
                                         Alerts Center
                                     </h6>
@@ -316,21 +361,25 @@
                                     {
                                         @foreach (var notification in ViewBag.Notifications as List<AlertViewModel>)
                                         {
-                                            <a class="dropdown-item d-flex align-items-center" href="@Url.Action("PropertyInfo", "Property", new { propertyId = notification.PropertyId})">
+                                            <a class="dropdown-item d-flex align-items-center"
+                                                href="@Url.Action("PropertyInfo", "Property", new { propertyId = notification.PropertyId })">
                                                 <div class="mr-3">
                                                     <div class="icon-circle bg-secondary">
                                                         <i class="fas fa-info-circle text-white"></i>
                                                     </div>
                                                 </div>
                                                 <div>
-                                                    <div class="small text-gray-500">@(notification.AvailableDate != null? notification.AvailableDate.Value.ToString("MMM dd, yyyy") : "") [@notification.Code]</div>
+                                                    <div class="small text-gray-500">@(notification.AvailableDate != null?
+                                                                                                    notification.AvailableDate.Value.ToString("MMM dd, yyyy") : "")
+                                                        [@notification.Code]</div>
                                                     <span class="font-weight-bold">@notification.Message</span>
                                                 </div>
                                             </a>
                                         }
                                     }
 
-                                    <a class="dropdown-item text-center small text-gray-500" href="@Url.Action("AlertCenter", "Property")">Show All Alerts</a>
+                                    <a class="dropdown-item text-center small text-gray-500"
+                                        href="@Url.Action("AlertCenter", "Property")">Show All Alerts</a>
                                 </div>
                             </li>
 
@@ -339,13 +388,13 @@
                             <!-- Nav Item - User Information -->
                             <li class="nav-item dropdown no-arrow">
                                 <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="mr-2 d-none d-lg-inline text-gray-600 small">@User.Identity.Name</span>
                                     <i class="fa-solid fa-circle-user" style="font-size:25px;"></i>
                                 </a>
                                 <!-- Dropdown - User Information -->
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                                     aria-labelledby="userDropdown">
+                                    aria-labelledby="userDropdown">
                                     <a class="dropdown-item" href="#">
                                         <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                         Profile
@@ -406,7 +455,7 @@
 
     <!-- Logout Modal-->
     <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-         aria-hidden="true">
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

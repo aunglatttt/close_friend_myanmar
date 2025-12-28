@@ -1,15 +1,20 @@
 ﻿@* The model declaration is no longer needed as the view is now just a template *@
-@model List<CloseFriendMyanamr.ViewModel.PropertyViewModel> 
+@model List<CloseFriendMyanamr.ViewModel.PropertyViewModel>
 @{
     ViewData["Title"] = "Property List";
 }
-<div class="row d-flex">
-    <div class="col-sm-12 d-flex justify-content-end">
-        <a class="btn btn-secondary col-md-2 col-sm-4" asp-controller="Property" asp-action="NewProperty">
-            <i class="fas fa-user-plus"></i> Add New Property
-        </a>
+<link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+
+@if (User.IsInRole("Administrator"))
+{
+    <div class="row d-flex">
+        <div class="col-sm-12 d-flex justify-content-end">
+            <a class="btn btn-secondary col-md-2 col-sm-4" asp-controller="Property" asp-action="NewProperty">
+                <i class="fas fa-user-plus"></i> Add New Property
+            </a>
+        </div>
     </div>
-</div>
+}
 
 <div class="row mt-3">
     <div class="col-sm-12">
@@ -26,7 +31,10 @@
                             <tr>
                                 <th></th>
                                 <th data-name="Code">Code</th>
-                                <th data-name="LastCheckedDate">Last Checked</th>
+                                @if (!User.IsInRole("MobileUser"))
+                                {
+                                    <th data-name="LastCheckedDate">Last Checked</th>
+                                }
                                 <th data-name="Street">လိပ်စာ</th>
                                 <th data-name="Comment">Info</th>
                                 <th data-name="SalePrice">Price(L)</th>
@@ -46,79 +54,110 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
+            // Determine if the user is a MobileUser to sync JS with HTML
+            var isMobileUser = @(User.IsInRole("MobileUser") ? "true" : "false");
+
+            var columnsConfig = [
+                {
+                    "data": "id",
+                    "render": function (data, type, row) {
+                        return `<a href="/Property/PropertyInfo?propertyId=${data}" class="text-primary fw-bold" style="cursor:pointer;">Info</a>`;
+                    },
+                    "name": "InfoLink", "autoWidth": true
+                },
+                {
+                    "data": "code", "name": "Code", "autoWidth": true, "render": function (data, type, row) {
+                        let statusBadge = '';
+                        let availableDate = '';
+                        switch (row.status) {
+                            case "Available": statusBadge = `<span class="badge rounded-pill bg-primary py-2 px-3">${row.status}</span>`; break;
+                            case "Rented":
+                                statusBadge = `<span class="badge rounded-pill bg-info py-2 px-3">${row.status}</span>`;
+                                if (row.avaliableDate) {
+                                    availableDate = `<br/><span class="text-warning fw-bold" style="font-size:12px;">${row.avaliableDate}</span>`;
+                                }
+                                break;
+                            case "Delete": statusBadge = `<span class="badge rounded-pill bg-danger py-2 px-3">${row.status}</span>`; break;
+                            case "PowerOff": statusBadge = `<span class="badge rounded-pill bg-secondary py-2 px-3">${row.status}</span>`; break;
+                            default: statusBadge = `<span class="badge rounded-pill bg-warning py-2 px-3">${row.status}</span>`; break;
+                        }
+                        return `${data}<br/>${statusBadge}${availableDate}`;
+                    }
+                }
+            ];
+
+            // Only add the LastCheckedDate column if the user is NOT a MobileUser
+            if (!isMobileUser) {
+                columnsConfig.push({
+                    "data": "lastCheckedDateString",
+                    "name": "LastCheckedDate",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+                        return `${data}<br/><span class="text-primary" style="font-size:12px;">${row.lastCheckedBy}</span>`;
+                    }
+                });
+            }
+
+            // Add remaining columns
+            columnsConfig.push(
+                { "data": "street", "name": "Street", "autoWidth": true },
+                { "data": "comment", "name": "Comment", "autoWidth": true },
+                { "data": "salePrice", "name": "SalePrice", "autoWidth": true },
+                {
+                    "data": "owner",
+                    "name": "Owner",
+                    "autoWidth": true,
+                    "render": function (data, type, row) {
+                        if (isMobileUser) {
+                            var phone = "09782229078";
+                            return `
+                        <div class="d-flex flex-column">
+                            <span>Admin</span>
+                            <div class="d-flex align-items-center">
+                                <a href="tel:${phone}" class="text-primary fw-bold" style="font-size:13px; text-decoration:none;">
+                                   ${phone}
+                                </a>
+                                <button type="button" class="btn btn-sm btn-light ms-2 p-0 px-1" 
+                                        onclick="copyToClipboard('${phone}')" title="Copy Number">
+                                    <i class="far fa-copy text-muted" style="font-size:12px;"></i>
+                                </button>
+                            </div>
+                        </div>`;
+                        }
+                        return data;
+                    }
+                },
+                { "data": "remark", "name": "Remark", "autoWidth": true }
+            );
+
             $('#propertyTable').DataTable({
-                "processing": true, // Show processing indicator
-                "serverSide": true, // Enable server-side processing
-                "filter": true,     // Enable filtering
+                "processing": true,
+                "serverSide": true,
+                "filter": true,
                 "responsive": true,
                 "paging": true,
                 "ordering": true,
                 "info": true,
                 "autoWidth": false,
-                "lengthMenu": [
-                    [25, 50, 100, -1],
-                    [25, 50, 100, "All"]
-                ],
                 "ajax": {
                     "url": "@Url.Action("GetProperties", "Property")",
                     "type": "POST",
                     "datatype": "json"
                 },
+                "columns": columnsConfig, // Use the dynamically built array
                 "columnDefs": [
-                    { "orderable": false, "targets": [0, 3, 4, 6, 7] }, // Disable sorting on specific columns
-                    { "searchable": false, "targets": [0] },
-                    { responsivePriority: 1, targets: 1 },
-                    { responsivePriority: 2, targets: 2 }
-                ],
-                "columns": [
-                    {
-                        "data": "id", "render": function (data, type, row) {
-                            // Create the 'Info' link for the first column
-                            return `<a href="/Property/PropertyInfo?propertyId=${data}" class="text-primary fw-bold" style="cursor:pointer;">Info</a>`;
-                        },
-                        "name": "InfoLink", "autoWidth": true
-                    },
-                    {
-                        "data": "code", "name": "Code", "autoWidth": true, "render": function (data, type, row) {
-                            // Custom rendering for the 'Code' and 'Status' badge
-                            let statusBadge = '';
-                            let availableDate = '';
-                            switch (row.status) {
-                                case "Available":
-                                    statusBadge = `<span class="badge rounded-pill bg-primary py-2 px-3">${row.status}</span>`;
-                                    break;
-                                case "Rented":
-                                    statusBadge = `<span class="badge rounded-pill bg-info py-2 px-3">${row.status}</span>`;
-                                    if (row.avaliableDate) {
-                                        availableDate = `<br/><span class="text-warning fw-bold" style="font-size:12px;">${row.avaliableDate}</span>`;
-                                    }
-                                    break;
-                                case "Delete":
-                                    statusBadge = `<span class="badge rounded-pill bg-danger py-2 px-3">${row.status}</span>`;
-                                    break;
-                                case "PowerOff":
-                                    statusBadge = `<span class="badge rounded-pill bg-secondary py-2 px-3">${row.status}</span>`;
-                                    break;
-                                default:
-                                    statusBadge = `<span class="badge rounded-pill bg-warning py-2 px-3">${row.status}</span>`;
-                                    break;
-                            }
-                            return `${data}<br/>${statusBadge}${availableDate}`;
-                        }
-                    },
-                    {
-                        "data": "lastCheckedDateString", "name": "LastCheckedDate", "autoWidth": true, "render": function (data, type, row) {
-                            // Custom rendering for the 'Last Checked' date and user
-                            return `${data}<br/><span class="text-primary" style="font-size:12px;">${row.lastCheckedBy}</span>`;
-                        }
-                    },
-                    { "data": "street", "name": "Street", "autoWidth": true },
-                    { "data": "comment", "name": "Comment", "autoWidth": true },
-                    { "data": "salePrice", "name": "SalePrice", "autoWidth": true },
-                    { "data": "owner", "name": "Owner", "autoWidth": true },
-                    { "data": "remark", "name": "Remark", "autoWidth": true }
+                    { "orderable": false, "targets": isMobileUser ? [0, 2, 3, 5, 6] : [0, 3, 4, 6, 7] },
+                    { "searchable": false, "targets": [0] }
                 ]
             });
         });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function () {
+
+            }, function (err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
     </script>
 }

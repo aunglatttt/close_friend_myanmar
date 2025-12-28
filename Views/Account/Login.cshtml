@@ -1,56 +1,82 @@
-﻿
-<body class="bg-gray-900">
+﻿<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="~/css/login-responsive.css" rel="stylesheet" />
+
+<body class="bg-gray-900 d-flex align-items-center justify-content-center min-vh-100">
 
     <div class="container">
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
 
-            <div class="col-xl-10 col-lg-12 col-md-9">
+            <!-- ⬇️ ONLY column classes updated -->
+            <div class="col-12 col-sm-10 col-md-9 col-lg-8 col-xl-10">
 
                 <div class="card o-hidden border-0 shadow-lg my-5 login-card mx-auto">
                     <div class="card-body p-0">
+
                         <!-- Nested Row within Card Body -->
                         <div class="row">
                             <div class="col-lg-12">
-                                
-                                <img class="w-100" src="@Url.Content("~/images/Logo2.jpg")">
 
-                                <div class="p-5">
+                                <!-- ⬇️ img-fluid added -->
+                                <img class="w-100 img-fluid" src="@Url.Content("~/images/Logo2.jpg")" alt="Logo">
+
+                                <!-- ⬇️ padding responsive -->
+                                <div class="p-3 p-md-5">
+
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
+
                                     <form class="user" asp-action="Login" method="post">
                                         <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user"
-                                                   id="exampleInputEmail" name="username"
-                                                   placeholder="Enter Email Address...">
+                                            <input type="text" class="form-control form-control-user" name="username"
+                                                placeholder="Enter Email Address...">
                                         </div>
+
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"
-                                                   id="exampleInputPassword" name="password" placeholder="Password">
+                                                name="password" placeholder="Password">
                                         </div>
+
                                         <div class="form-group">
                                             <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck" name="rememberMe">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck"
+                                                    name="rememberMe">
                                                 <label class="custom-control-label" for="customCheck">
-                                                    Remember
-                                                    Me
+                                                    Remember Me
                                                 </label>
                                             </div>
                                         </div>
-                                        @if (ViewBag.LoginError != null){
-                                            <label class="text-danger lginlogmsg text-center d-flex justify-content-center align-items-center">@ViewBag.LoginError</label>
+
+                                        @if (ViewBag.LoginError != null)
+                                        {
+                                            <label
+                                                class="text-danger lginlogmsg text-center d-flex justify-content-center align-items-center">
+                                                @ViewBag.LoginError
+                                            </label>
                                         }
+
                                         <button type="submit" class="btn btn-secondary btn-user btn-block">
                                             Login
                                         </button>
                                         <hr>
+
+
                                     </form>
+                                    
+                                    <div class="text-center mt-3">
+                                        <a asp-action="Register" class="small">
+                                            Don't have an account? Register
+                                        </a>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
@@ -59,4 +85,5 @@
         </div>
 
     </div>
+
 </body>

@@ -9,17 +9,24 @@
         <div class="row">
             <div class="col-12">
                 <ul class="breadcrumb">
-                    <li><a href="@Url.Action("SearchProperty", "Property")">Search Property</a> <span class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
-                    <li><a href="@Url.Action("NewProperty", "Property")">New Property</a> <span class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
-                    <li class="active"><span id="lblCode">@Model.Code &nbsp; &nbsp; (@Model.Township)</span></li>&nbsp; &nbsp; 
+                    <li><a href="@Url.Action("SearchProperty", "Property")">Search Property</a> <span
+                            class="divider">&nbsp; &nbsp; | &nbsp; &nbsp;</span></li>
+                    <li><a href="@Url.Action("NewProperty", "Property")">New Property</a> <span class="divider">&nbsp;
+                            &nbsp; | &nbsp; &nbsp;</span></li>
+                    <li class="active"><span id="lblCode">@Model.Code &nbsp; &nbsp; (@Model.Township)</span></li>&nbsp;
+                    &nbsp;
                     @if (!string.IsNullOrEmpty(Model.Map))
                     {
                         @Model.Map
-       <span>| &nbsp; &nbsp;
-           <a href="@Model.Map" target="_blank">
-               <img alt="File:Google Maps icon (2015-2020).svg" src="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/512px-Google_Maps_icon_%282015-2020%29.svg.png" decoding="async" width="20" height="20" srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/768px-Google_Maps_icon_%282015-2020%29.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/1024px-Google_Maps_icon_%282015-2020%29.svg.png 2x" data-file-width="20" data-file-height="20">
-           </a>
-       </span>
+                        <span>| &nbsp; &nbsp;
+                            <a href="@Model.Map" target="_blank">
+                                <img alt="File:Google Maps icon (2015-2020).svg"
+                                    src="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/512px-Google_Maps_icon_%282015-2020%29.svg.png"
+                                    decoding="async" width="20" height="20"
+                                    srcset="//upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/768px-Google_Maps_icon_%282015-2020%29.svg.png 1.5x, //upload.wikimedia.org/wikipedia/commons/thumb/3/39/Google_Maps_icon_%282015-2020%29.svg/1024px-Google_Maps_icon_%282015-2020%29.svg.png 2x"
+                                    data-file-width="20" data-file-height="20">
+                            </a>
+                        </span>
                     }
 
                 </ul>
@@ -29,36 +36,52 @@
         <div class="row">
             <div class="col-md-4 col-sm-12 mb-3">
 
-                @if(Model.Photos != null && Model.Photos.Count >0) {
+                @if (Model.Photos != null && Model.Photos.Count > 0)
+                {
                     <div class="row">
                         <div class="col-12">
-                            @if(Model.Photos != null && Model.Photos.Count >0) {
-                                <a href="@Url.Content("~/PropertyPhoto/" + Model.Photos[0].Location)" data-lightbox="gallery" data-title="@Model.Photos[0].Location">
-                                    <img src="@Url.Content("~/PropertyPhoto/" + Model.Photos[0].Location)" alt="" class="img-thumbnail w-100" loading="lazy">
+                            @if (Model.Photos != null && Model.Photos.Count > 0)
+                            {
+                                <a href="@Url.Content("~/PropertyPhoto/" + Model.Photos[0].Location)" data-lightbox="gallery"
+                                    data-title="@Model.Photos[0].Location">
+                                    <img src="@Url.Content("~/PropertyPhoto/" + Model.Photos[0].Location)" alt=""
+                                        class="img-thumbnail w-100" loading="lazy">
                                 </a>
                             }
                         </div>
                     </div>
 
 
-                    @if(Model.Photos != null && Model.Photos.Count > 1){
-                        @for (var i = 1; i < Model.Photos.Count; i++) {
-                            <a href="@Url.Content("~/PropertyPhoto/" + Model.Photos[i].Location)" data-lightbox="gallery" data-title="@Model.Photos[i].Location">
-                                <img src="@Url.Content("~/PropertyPhoto/" + Model.Photos[i].Location)" alt="" class="img-thumbnail" style="width:29%" loading="lazy">
+                    @if (Model.Photos != null && Model.Photos.Count > 1)
+                    {
+                        @for (var i = 1; i < Model.Photos.Count; i++)
+                        {
+                            <a href="@Url.Content("~/PropertyPhoto/" + Model.Photos[i].Location)" data-lightbox="gallery"
+                                data-title="@Model.Photos[i].Location">
+                                <img src="@Url.Content("~/PropertyPhoto/" + Model.Photos[i].Location)" alt="" class="img-thumbnail"
+                                    style="width:29%" loading="lazy">
                             </a>
                         }
                     }
-                }else{
+                }
+                else
+                {
 
                     <a href="@Url.Content("~/images/NoPropertyPhoto.png")" data-lightbox="gallery" data-title="No Photo">
-                        <img src="@Url.Content("~/images/NoPropertyPhoto.png")" alt="" class="img-thumbnail w-100" loading="lazy">
+                        <img src="@Url.Content("~/images/NoPropertyPhoto.png")" alt="" class="img-thumbnail w-100"
+                            loading="lazy">
                     </a>
                 }
                 <hr class="border-soft-bottom">
                 <div class="row">
                     <div class="text-center">
-                        <a href="@Url.Action("Gallery", "Property", new { propertyId = @Model.Id })" class="btn btn-primary text-center">Gallery</a>
-                        <a href="@Url.Action("NewProperty", "Property", new { id = @Model.Id })" class="btn btn-secondary text-center">Edit Info</a>
+                        <a href="@Url.Action("Gallery", "Property", new { propertyId = @Model.Id })"
+                            class="btn btn-primary text-center">Gallery</a>
+                        @if (!User.IsInRole("MobileUser"))
+                        {
+                            <a href="@Url.Action("NewProperty", "Property", new { id = @Model.Id })"
+                                class="btn btn-secondary text-center">Edit Info</a>
+                        }
                     </div>
                 </div>
                 <hr class="border-soft-bottom">
@@ -67,10 +90,12 @@
                     <div class="col-12">
                         <h5>Facilities</h5>
 
-                        @if(Model.PropertyFacilities != null) {
+                        @if (Model.PropertyFacilities != null)
+                        {
                             <ul>
                                 @* @foreach(var item in Model.Facilities.Split(",") as string[]){ *@
-                                    @foreach(var item in Model.PropertyFacilities){
+                                @foreach (var item in Model.PropertyFacilities)
+                                {
                                     <li>@item.Facility</li>
                                 }
                             </ul>
@@ -84,7 +109,8 @@
             <div class="col-md-8 col-sm-12">
                 <div class="row">
                     <div class="col-12 mb-3">
-                        @if(Model.Owner != null) {
+                        @if (Model.Owner != null)
+                        {
                             <h3>@Model.Owner.OwnerName (@Model.Owner.OwnerPhone)</h3>
                         }
                     </div>
@@ -92,16 +118,19 @@
                     <div class="col-12 mb-3">
                         <span>@Model.Street</span>
                     </div>
-                    @if(Model.CondoName != null){
+                    @if (Model.CondoName != null)
+                    {
                         <div class="col-12">
                             <span>@Model.CondoName</span>
                         </div>
                     }
-                
+
                     <div class="col-12">
-                    <hr class="border-soft-bottom ">
-                        <span>@Model.Purpose Price (@(Model.Purpose == "Sale" ? Model.SalePrice : Model.RentPrice)) &nbsp;&nbsp;&nbsp; >>>> &nbsp;&nbsp;&nbsp; @(Model.Purpose == "Sale" ? Model.SaleCommissionString : Model.RentCommisionString)</span>
-                    <hr class="border-soft-bottom mt-3">
+                        <hr class="border-soft-bottom ">
+                        <span>@Model.Purpose Price (@(Model.Purpose == "Sale" ? Model.SalePrice : Model.RentPrice))
+                            &nbsp;&nbsp;&nbsp; >>>> &nbsp;&nbsp;&nbsp; @(Model.Purpose == "Sale" ?
+                                                        Model.SaleCommissionString : Model.RentCommisionString)</span>
+                        <hr class="border-soft-bottom mt-3">
                     </div>
 
 
@@ -167,7 +196,9 @@
                                     </span>
                                     <span class="text">Cancel (မရောင်းတော့ပါ)</span>
                                 </a>
-                            }else{
+                            }
+                            else
+                            {
 
                                 <a href="#" class="btn btn-secondary btn-icon-split">
                                     <span class="icon text-white-50">
@@ -176,8 +207,8 @@
                                     <span class="text">@Model.Status</span>
                                 </a>
                             }
-                           
-                         
+
+
                             <a href="#" class="btn btn-success btn-icon-split">
                                 <span class="icon text-white-50">
                                     <i class="fas fa-check"></i>
@@ -185,7 +216,7 @@
                                 <span id="lblPostStatus" class="text">@Model.PostStatus</span>
                             </a>
                         </div>
-                      
+
                         @* </div> *@
 
 
@@ -211,7 +242,7 @@
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-100">Building Condition: </td>
-                                    <td class="bg-gray-100">@(Model.BuildingCondition??"-")</td>
+                                    <td class="bg-gray-100">@(Model.BuildingCondition ?? "-")</td>
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-100">Building Type: </td>
@@ -223,24 +254,24 @@
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-100">Area: </td>
-                                    
-                                    <td class="bg-gray-100">@((Model.Area <= 0 || Model.Area == null) ? Model.Size??"-" : Model.Area + "")</td>
+
+                                    <td class="bg-gray-100">@((Model.Area <= 0 || Model.Area == null) ? Model.Size ?? "-" : Model.Area + "")</td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td class="bg-gray-100">Room Type:</td>
                                     <td class="bg-gray-100">
-                                       @Model.MasterBed M, @Model.SingleBed S
+                                        @Model.MasterBed M, @Model.SingleBed S
                                     </td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td class="bg-gray-100">Ownership:</td>
                                     <td class="bg-gray-100">@Model.Ownership</td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td class="bg-gray-100">Saler Own Type:</td>
                                     <td class="bg-gray-100">@Model.SalerOwnTypeString</td>
                                 </tr>
-                                 <tr>
+                                <tr>
                                     <td class="bg-gray-100">Registration Date: </td>
                                     <td class="bg-gray-100">@Model.RegistrationDate.ToString("MMM dd, yyyy")</td>
                                 </tr>
@@ -250,13 +281,15 @@
                                 </tr>
                                 <tr>
                                     <td class="bg-gray-100">Last Check Date:</td>
-                                    <td class="bg-gray-100">@Model.LastCheckedDate.ToString("MMM dd, yyyy") <span style="font-size:12px;">(By @(Model.LastCheckedBy != null? Model.LastCheckedBy.EmployeeName: ""))</span></td>
+                                    <td class="bg-gray-100">@Model.LastCheckedDate.ToString("MMM dd, yyyy") <span
+                                            style="font-size:12px;">(By @(Model.LastCheckedBy != null?
+                                                                                        Model.LastCheckedBy.EmployeeName : ""))</span></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
-               
+
             </div>
         </div>
 
