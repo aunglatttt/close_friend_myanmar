@@ -22,10 +22,13 @@ namespace CloseFriendMyanamr.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
-        public PropertyController(ApplicationDbContext context, IWebHostEnvironment env)
+        private readonly NotificationService _notificationService;
+
+        public PropertyController(ApplicationDbContext context, IWebHostEnvironment env, NotificationService notificationService)
         {
-            _context=context;
-            _env=env;
+            _context = context;
+            _env = env;
+            _notificationService = notificationService;
         }
 
         #region save property
@@ -320,6 +323,7 @@ namespace CloseFriendMyanamr.Controllers
                         model.Code  = await GetMaxCodeNumberAsync(prefix);
                     }
 
+                    bool isNew = false;
                     if (model.Id == 0)
                     {
 
@@ -328,6 +332,7 @@ namespace CloseFriendMyanamr.Controllers
                         _context.Property.Add(model);
 
                         log.Logs = $"{loginUserName} Add new Property {model.Code} @ {DateTime.Now.ToString("MMM dd, yyyy")}";
+                        isNew = true;
                     }
                     else
                     {
@@ -349,6 +354,23 @@ namespace CloseFriendMyanamr.Controllers
                     #endregion
 
                     await _context.SaveChangesAsync();
+
+                    if (isNew)
+                    {
+                        var notiTokens = await _context.TokenCredentail.Select(x => x.Token).ToListAsync();
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                await _notificationService.SendNotificationAsync(notiTokens, model.Id + "");
+                            }
+                            catch (Exception ex)
+                            {
+                                // Log only (DO NOT throw)
+                                Console.WriteLine(ex.Message);
+                            }
+                        });
+                    }
 
                     return RedirectToAction("PropertyList");
                 }

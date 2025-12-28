@@ -25,7 +25,7 @@ namespace CloseFriendMyanamr.Controllers
         [HttpGet("send")]
         public async Task<IActionResult> TriggerNotification()
         {
-            await _notificationService.SendNotificationAsync("ExponentPushToken[ecezhhJv7sv5-hIGyGL6dp]", "Hello from .NET!", "This is a test notification.", "15359");
+            // await _notificationService.SendNotificationAsync("ExponentPushToken[ecezhhJv7sv5-hIGyGL6dp]", "15359");
             return Ok("Notification request sent to Expo.");
         }
 

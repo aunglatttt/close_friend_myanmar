@@ -196,12 +196,12 @@ namespace CloseFriendMyanamr.Controllers
             // Example: get phone from session
             string userAgent = Request.Headers["User-Agent"].ToString();
             int userId = 0;
-             var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int.TryParse(userIdObj, out userId);
-                
-            
+            var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int.TryParse(userIdObj, out userId);
 
-            if (userId <=0)
+
+
+            if (userId <= 0)
             {
                 return RedirectToAction("Login");
             }
@@ -218,5 +218,47 @@ namespace CloseFriendMyanamr.Controllers
             return View(client);
         }
 
+        [Authorize]
+        public ActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+                return View(model);
+
+                  string userAgent = Request.Headers["User-Agent"].ToString();
+            int userId = 0;
+            var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            int.TryParse(userIdObj, out userId);
+
+
+
+            if (userId <= 0)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var user = await  _context.Client.FirstOrDefaultAsync(x => x.Id == userId);
+
+            if(user == null) return RedirectToAction("Login");
+
+            if (user.Password != model.CurrentPassword)
+            {
+                ModelState.AddModelError("", "Current password is incorrect");
+                return View(model);
+            }
+
+            user.Password = model.NewPassword;
+            
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Password updated successfully!";
+            return RedirectToAction("Profile");
+        }
     }
 }

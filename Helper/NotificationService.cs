@@ -15,23 +15,15 @@ private readonly IHttpClientFactory _httpClientFactory;
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task SendNotificationAsync(string expoPushToken, string title, string message, string propertyId)
+    public async Task SendNotificationAsync(List<string> expoPushToken, string propertyId)
     {
         var client = _httpClientFactory.CreateClient();
-        
-        // var payload = new ExpoNotificationRequest
-        // {
-        //     To = new List<string> { expoPushToken },
-        //     Title = title,
-        //     Body = message,
-        //     Data = new { ClickAction = "NavigateToSettings" } // Optional custom data
-        // };
 
         var payload = new
         {
-            to = new List<string> {expoPushToken},
+            to = expoPushToken,
             title = "New Property Added!",
-            body = "Tap to view the latest listing.",
+            body = "Tap to view detail.",
             data = new { url = $"https://tbalmm-001-site1.jtempurl.com/Property/PropertyInfo?propertyId={propertyId}" },
             priority = "high",
             sound = "default",
