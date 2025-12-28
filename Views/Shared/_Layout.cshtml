@@ -178,7 +178,7 @@
                     <li class="nav-item">
                         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#clentRequestPages"
                             aria-expanded="true" aria-controls="clentRequestPages">
-                            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+                            <i class="fa-regular fa-rectangle-list"></i>
                             <span>My Request</span>
                         </a>
                         <div id="clentRequestPages" class="collapse" aria-labelledby="headingPages"
@@ -187,11 +187,8 @@
                                 <h6 class="collapse-header">My Request:</h6>
                                 <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClicentRequestList">My
                                     Request List</a>
-                                <a class="btn btn-add" asp-controller="ClientRequest" asp-action="ClientRequirement"
-                                    asp-route-id="@userId">
-                                    New Entry
-                                </a>
 
+                                <a class="collapse-item" asp-controller="ClientRequest" asp-action="ClientRequirement" asp-route-id="@userId">New Entry</a>
                             </div>
                         </div>
                     </li>

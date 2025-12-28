@@ -33,7 +33,7 @@ namespace CloseFriendMyanamr.Controllers
             if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
             {
                 string userAgent = Request.Headers["User-Agent"].ToString();
-                if (!userAgent.Contains("MyCustomApp"))
+                if (userAgent.Contains("MyCustomApp"))
                 {
                     var user = await _context.Client.AsNoTracking().Where(x => x.ClientPhone == username && x.Password == password).FirstOrDefaultAsync();
                     if (user == null)
