@@ -24,7 +24,7 @@ private readonly IHttpClientFactory _httpClientFactory;
             to = expoPushToken,
             title = "New Property Added!",
             body = "Tap to view detail.",
-            data = new { url = $"https://tbalmm-001-site1.jtempurl.com/Property/PropertyInfo?propertyId={propertyId}" },
+            data = new { url = $"https://admin.closefriendmyanmar.com/Property/PropertyInfo?propertyId={propertyId}" },
             priority = "high",
             sound = "default",
             channelId = "default"
