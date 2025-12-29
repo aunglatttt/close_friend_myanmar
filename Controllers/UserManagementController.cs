@@ -36,7 +36,7 @@ namespace CloseFriendMyanamr.Controllers
             //        x.Remark,
             //    })
                 
-            return View(await _context.Client.AsNoTracking().Include(x => x.ClientRequirements).ToListAsync());
+            return View(await _context.Client.AsNoTracking().Include(x => x.ClientRequirements).OrderByDescending(x => x.Id).ToListAsync());
         }
 
         public async Task<IActionResult> ClientCreate(int? id)
