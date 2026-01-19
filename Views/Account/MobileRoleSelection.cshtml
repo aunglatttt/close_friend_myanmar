@@ -1,0 +1,42 @@
+﻿@{
+    Layout = null; // Remove header/footer for a clean app look
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; background-color: #0f172a; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .card { width: 90%; text-align: center; }
+        h2 { margin-bottom: 30px; font-weight: 300; }
+        .choice-btn {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .btn-client { background-color: #3b82f6; color: white; }
+        .btn-admin { background-color: #1e293b; color: white; border: 1px solid #334155; }
+        .choice-btn:active { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Choose Profile</h2>
+        <form asp-action="SelectRole" method="post">
+            <button type="submit" name="role" value="Client" class="choice-btn btn-client">
+                Continue as CLIENT
+            </button>
+            <button type="submit" name="role" value="Admin" class="choice-btn btn-admin">
+                Continue as ADMIN
+            </button>
+        </form>
+    </div>
+</body>
+</html>

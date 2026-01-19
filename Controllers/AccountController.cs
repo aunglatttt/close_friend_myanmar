@@ -30,97 +30,116 @@ namespace CloseFriendMyanamr.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password, bool rememberMe, string returnUrl = null)
         {
-            // Validate the username and password (this is just a simple example)
-            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(password))
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
-                string userAgent = Request.Headers["User-Agent"].ToString();
-                if (userAgent.Contains("MyCustomApp"))
-                {
-                    var user = await _context.Client.AsNoTracking().Where(x => x.ClientPhone == username && x.Password == password).FirstOrDefaultAsync();
-                    if (user == null)
-                    {
-                        ViewBag.LoginError = "Invalid Login Information!";
-                        return View();
-                    }
-                    else if (user.Status == "Block")
-                    {
-                        ViewBag.LoginError = "Your Account status is inactive.!";
-                        return View();
-                    }
+                ViewBag.LoginError = "Please enter credentials.";
+                return View();
+            }
 
-                    var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.ClientName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id + ""),
-                    new Claim(ClaimTypes.Role, "MobileUser")
-                };
+            string userAgent = Request.Headers["User-Agent"].ToString();
+            bool isOldMobileApp = userAgent.Contains("MyCustomApp");
+            bool isMobileApp = userAgent.Contains("CFMCustomApp");
 
-                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
-
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = rememberMe // Set the "Remember Me" option
-                    };
-
-                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+            if (isOldMobileApp)
+            {
+                ViewBag.LoginError = "Your app version is no longer supported. Please update to the latest version to continue.";
+                return View();
+            }
 
 
-                    return RedirectToAction("Welcome", "Home");
+            var client = await _context.Client.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.ClientPhone == username && x.Password == password);
 
-                }
-                else
-                {
-                    var user = await _context.Employee.AsNoTracking().Include(x => x.EmployeeType).Where(x => x.LoginName == username && x.Password == password).FirstOrDefaultAsync();
-                    if (user == null)
-                    {
-                        ViewBag.LoginError = "Invalid Login Information!";
-                        return View();
-                    }
-                    else if (user.Status == false)
-                    {
-                        ViewBag.LoginError = "Your Account status is inactive.!";
-                        return View();
-                    }
+            var employee = await _context.Employee.AsNoTracking()
+                .Include(x => x.EmployeeType)
+                .FirstOrDefaultAsync(x => x.LoginName == username && x.Password == password);
 
-                    var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.EmployeeName),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id + ""),
-                    new Claim(ClaimTypes.Role, user.EmployeeType?.Type?? "Admin")
-                };
+            if (isMobileApp && client != null && employee != null)
+            {
+                // Temporary storage to remember the choice during the next step
+                TempData["Username"] = username;
+                TempData["Password"] = password;
+                TempData["RememberMe"] = rememberMe;
+                return View("MobileRoleSelection");
+            }
 
-                    var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+            if (client != null && employee == null)
+            {
+                return await ProcessClientLogin(client, rememberMe);
+            }
 
-                    var authProperties = new AuthenticationProperties
-                    {
-                        IsPersistent = rememberMe // Set the "Remember Me" option
-                    };
-
-                    await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
-
-                    if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
-                    {
-                        return Redirect(returnUrl);
-                    }
-                    else
-                    {
-                        if (user.EmployeeTypeId == 4)
-                            return RedirectToAction("Welcome", "Home");
-                        else
-                            return RedirectToAction("Index", "Home");
-                    }
-                }
-
+            // CASE 3: ONLY EMPLOYEE OR (Web + Employee/Both)
+            if (employee != null)
+            {
+                // On Web, if both exist, we default to Admin or you can handle differently
+                return await ProcessEmployeeLogin(employee, rememberMe, returnUrl);
             }
 
             ViewBag.LoginError = "Invalid Login Information!";
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SelectRole(string role)
+        {
+            string username = TempData["Username"]?.ToString();
+            string password = TempData["Password"]?.ToString();
+            bool rememberMe = (bool)(TempData["RememberMe"] ?? false);
+
+            if (role == "Client")
+            {
+                var user = await _context.Client.FirstOrDefaultAsync(x => x.ClientPhone == username && x.Password == password);
+                return await ProcessClientLogin(user, rememberMe);
+            }
+            else
+            {
+                var user = await _context.Employee.Include(x => x.EmployeeType).FirstOrDefaultAsync(x => x.LoginName == username && x.Password == password);
+                return await ProcessEmployeeLogin(user, rememberMe, null);
+            }
+        }
+
+        private async Task<IActionResult> ProcessClientLogin(ClientModel user, bool rememberMe)
+        {
+            if (user.Status == "Block") { ViewBag.LoginError = "Account Blocked"; return View("Login"); }
+
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.Name, user.ClientName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, "MobileUser")
+            };
+            await SignIn(claims, rememberMe);
+            return RedirectToAction("Welcome", "Home");
+        }
+
+        private async Task<IActionResult> ProcessEmployeeLogin(EmployeeModel user, bool rememberMe, string returnUrl)
+        {
+            if (user.Status == false) { ViewBag.LoginError = "Account Inactive"; return View("Login"); }
+
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.Name, user.EmployeeName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, user.EmployeeType?.Type ?? "Admin")
+            };
+            await SignIn(claims, rememberMe);
+            return RedirectToAction(user.EmployeeTypeId == 4 ? "Welcome" : "Index", "Home");
+        }
+
+        private async Task SignIn(List<Claim> claims, bool isPersistent)
+        {
+            var claimsIdentity = new ClaimsIdentity(claims, "CookieAuth");
+            await HttpContext.SignInAsync("CookieAuth", new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties { IsPersistent = isPersistent });
+        }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync("CookieAuth");
             return RedirectToAction("Index", "Home");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MobileRoleSelection()
+        {
+            return View();
         }
 
         [HttpGet]
@@ -231,7 +250,7 @@ namespace CloseFriendMyanamr.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-                  string userAgent = Request.Headers["User-Agent"].ToString();
+            string userAgent = Request.Headers["User-Agent"].ToString();
             int userId = 0;
             var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int.TryParse(userIdObj, out userId);
@@ -243,9 +262,9 @@ namespace CloseFriendMyanamr.Controllers
                 return RedirectToAction("Login");
             }
 
-            var user = await  _context.Client.FirstOrDefaultAsync(x => x.Id == userId);
+            var user = await _context.Client.FirstOrDefaultAsync(x => x.Id == userId);
 
-            if(user == null) return RedirectToAction("Login");
+            if (user == null) return RedirectToAction("Login");
 
             if (user.Password != model.CurrentPassword)
             {
@@ -254,7 +273,7 @@ namespace CloseFriendMyanamr.Controllers
             }
 
             user.Password = model.NewPassword;
-            
+
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Password updated successfully!";
