@@ -159,18 +159,18 @@ namespace CloseFriendMyanamr.Controllers
                 }
 
                 // // Check for duplicate HouseNo, Street, CondoName, Floor, RoomNo (for both create and update)
-                // var isDuplicate = await _context.Property.AsNoTracking()
-                //     .FirstOrDefaultAsync(x => 
-                //                 //(x.Ward == model.Ward) &&
-                //                 (x.Street == model.Street) &&
-                //                 (x.CondoName == model.CondoName) &&
-                //                 (x.Floor == model.Floor) &&
-                //                 (x.Room == model.Room) &&
-                //                 (x.Owner.OwnerName == model.OwnerName) &&
-                //                 (x.Owner.OwnerPhone == model.OwnerPhone) &&
-                //                 (x.PropertyType == model.PropertyType) &&
-                //                  x.Id != model.Id);
-                var isDuplicate = await _context.Property.AsNoTracking().OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+                var isDuplicate = await _context.Property.AsNoTracking()
+                    .FirstOrDefaultAsync(x =>
+                                //(x.Ward == model.Ward) &&
+                                (x.Street == model.Street) &&
+                                (x.CondoName == model.CondoName) &&
+                                (x.Floor == model.Floor) &&
+                                (x.Room == model.Room) &&
+                                (x.Owner.OwnerName == model.OwnerName) &&
+                                (x.Owner.OwnerPhone == model.OwnerPhone) &&
+                                (x.PropertyType == model.PropertyType) &&
+                                 x.Id != model.Id);
+                //var isDuplicate = await _context.Property.AsNoTracking().OrderByDescending(x => x.Id).FirstOrDefaultAsync();
 
 
                 if (ModelState.IsValid && isCodeOk && isDuplicate == null)
