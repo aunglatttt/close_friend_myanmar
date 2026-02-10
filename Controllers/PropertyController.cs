@@ -144,6 +144,7 @@ namespace CloseFriendMyanamr.Controllers
             }
             return View(new PropertyModel());
         }
+        
 
         [HttpPost]
         public async Task<IActionResult> NewProperty(PropertyModel model, List<string> selectedFacilities)
@@ -157,21 +158,22 @@ namespace CloseFriendMyanamr.Controllers
                     isCodeOk = isFound == true ? false : true;
                 }
 
-                // Check for duplicate HouseNo, Street, CondoName, Floor, RoomNo (for both create and update)
-                bool isDuplicate = await _context.Property.AsNoTracking()
-                    .AnyAsync(x => 
-                                //(x.Ward == model.Ward) &&
-                                (x.Street == model.Street) &&
-                                (x.CondoName == model.CondoName) &&
-                                (x.Floor == model.Floor) &&
-                                (x.Room == model.Room) &&
-                                (x.Owner.OwnerName == model.OwnerName) &&
-                                (x.Owner.OwnerPhone == model.OwnerPhone) &&
-                                (x.PropertyType == model.PropertyType) &&
-                                 x.Id != model.Id);
+                // // Check for duplicate HouseNo, Street, CondoName, Floor, RoomNo (for both create and update)
+                // var isDuplicate = await _context.Property.AsNoTracking()
+                //     .FirstOrDefaultAsync(x => 
+                //                 //(x.Ward == model.Ward) &&
+                //                 (x.Street == model.Street) &&
+                //                 (x.CondoName == model.CondoName) &&
+                //                 (x.Floor == model.Floor) &&
+                //                 (x.Room == model.Room) &&
+                //                 (x.Owner.OwnerName == model.OwnerName) &&
+                //                 (x.Owner.OwnerPhone == model.OwnerPhone) &&
+                //                 (x.PropertyType == model.PropertyType) &&
+                //                  x.Id != model.Id);
+                var isDuplicate = await _context.Property.AsNoTracking().OrderByDescending(x => x.Id).FirstOrDefaultAsync();
 
 
-                if (ModelState.IsValid && isCodeOk && !isDuplicate)
+                if (ModelState.IsValid && isCodeOk && isDuplicate == null)
                 {
                     // Check if the user selected "အသစ်ထည့်ရန်" (Add New Owner)
                     if (model.OwnerId == 0)
@@ -461,9 +463,16 @@ namespace CloseFriendMyanamr.Controllers
                         ViewBag.Error = $"Code ({model.Code}) is already exist.";
                     }
 
-                    if (isDuplicate)
+                    if (isDuplicate != null)
                     {
-                        ViewBag.Error = "property already exists.";
+                        string msg =  "This property already exists.\n" +
+                                        $"Street : {isDuplicate.Street}\n" +
+                                        $"Condo  : {isDuplicate.CondoName}\n" +
+                                        $"Floor  : {isDuplicate.Floor}\n" +
+                                        $"Room   : {isDuplicate.Room}\n" +
+                                        $"Owner  : {isDuplicate.Owner?.OwnerName}\n" +
+                                        $"Type   : {isDuplicate.PropertyType}";
+                        ViewBag.Error = msg;
                     }
 
                     #endregion

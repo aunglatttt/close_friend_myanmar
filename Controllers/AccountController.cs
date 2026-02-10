@@ -155,7 +155,6 @@ namespace CloseFriendMyanamr.Controllers
             {
                 return View(model);
             }
-
             var existClient = await _context.Client.AsNoTracking()
         .FirstOrDefaultAsync(x => x.ClientPhone == NormalizeMyanmarPhone(model.PhoneNumber));
 
