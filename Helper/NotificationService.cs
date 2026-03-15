@@ -7,7 +7,7 @@ namespace CloseFriendMyanamr.Helper;
 
 public class NotificationService
 {
-private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHttpClientFactory _httpClientFactory;
     private const string ExpoApiUrl = "https://exp.host/--/api/v2/push/send";
 
     public NotificationService(IHttpClientFactory httpClientFactory)
