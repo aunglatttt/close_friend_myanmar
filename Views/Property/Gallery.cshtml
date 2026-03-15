@@ -50,6 +50,10 @@
                         <td class="bg-gray-100"><img src="@Url.Content("~/PropertyPhoto/" + @image.Location)" alt="@image.Title" width="100" loading="lazy" /></td>
                         <td class="bg-gray-100">@image.Title</td>
                         <td class="bg-gray-100">
+                            <a class="btn btn-success mb-2 d-block"
+                               href="@Url.Action("DownloadPhoto", "Property", new { id = image.Id, propertyId = ViewBag.PropertyId })">
+                                Download
+                            </a>
                             <form asp-action="Delete" method="post" onsubmit="return confirmDelete();">
                                 <input type="hidden" name="id" value="@image.Id" />
                                 <input type="hidden" name="propertyId" value="@ViewBag.PropertyId" />
