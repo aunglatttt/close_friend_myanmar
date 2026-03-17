@@ -18,38 +18,46 @@ namespace CloseFriendMyanamr.Controllers
             _context = context;
         }
 
+        private int GetCurrentUserId()
+        {
+            return int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var userId)
+                ? userId
+                : 0;
+        }
+
         public async Task<IActionResult> ClicentRequestList()
         {
-            string userAgent = Request.Headers["User-Agent"].ToString();
-            int userId = 0;
-
-            if (userAgent.Contains("MyCustomApp"))
-            {
-                var userIdObj = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                int.TryParse(userIdObj, out userId);
-
-                ViewBag.UserId = userId;
-
-                if (userId > 0)
-                {
-                    return View(await _context.ClientRequirement
-                        .AsNoTracking()
-                        .Include(x => x.Client)
-                        .Where(x => x.ClientId == userId)
-                        .ToListAsync());
-                }
-            }
-
+            var userId = GetCurrentUserId();
             ViewBag.UserId = userId;
 
-            return View(await _context.ClientRequirement
+            var query = _context.ClientRequirement
                 .AsNoTracking()
                 .Include(x => x.Client)
+                .AsQueryable();
+
+            if (User.IsInRole("MobileUser"))
+            {
+                query = query.Where(x => x.ClientId == userId);
+            }
+
+            return View(await query
+                .OrderByDescending(x => x.Id)
                 .ToListAsync());
         }
 
         public async Task<IActionResult> ClientRequirement(int clientId, int? clrId)
         {
+            var currentUserId = GetCurrentUserId();
+            if (User.IsInRole("MobileUser"))
+            {
+                if (currentUserId <= 0)
+                {
+                    return Challenge();
+                }
+
+                clientId = currentUserId;
+            }
+
             #region for select value
             var propertyTypes = await _context.PropertyType.AsNoTracking()
                 .Select(x => new { x.Id, x.TypeName })
@@ -117,11 +125,18 @@ namespace CloseFriendMyanamr.Controllers
             ClientRequirementModel model;
             if (clrId.HasValue) // Check if it's an update
             {
-                model = await _context.ClientRequirement.FindAsync(clrId.Value);
+                model = await _context.ClientRequirement.AsNoTracking().FirstOrDefaultAsync(x => x.Id == clrId.Value);
                 if (model == null)
                 {
                     return NotFound();
                 }
+
+                if (User.IsInRole("MobileUser") && model.ClientId != currentUserId)
+                {
+                    return Forbid();
+                }
+
+                clientId = model.ClientId;
             }
             else
             {
@@ -143,8 +158,20 @@ namespace CloseFriendMyanamr.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ClientRequirementCreate(ClientRequirementModel model, List<string> selectedTownships, List<string> selectedFacilities)
         {
+            var currentUserId = GetCurrentUserId();
+            if (User.IsInRole("MobileUser"))
+            {
+                if (currentUserId <= 0)
+                {
+                    return Challenge();
+                }
+
+                model.ClientId = currentUserId;
+            }
+
             if (ModelState.IsValid)
             {
                 model.Township = string.Join(",", selectedTownships ?? new List<string>());
@@ -156,7 +183,36 @@ namespace CloseFriendMyanamr.Controllers
                 }
                 else
                 {
-                    _context.ClientRequirement.Update(model);  // Use Update for existing record
+                    var existingRequirement = await _context.ClientRequirement.FirstOrDefaultAsync(x => x.Id == model.Id);
+                    if (existingRequirement == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (User.IsInRole("MobileUser") && existingRequirement.ClientId != currentUserId)
+                    {
+                        return Forbid();
+                    }
+
+                    existingRequirement.ClientId = User.IsInRole("MobileUser") ? currentUserId : model.ClientId;
+                    existingRequirement.Purpose = model.Purpose;
+                    existingRequirement.PropertyType = model.PropertyType;
+                    existingRequirement.BuildingCondition = model.BuildingCondition;
+                    existingRequirement.BuildingType = model.BuildingType;
+                    existingRequirement.Street = model.Street;
+                    existingRequirement.Ward = model.Ward;
+                    existingRequirement.CondoName = model.CondoName;
+                    existingRequirement.StartPrice = model.StartPrice;
+                    existingRequirement.EndPrice = model.EndPrice;
+                    existingRequirement.Area = model.Area;
+                    existingRequirement.MasterBed = model.MasterBed;
+                    existingRequirement.FloorMin = model.FloorMin;
+                    existingRequirement.FloorMax = model.FloorMax;
+                    existingRequirement.SpecialRequest = model.SpecialRequest;
+                    existingRequirement.Township = model.Township;
+                    existingRequirement.Facilities = model.Facilities;
+                    existingRequirement.Status = model.Status;
+                    existingRequirement.RequestDate = model.RequestDate;
                 }
 
                 await _context.SaveChangesAsync();
@@ -234,12 +290,19 @@ namespace CloseFriendMyanamr.Controllers
         }
 
         //Delete Action
+        [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
+            var currentUserId = GetCurrentUserId();
             var clientRequirement = await _context.ClientRequirement.FindAsync(id);
             if (clientRequirement == null)
             {
                 return NotFound();
+            }
+
+            if (User.IsInRole("MobileUser") && clientRequirement.ClientId != currentUserId)
+            {
+                return Forbid();
             }
 
             _context.ClientRequirement.Remove(clientRequirement);
