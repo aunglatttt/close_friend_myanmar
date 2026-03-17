@@ -14,6 +14,29 @@ namespace SimpleDataWebsite.Data
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<CompanyExpenseModel>(entity =>
+            {
+                entity.Property(x => x.Id)
+                    .HasColumnName("ExpenseID")
+                    .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<CashBookTransaction>(entity =>
+            {
+                entity.Property(x => x.Id)
+                    .HasColumnName("CBTID")
+                    .ValueGeneratedOnAdd();
+
+                // Legacy live table does not store audit columns for cash book rows.
+                entity.Ignore(x => x.CreatedAt);
+                entity.Ignore(x => x.UpdatedAt);
+            });
+        }
+
         #region configuration
         public DbSet<EmployeeType> EmployeeType { get; set; }
         public DbSet<EmployeeModel> Employee { get; set; }

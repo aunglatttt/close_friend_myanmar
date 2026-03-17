@@ -14,9 +14,9 @@ namespace CloseFriendMyanamr.Models.CashManagement
         public DateTime ExpenseDate { get; set; } = DateTime.Now;
 
 
-        [DisplayName("Expense Title")]
         public int? ExpenseTitleId { get; set; }
 
+        [DisplayName("Expense Title")]
         public string? ExpenseTitleName { get; set; }
 
 
@@ -29,6 +29,6 @@ namespace CloseFriendMyanamr.Models.CashManagement
         public string? ExpenseType { get; set; }
         public string? Description { get; set; }
 
-        public ExpenseTitleModel? ExpenseTitle { get; set; }
+        public virtual ExpenseTitleModel? ExpenseTitle { get; set; }
     }
 }
