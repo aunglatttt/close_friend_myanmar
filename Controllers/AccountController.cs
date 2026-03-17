@@ -115,13 +115,41 @@ namespace CloseFriendMyanamr.Controllers
         {
             if (user.Status == false) { ViewBag.LoginError = "Account Inactive"; return View("Login"); }
 
-            var claims = new List<Claim> {
-                new Claim(ClaimTypes.Name, user.EmployeeName),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.EmployeeType?.Type ?? "Admin")
-            };
+            var claims = BuildEmployeeClaims(user);
             await SignIn(claims, rememberMe);
             return RedirectToAction(user.EmployeeTypeId == 4 ? "Welcome" : "Index", "Home");
+        }
+
+        private static List<Claim> BuildEmployeeClaims(EmployeeModel user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.EmployeeName),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
+            };
+
+            foreach (var role in GetEmployeeRoleClaims(user.EmployeeType?.Type))
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            return claims;
+        }
+
+        private static IEnumerable<string> GetEmployeeRoleClaims(string? employeeType)
+        {
+            var roles = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var primaryRole = string.IsNullOrWhiteSpace(employeeType) ? "Admin" : employeeType.Trim();
+
+            roles.Add(primaryRole);
+
+            // BOD should inherit the full Administrator surface area.
+            if (string.Equals(primaryRole, "BOD", StringComparison.OrdinalIgnoreCase))
+            {
+                roles.Add("Administrator");
+            }
+
+            return roles;
         }
 
         private async Task SignIn(List<Claim> claims, bool isPersistent)
