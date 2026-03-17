@@ -1,65 +1,63 @@
-﻿@model CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel
+@model CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel
 
 @{
     ViewData["Title"] = "Company Expense";
 }
 
-
 <div class="row my-3 mx-auto">
     <div class="col-sm-12">
         <h3 class="responsive-heading mb-3 text-center">@ViewBag.CreateOrUpdate Expense Data</h3>
         <form asp-action="CompanyExpense" method="post" id="employeeForm">
+            <input asp-for="Id" type="hidden" />
+            <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
             <div class="row">
-                <!-- Left Column: Employee Details -->
                 <div class="col-md-12 col-sm-12">
                     <div class="card mx-auto w-80 shadow">
                         <div class="card-header">
-                            <span class="text-primary fw-bold"> Expense Information</span>
+                            <span class="text-primary fw-bold">Expense Information</span>
                         </div>
                         <div class="card-body">
                             <div class="form-group">
                                 <label asp-for="ExpenseDate"></label>
-                                <input type="date" asp-for="ExpenseDate" placeholder="Type here" class="form-control" />
+                                <input type="date" asp-for="ExpenseDate" class="form-control" />
                                 <span asp-validation-for="ExpenseDate" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="ExpenseTitleId"></label>
-                                <select class="form-select" asp-for="ExpenseTitleId" asp-items="ViewBag.ExpenseTitle" id="ExpenseTitleId" name="ExpenseTitleId" data-val="true" data-val-required="Expense Title is required.">
-                                    <option value="">{{Select}}</option>
+                                <select class="form-select" asp-for="ExpenseTitleId" asp-items="ViewBag.ExpenseTitle">
+                                    <option value="">Select</option>
                                 </select>
                                 <span asp-validation-for="ExpenseTitleId" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label asp-for="ExpenseType" class="required"></label>
-                                <select class="form-select" asp-for="ExpenseType" id="ExpenseType" name="ExpenseType" data-val="true" data-val-required="Expense Type is required.">
-                                    <option value="CompanyExpense">Main Cash</option>
+                                <label asp-for="ExpenseType"></label>
+                                <select class="form-select" asp-for="ExpenseType">
+                                    <option value="Cash">Main Cash</option>
                                 </select>
                                 <span asp-validation-for="ExpenseType" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Amount"></label>
-                                <input type="number" asp-for="Amount" placeholder="Type here" class="form-control" />
+                                <input type="number" asp-for="Amount" class="form-control" min="1" step="1" />
                                 <span asp-validation-for="Amount" class="text-danger"></span>
                             </div>
                             <div class="form-group">
                                 <label asp-for="Description"></label>
-                                <input asp-for="Description" placeholder="Type here" class="form-control" />
+                                <input asp-for="Description" class="form-control" placeholder="Type here" />
                                 <span asp-validation-for="Description" class="text-danger"></span>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
             <div class="text-center">
                 <button type="submit" class="btn btn-primary mt-3 text-center">Submit</button>
-                <a href="@Url.Action("ExpenseList", "CashManagement")" class="btn btn-secondary mt-3 text-center">Back To List</a>
-
+                <a asp-action="ExpenseList" asp-controller="CashManagement" class="btn btn-secondary mt-3 text-center">Back To List</a>
             </div>
         </form>
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.2/dist/jquery.validate.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@3.2.11/dist/jquery.validate.unobtrusive.min.js"></script>
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

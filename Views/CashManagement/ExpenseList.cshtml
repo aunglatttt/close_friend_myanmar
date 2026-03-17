@@ -1,46 +1,46 @@
-﻿@model IEnumerable<CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel>
+@model IEnumerable<CloseFriendMyanamr.Models.CashManagement.CompanyExpenseModel>
+
 @{
     ViewData["Title"] = "Company Expense List";
 }
+
 <link rel="stylesheet" href="~/css/employeelist.css" asp-append-version="true" />
+
 <div class="row">
     <div class="col-sm-12">
-        <!-- Main Content Row -->
         <div class="row">
-            <!-- Left Card: DataTable -->
             <div class="col-md-12 mb-4 mt-2">
                 <div class="card border-2 shadow">
                     <div class="card-header">
-                        <span class="text-primary fw-bold"> Income List</span>
+                        <span class="text-primary fw-bold">Expense List</span>
                         <form asp-action="ExpenseList" method="get">
                             <div class="row my-2">
                                 <div class="col-md-2">
-                                    <label for="fromdate" class="form-label">From</label>
-                                    <input type="date" class="form-control" id="fromdate" name="fromdate" value="@(ViewBag.FromDate?.ToString("yyyy-MM-dd"))" placeholder="From">
+                                    <label for="fromDate" class="form-label">From</label>
+                                    <input type="date" class="form-control" id="fromDate" name="fromDate" value="@(ViewBag.FromDate?.ToString("yyyy-MM-dd"))" placeholder="From" />
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="todate" class="form-label">To</label>
-                                    <input type="date" class="form-control" id="todate" name="todate" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" placeholder="To">
+                                    <label for="toDate" class="form-label">To</label>
+                                    <input type="date" class="form-control" id="toDate" name="toDate" value="@(ViewBag.ToDate?.ToString("yyyy-MM-dd"))" placeholder="To" />
                                 </div>
                                 <div class="col-md-2">
-                                    <label for="expenseTitle" class="form-label">Income Title</label>
-                                    <select class="form-select" id="expenseTitle" asp-items="ViewBag.ExpenseTitle" name="expenseTitle" data-val="true" data-val-required="Expense Title is required.">
+                                    <label for="expenseTitle" class="form-label">Expense Title</label>
+                                    <select class="form-select" id="expenseTitle" name="expenseTitle" asp-items="ViewBag.ExpenseTitle">
                                         <option value="">All</option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 mt-4">
                                     <button type="submit" class="btn btn-secondary form-btn mt-2">Search</button>
-                                    <button class="btn btn-secondary form-btn mt-2">Account Transfer</button>
-                                    <a class="btn btn-warning text-white mt-2 form-btn" href="@Url.Action("CompanyExpense", "CashManagement")">New Expense</a>
-                                    @* <button class="btn btn-warning text-white mt-2 form-btn" onclick="window.location.href='@Url.Action("CompanyIncome", "CashManagement")'">New Income</button> *@
-                                    <button class="btn btn-primary form-btn mt-2">Cash Book</button>
+                                    <a class="btn btn-secondary form-btn mt-2" asp-action="AccountTransfer" asp-controller="CashManagement">Account Transfer</a>
+                                    <a class="btn btn-warning text-white mt-2 form-btn" asp-action="CompanyExpense" asp-controller="CashManagement">New Expense</a>
+                                    <a class="btn btn-primary form-btn mt-2" asp-action="CashBookList" asp-controller="CashManagement">Cash Book</a>
                                 </div>
                             </div>
                         </form>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="employeeTable" class="table table-hover table-bordered" style="width:100%">
+                            <table id="expenseTable" class="table table-hover table-bordered" style="width:100%">
                                 <thead>
                                     <tr>
                                         <th>Date</th>
@@ -49,23 +49,31 @@
                                         <th>Amount</th>
                                         <th>Description</th>
                                         <th>Created At</th>
-                                        @* <th>Action</th> *@
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var item in Model)
+                                    @if (Model.Any())
+                                    {
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>@item.ExpenseDate.ToString("MMM dd, yyyy")</td>
+                                                <td>@item.ExpenseTitleName</td>
+                                                <td>@item.ExpenseType</td>
+                                                <td class="text-end">@item.Amount.ToString("N0")</td>
+                                                <td>@item.Description</td>
+                                                <td>@(item.CreatedAt != null ? item.CreatedAt.Value.ToString("MMM dd, yyyy  hh:mm tt") : "")</td>
+                                                <td class="text-center">
+                                                    <a class="btn btn-sm btn-outline-primary" asp-action="CompanyExpense" asp-controller="CashManagement" asp-route-id="@item.Id">Edit</a>
+                                                </td>
+                                            </tr>
+                                        }
+                                    }
+                                    else
                                     {
                                         <tr>
-                                            <td>@item.ExpenseDate.ToString("MMM dd, yyyy")</td>
-                                            <td>@item.ExpenseTitleName</td>
-                                            <td>@item.ExpenseType</td>
-                                            <td>@item.Amount</td>
-                                            <td>@item.Description</td>
-                                            <td>@(item.CreatedAt != null ? item.CreatedAt.Value.ToString("MMM dd, yyyy  hh:mm tt") : "")</td>
-                                         @*    <td>
-                                                <i class="fa-solid fa-pen" onclick="window.location.href='@Url.Action("CompanyExpense", "CashManagement", new { id = item.Id })'" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
-                                                <i class="fa-solid fa-trash-can" onclick="deleteIncomeTitle(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete"></i>
-                                            </td> *@
+                                            <td colspan="7" class="text-center text-muted">No expense records found for the selected filters.</td>
                                         </tr>
                                     }
                                 </tbody>
@@ -80,28 +88,21 @@
 
 <script>
     $(document).ready(function () {
-        $('#employeeTable').DataTable({
-            responsive: true, // Enable responsive feature
-            paging: true,     // Enable pagination
-            searching: true,  // Enable search
-            ordering: true,   // Enable sorting
-            info: true,       // Show table information
-            autoWidth: false, // Disable automatic column width calculation
-               lengthMenu: [      // Specify the length options
-            [25, 50, 100, -1],  // -1 means 'All'
-            [25, 50, 100, "All"] // Display labels for options
-        ],
+        $('#expenseTable').DataTable({
+            responsive: true,
+            paging: true,
+            searching: true,
+            ordering: true,
+            info: true,
+            autoWidth: false,
+            lengthMenu: [
+                [25, 50, 100, -1],
+                [25, 50, 100, 'All']
+            ],
             columnDefs: [
-                { responsivePriority: 1, targets: 0 }, // Make Employee Name column high priority
-                { responsivePriority: 2, targets: -1 } // Make Action column high priority
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: -1 }
             ]
         });
     });
-
-     function deleteIncomeTitle(id) {
-        if (confirm('Are you sure you want to delete this client?')) {
-            fetch(`/UserManagement/DeleteClient/${id}`, { method: 'POST' })
-                .then(() => window.location.reload());
-        }
-    }
 </script>
