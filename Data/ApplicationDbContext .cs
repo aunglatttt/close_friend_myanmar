@@ -35,6 +35,22 @@ namespace SimpleDataWebsite.Data
                 entity.Ignore(x => x.CreatedAt);
                 entity.Ignore(x => x.UpdatedAt);
             });
+
+            modelBuilder.Entity<TownshipModel>(entity =>
+            {
+                entity.Property(x => x.Id)
+                    .HasColumnName("TownshipID")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(x => x.Township)
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.TownshipMM)
+                    .HasMaxLength(100);
+
+                entity.Property(x => x.IsDeleted)
+                    .HasDefaultValue(false);
+            });
         }
 
         #region configuration

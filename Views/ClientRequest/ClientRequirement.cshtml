@@ -2,8 +2,16 @@
 
 @{
     ViewData["Title"] = "Client Requirement";
-    var selectedTownships = ViewBag.SelectedTownships as string[];
-    var selectedFacilities = ViewBag.SelectedFacilities as string[];
+    var selectedTownships = (ViewBag.SelectedTownships as IEnumerable<string>)?
+        .Where(x => !string.IsNullOrWhiteSpace(x))
+        .Select(x => x.Trim())
+        .ToHashSet(StringComparer.OrdinalIgnoreCase)
+        ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    var selectedFacilities = (ViewBag.SelectedFacilities as IEnumerable<string>)?
+        .Where(x => !string.IsNullOrWhiteSpace(x))
+        .Select(x => x.Trim())
+        .ToHashSet(StringComparer.OrdinalIgnoreCase)
+        ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 }
 
 <div class="row my-3 mx-auto">

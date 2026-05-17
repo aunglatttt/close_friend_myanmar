@@ -84,19 +84,7 @@ namespace CloseFriendMyanamr.Controllers
             #endregion
 
             #region townships
-            var townships = await _context.Township.AsNoTracking()
-                .Select(x => new { x.Township, x.TownshipMM })
-                .OrderBy(x => x.TownshipMM)
-                .ToListAsync();
-
-            if (townships == null || !townships.Any())
-            {
-                ViewData["TownshipList"] = new SelectList(new List<object>(), "Township", "TownshipMM");
-            }
-            else
-            {
-                ViewData["TownshipList"] = new SelectList(townships, "Township", "TownshipMM");
-            }
+            ViewData["TownshipList"] = new SelectList(await GetTownshipSelectItemsAsync(), "Value", "Text");
             #endregion
 
 
@@ -140,6 +128,7 @@ namespace CloseFriendMyanamr.Controllers
                     }
                     model.PurposeSale = model.Purpose == "Sale";
                     model.PurposeRent = model.Purpose == "Rent";
+                    ViewData["TownshipList"] = new SelectList(await GetTownshipSelectItemsAsync(model.Township), "Value", "Text", model.Township);
                 }
                 return View(model);
             }
@@ -175,7 +164,7 @@ namespace CloseFriendMyanamr.Controllers
 
                 if (!model.PurposeSale && !model.PurposeRent)
                 {
-                    await PopulatePropertyFormSelectionsAsync();
+                    await PopulatePropertyFormSelectionsAsync(model.Township);
                     ViewBag.SelectedFacilities = selectedFacilities;
                     ViewBag.Error = "Please select a property purpose (Sale or Rent).";
                     return View(model);
@@ -224,7 +213,7 @@ namespace CloseFriendMyanamr.Controllers
 
                 if (!ModelState.IsValid || !isCodeOk || isDuplicate != null)
                 {
-                    await PopulatePropertyFormSelectionsAsync();
+                    await PopulatePropertyFormSelectionsAsync(model.Township);
                     ViewBag.SelectedFacilities = selectedFacilities;
 
                     if (!isCodeOk)
@@ -250,7 +239,7 @@ namespace CloseFriendMyanamr.Controllers
                      string.IsNullOrWhiteSpace(model.OwnerPhone) ||
                      string.IsNullOrWhiteSpace(model.OwnerTypeSelect)))
                 {
-                    await PopulatePropertyFormSelectionsAsync();
+                    await PopulatePropertyFormSelectionsAsync(model.Township);
                     ViewBag.SelectedFacilities = selectedFacilities;
                     ViewBag.Error = "Owner information is required when adding a new owner.";
                     return View(model);
@@ -304,7 +293,7 @@ namespace CloseFriendMyanamr.Controllers
                     var ownerFound = await _context.Owner.FirstOrDefaultAsync(x => x.Id == model.OwnerId.Value);
                     if (ownerFound == null)
                     {
-                        await PopulatePropertyFormSelectionsAsync();
+                        await PopulatePropertyFormSelectionsAsync(model.Township);
                         ViewBag.SelectedFacilities = selectedFacilities;
                         ViewBag.Error = "Selected owner was not found. Please select a valid owner.";
                         return View(model);
@@ -330,7 +319,7 @@ namespace CloseFriendMyanamr.Controllers
 
                     if (existingProperty == null)
                     {
-                        await PopulatePropertyFormSelectionsAsync();
+                        await PopulatePropertyFormSelectionsAsync(model.Township);
                         ViewBag.SelectedFacilities = selectedFacilities;
                         ViewBag.Error = "Property not found for update.";
                         return View(model);
@@ -383,14 +372,14 @@ namespace CloseFriendMyanamr.Controllers
             }
             catch (Exception ex)
             {
-                await PopulatePropertyFormSelectionsAsync();
+                await PopulatePropertyFormSelectionsAsync(model.Township);
                 ViewBag.SelectedFacilities = selectedFacilities;
                 ViewBag.Error = ex.Message;
                 return View(model);
             }
         }
 
-        private async Task PopulatePropertyFormSelectionsAsync()
+        private async Task PopulatePropertyFormSelectionsAsync(string? selectedTownship = null)
         {
             var owners = await _context.Owner.AsNoTracking()
                 .Select(x => new { x.Id, x.OwnerName })
@@ -414,18 +403,71 @@ namespace CloseFriendMyanamr.Controllers
                 ? new SelectList(buildingTypes, "Id", "Name")
                 : new SelectList(new List<object>(), "Id", "Name");
 
-            var townships = await _context.Township.AsNoTracking()
-                .Select(x => new { x.Township, x.TownshipMM })
-                .OrderBy(x => x.TownshipMM)
-                .ToListAsync();
-            ViewData["TownshipList"] = townships.Any()
-                ? new SelectList(townships, "Township", "TownshipMM")
-                : new SelectList(new List<object>(), "Township", "TownshipMM");
+            ViewData["TownshipList"] = new SelectList(
+                await GetTownshipSelectItemsAsync(selectedTownship),
+                "Value",
+                "Text",
+                selectedTownship);
 
             var facilities = await _context.Facilities.AsNoTracking()
                 .Select(x => x.Name)
                 .ToListAsync();
             ViewData["Facilities"] = facilities.Any() ? facilities : new List<string>();
+        }
+
+        private async Task<List<SelectListItem>> GetTownshipSelectItemsAsync(string? selectedTownship = null, bool includeHistoricalPropertyTownships = false)
+        {
+            selectedTownship = selectedTownship?.Trim();
+
+            var townships = await _context.Township.AsNoTracking()
+                .Where(x => !x.IsDeleted || (!string.IsNullOrWhiteSpace(selectedTownship) && x.Township == selectedTownship))
+                .Select(x => new SelectListItem
+                {
+                    Value = x.Township,
+                    Text = x.TownshipMM
+                })
+                .OrderBy(x => x.Text)
+                .ThenBy(x => x.Value)
+                .ToListAsync();
+
+            if (includeHistoricalPropertyTownships)
+            {
+                var propertyTownships = await _context.Property.AsNoTracking()
+                    .Where(x => !string.IsNullOrWhiteSpace(x.Township))
+                    .Select(x => x.Township)
+                    .Distinct()
+                    .ToListAsync();
+
+                foreach (var township in propertyTownships
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                    .Select(x => x!.Trim())
+                    .Distinct(StringComparer.OrdinalIgnoreCase))
+                {
+                    if (!townships.Any(x => string.Equals(x.Value, township, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        townships.Add(new SelectListItem
+                        {
+                            Value = township,
+                            Text = township
+                        });
+                    }
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(selectedTownship) &&
+                !townships.Any(x => string.Equals(x.Value, selectedTownship, StringComparison.OrdinalIgnoreCase)))
+            {
+                townships.Add(new SelectListItem
+                {
+                    Value = selectedTownship,
+                    Text = selectedTownship
+                });
+            }
+
+            return townships
+                .OrderBy(x => x.Text)
+                .ThenBy(x => x.Value)
+                .ToList();
         }
         #endregion
 
@@ -540,19 +582,7 @@ namespace CloseFriendMyanamr.Controllers
             #endregion
 
             #region townships
-            var townships = await _context.Township.AsNoTracking()
-                .Select(x => new { x.Township, x.TownshipMM })
-                .OrderBy(x => x.TownshipMM)
-                .ToListAsync();
-
-            if (townships == null || !townships.Any())
-            {
-                ViewData["TownshipList"] = new SelectList(new List<object>(), "Township", "TownshipMM");
-            }
-            else
-            {
-                ViewData["TownshipList"] = new SelectList(townships, "Township", "TownshipMM");
-            }
+            ViewData["TownshipList"] = new SelectList(await GetTownshipSelectItemsAsync(includeHistoricalPropertyTownships: true), "Value", "Text");
             #endregion
 
             #region condo name

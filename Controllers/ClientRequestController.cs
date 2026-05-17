@@ -85,19 +85,7 @@ namespace CloseFriendMyanamr.Controllers
                 ViewData["BuildingType"] = new SelectList(buildingTypes, "Name", "Name"); // Corrected this line
             }
 
-            var townships = await _context.Township.AsNoTracking()
-                .Select(x => x.TownshipMM)
-                .ToListAsync();
-
-
-            if (townships == null || !townships.Any())
-            {
-                ViewData["Townships"] = new List<string>();
-            }
-            else
-            {
-                ViewData["Townships"] = townships;
-            }
+            ViewData["Townships"] = await GetTownshipDisplayNamesAsync();
 
             var facilities = await _context.Facilities.AsNoTracking()
                 .Select(x => x.Name)
@@ -145,14 +133,19 @@ namespace CloseFriendMyanamr.Controllers
 
 
             // Pre-select townships and facilities for update
+            var selectedTownships = new List<string>();
             if (model.Township != null)
             {
-                ViewBag.SelectedTownships = model.Township.Split(',');
+                selectedTownships = NormalizeSelections(model.Township
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+                ViewBag.SelectedTownships = selectedTownships.ToArray();
             }
             if (model.Facilities != null)
             {
-                ViewBag.SelectedFacilities = model.Facilities.Split(',');
+                ViewBag.SelectedFacilities = NormalizeSelections(model.Facilities.Split(',')).ToArray();
             }
+
+            ViewData["Townships"] = await GetTownshipDisplayNamesAsync(selectedTownships);
 
             return View(model);
         }
@@ -171,6 +164,9 @@ namespace CloseFriendMyanamr.Controllers
 
                 model.ClientId = currentUserId;
             }
+
+            selectedTownships = NormalizeSelections(selectedTownships);
+            selectedFacilities = NormalizeSelections(selectedFacilities);
 
             if (ModelState.IsValid)
             {
@@ -247,19 +243,7 @@ namespace CloseFriendMyanamr.Controllers
                 ViewData["BuildingType"] = new SelectList(buildingTypes, "Id", "Name"); // Corrected this line
             }
 
-            var townships = await _context.Township.AsNoTracking()
-                .Select(x => x.TownshipMM)
-                .ToListAsync();
-
-
-            if (townships == null || !townships.Any())
-            {
-                ViewData["Townships"] = new List<string>();
-            }
-            else
-            {
-                ViewData["Townships"] = townships;
-            }
+            ViewData["Townships"] = await GetTownshipDisplayNamesAsync(selectedTownships);
 
             var facilities = await _context.Facilities.AsNoTracking()
                 .Select(x => x.Name)
@@ -283,10 +267,43 @@ namespace CloseFriendMyanamr.Controllers
 
             #endregion
 
-            ViewBag.SelectedTownships = selectedTownships;
-            ViewBag.SelectedFacilities = selectedFacilities;
+            ViewBag.SelectedTownships = selectedTownships.ToArray();
+            ViewBag.SelectedFacilities = selectedFacilities.ToArray();
 
             return View(model);
+        }
+
+        private static List<string> NormalizeSelections(IEnumerable<string>? values)
+        {
+            return values?
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => x.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? new List<string>();
+        }
+
+        private async Task<List<string>> GetTownshipDisplayNamesAsync(IEnumerable<string>? selectedTownships = null)
+        {
+            var selectedTownshipList = NormalizeSelections(selectedTownships);
+
+            var townships = await _context.Township.AsNoTracking()
+                .Where(x => !x.IsDeleted || selectedTownshipList.Contains(x.TownshipMM))
+                .Select(x => x.TownshipMM)
+                .OrderBy(x => x)
+                .ToListAsync();
+
+            foreach (var township in selectedTownshipList)
+            {
+                if (!townships.Contains(township, StringComparer.OrdinalIgnoreCase))
+                {
+                    townships.Add(township);
+                }
+            }
+
+            return townships
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(x => x)
+                .ToList();
         }
 
         //Delete Action

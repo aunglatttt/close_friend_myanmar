@@ -243,6 +243,133 @@ namespace CloseFriendMyanamr.Controllers
         }
         #endregion
 
+        #region Township
+        public async Task<IActionResult> TownshipList()
+        {
+            ViewData["FormTitle"] = "Add Township";
+            var items = await _context.Township.AsNoTracking()
+                .Where(x => !x.IsDeleted)
+                .OrderBy(x => x.TownshipMM)
+                .ThenBy(x => x.Township)
+                .ToListAsync();
+            return View(items);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddTownship(TownshipModel item)
+        {
+            item.Township = item.Township?.Trim();
+            item.TownshipMM = item.TownshipMM?.Trim();
+
+            if (string.IsNullOrWhiteSpace(item.Township))
+                return BadRequest("Township is required.");
+
+            if (string.IsNullOrWhiteSpace(item.TownshipMM))
+                return BadRequest("Township (Myanmar) is required.");
+
+            string township = item.Township;
+            string townshipMm = item.TownshipMM;
+
+            bool activeDuplicate = await _context.Township.AsNoTracking().AnyAsync(x =>
+                !x.IsDeleted &&
+                (x.Township.ToLower() == township.ToLower() ||
+                 x.TownshipMM.ToLower() == townshipMm.ToLower()));
+
+            if (activeDuplicate)
+            {
+                return BadRequest("The township already exists.");
+            }
+
+            var deletedDuplicate = await _context.Township.FirstOrDefaultAsync(x =>
+                x.IsDeleted &&
+                (x.Township.ToLower() == township.ToLower() ||
+                 x.TownshipMM.ToLower() == townshipMm.ToLower()));
+
+            if (deletedDuplicate != null)
+            {
+                deletedDuplicate.Township = township;
+                deletedDuplicate.TownshipMM = townshipMm;
+                deletedDuplicate.IsDeleted = false;
+                deletedDuplicate.DeletedAt = null;
+                await _context.SaveChangesAsync();
+                return Json(deletedDuplicate);
+            }
+
+            item.IsDeleted = false;
+            item.DeletedAt = null;
+            _context.Township.Add(item);
+            await _context.SaveChangesAsync();
+            return Json(item);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateTownship(TownshipModel item)
+        {
+            item.Township = item.Township?.Trim();
+            item.TownshipMM = item.TownshipMM?.Trim();
+
+            if (string.IsNullOrWhiteSpace(item.Township))
+                return BadRequest("Township is required.");
+
+            if (string.IsNullOrWhiteSpace(item.TownshipMM))
+                return BadRequest("Township (Myanmar) is required.");
+
+            var existingItem = await _context.Township.FirstOrDefaultAsync(x => x.Id == item.Id && !x.IsDeleted);
+            if (existingItem == null) return NotFound();
+
+            string township = item.Township;
+            string townshipMm = item.TownshipMM;
+
+            bool activeDuplicate = await _context.Township.AsNoTracking().AnyAsync(x =>
+                x.Id != item.Id &&
+                !x.IsDeleted &&
+                (x.Township.ToLower() == township.ToLower() ||
+                 x.TownshipMM.ToLower() == townshipMm.ToLower()));
+
+            if (activeDuplicate)
+            {
+                return BadRequest("The township already exists.");
+            }
+
+            existingItem.Township = township;
+            existingItem.TownshipMM = townshipMm;
+            await _context.SaveChangesAsync();
+            return Json(existingItem);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteTownship(int id)
+        {
+            var item = await _context.Township.FirstOrDefaultAsync(x => x.Id == id);
+            if (item == null) return NotFound();
+
+            if (!item.IsDeleted)
+            {
+                item.IsDeleted = true;
+                item.DeletedAt = DateTime.Now;
+                await _context.SaveChangesAsync();
+            }
+
+            return Json(new { success = true });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DetailTownship(int id)
+        {
+            var township = await _context.Township.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+            if (township == null)
+            {
+                return NotFound();
+            }
+
+            return Json(township);
+        }
+        #endregion
+
         #region Building Type
         public async Task<IActionResult> BuildingTypeList()
         {

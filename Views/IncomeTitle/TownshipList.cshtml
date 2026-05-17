@@ -1,0 +1,163 @@
+@model IEnumerable<CloseFriendMyanamr.Models.TownshipModel>
+<link rel="stylesheet" href="~/css/configuration.css" asp-append-version="true" />
+
+<div class="row my-3">
+    <div class="col-sm-12">
+        <h3 class="title mb-3 responsive-heading">Townships</h3>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card p-0">
+                    <div class="card-body pb-0">
+                        <div class="alert alert-info mb-3">
+                            Deleting a township here is a soft delete. It will be hidden from new selections but existing property and client records will stay intact.
+                        </div>
+                    </div>
+                    <div id="townshipList">
+                        <table class="table table-hover table-bordered mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Township</th>
+                                    <th>Township (Myanmar)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@item.Township</td>
+                                            <td>@item.TownshipMM</td>
+                                            <td>
+                                                <i class="fa-solid fa-pen" onclick="editTownship(@item.Id)" style="cursor:pointer; color:#0279d4;" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit"></i>
+                                                <i class="fa-solid fa-trash-can" onclick="deleteTownship(@item.Id)" style="cursor:pointer; color:red; margin-left:10px;" data-bs-toggle="tooltip" data-bs-placement="top" title="Soft Delete"></i>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">No active townships found.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-container">
+                    <h4 class="edittiele responsive-heading" id="editTitle">@ViewData["FormTitle"]</h4>
+
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <div class="alert alert-danger" style="display:none" role="alert"></div>
+                        </div>
+                    </div>
+
+                    <form id="townshipForm" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" id="Id" name="Id" />
+                        <input type="text" id="Township" name="Township" placeholder="Enter township" required class="form-control mb-3" />
+                        <input type="text" id="TownshipMM" name="TownshipMM" placeholder="Enter township (Myanmar)" required class="form-control mb-3" />
+                        <button type="submit" id="submitButton" class="btn btn-primary">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function resetFormTitle() {
+        document.getElementById('submitButton').innerText = 'Add';
+        document.getElementById('editTitle').innerText = 'Add Township';
+    }
+
+    function getRequestVerificationToken() {
+        return document.querySelector('#townshipForm input[name="__RequestVerificationToken"]').value;
+    }
+
+    function showError(message) {
+        const alertBox = document.querySelector('.alert-danger');
+        alertBox.innerText = message;
+        alertBox.style.display = 'block';
+    }
+
+    function clearError() {
+        const alertBox = document.querySelector('.alert-danger');
+        alertBox.innerText = '';
+        alertBox.style.display = 'none';
+    }
+
+    function editTownship(id) {
+        clearError();
+        fetch(`/IncomeTitle/DetailTownship/${id}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Unable to load township details.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById('Id').value = data.id;
+                document.getElementById('Township').value = data.township;
+                document.getElementById('TownshipMM').value = data.townshipMM;
+                document.getElementById('submitButton').innerText = 'Update';
+                document.getElementById('editTitle').innerText = 'Edit Township';
+            })
+            .catch(error => showError(error.message));
+    }
+
+    function deleteTownship(id) {
+        if (!confirm('Soft delete this township? It will be removed from new selections only.')) {
+            return;
+        }
+
+        clearError();
+        const formData = new FormData();
+        formData.append('__RequestVerificationToken', getRequestVerificationToken());
+
+        fetch(`/IncomeTitle/DeleteTownship/${id}`, {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (!response.ok) {
+                return response.text().then(errorMessage => {
+                    throw new Error(errorMessage || 'Unable to delete township.');
+                });
+            }
+
+            window.location.reload();
+        }).catch(error => showError(error.message));
+    }
+
+    document.getElementById('townshipForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        clearError();
+
+        const formData = new FormData(this);
+        const action = document.getElementById('submitButton').innerText === 'Add' ? 'AddTownship' : 'UpdateTownship';
+
+        fetch(`/IncomeTitle/${action}`, {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            if (!response.ok) {
+                response.text().then(errorMessage => {
+                    showError(errorMessage || 'Unable to save township.');
+                });
+                return;
+            }
+
+            this.reset();
+            document.getElementById('Id').value = '';
+            resetFormTitle();
+            window.location.reload();
+        });
+    });
+</script>
